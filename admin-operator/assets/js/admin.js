@@ -23,20 +23,34 @@ function loadOperatorData() {
   }
 }
 
+// Get base path based on current location depth
+function getBasePath() {
+  const path = window.location.pathname;
+  // Count how many folders deep we are from admin-operator root
+  const adminIndex = path.indexOf('/admin-operator/');
+  if (adminIndex === -1) return './';
+  
+  const subPath = path.substring(adminIndex + '/admin-operator/'.length);
+  const depth = subPath.split('/').length - 1;
+  
+  return depth <= 0 ? './' : '../'.repeat(depth);
+}
+
 // Render sidebar
 function renderSidebar() {
   const sidebar = document.querySelector('.sidebar-menu');
   if (!sidebar) return;
   
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const basePath = getBasePath();
   
   const menuItems = [
-    { href: '../index.html', icon: '📊', label: 'Dashboard' },
-    { href: '../trips/index.html', icon: '🏔️', label: 'Manajemen Trip' },
-    { href: '../schedules/index.html', icon: '📅', label: 'Jadwal Trip' },
-    { href: '../bookings/index.html', icon: '📝', label: 'Manajemen Booking' },
-    { href: '../reports/revenue.html', icon: '💰', label: 'Laporan' },
-    { href: '../profile/index.html', icon: '⚙️', label: 'Pengaturan' },
+    { href: basePath + 'index.html', icon: '📊', label: 'Dashboard' },
+    { href: basePath + 'trips/index.html', icon: '🏔️', label: 'Manajemen Trip' },
+    { href: basePath + 'schedules/index.html', icon: '📅', label: 'Jadwal Trip' },
+    { href: basePath + 'bookings/index.html', icon: '📝', label: 'Manajemen Booking' },
+    { href: basePath + 'reports/revenue.html', icon: '💰', label: 'Laporan' },
+    { href: basePath + 'profile/index.html', icon: '⚙️', label: 'Pengaturan' },
   ];
   
   sidebar.innerHTML = menuItems.map(item => {
@@ -110,7 +124,8 @@ function getStatusBadge(status) {
 
 // Logout
 function logout() {
-  window.location.href = 'login.html';
+  const basePath = getBasePath();
+  window.location.href = basePath + 'login.html';
 }
 
 // Initialize when DOM ready
