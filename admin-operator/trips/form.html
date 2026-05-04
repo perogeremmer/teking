@@ -5,6 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Trip - Admin Operator</title>
   <link rel="stylesheet" href="../assets/css/admin.css">
+  <style>
+    .tag-input-wrapper {
+      position: relative;
+    }
+    
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      min-height: 44px;
+      background: white;
+      align-items: center;
+    }
+    
+    .tag-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #c2410c;
+      font-weight: 500;
+    }
+    
+    .tag-remove {
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 4px;
+      color: #9a3412;
+      font-size: 16px;
+      line-height: 1;
+    }
+    
+    .tag-remove:hover {
+      color: #c2410c;
+    }
+    
+    .tag-input {
+      border: none !important;
+      padding: 0 !important;
+      flex: 1;
+      min-width: 150px;
+      background: transparent;
+    }
+    
+    .tag-input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    
+    .tag-suggestions {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+    
+    .tag-suggestion-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.2s;
+    }
+    
+    .tag-suggestion-item:hover {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+    
+    .tag-suggestion-item:last-child {
+      border-bottom: none;
+    }
+  </style>
 </head>
 <body class="admin-body">
   
@@ -70,9 +160,13 @@
               </div>
             </div>
             
-            <div class="form-group">
-              <label class="form-label">Fasilitas Include (pisahkan dengan koma)</label>
-              <textarea class="form-textarea" id="trip-includes" placeholder="Transportasi PP, Makan selama trip, Tenda & cooking set..."></textarea>
+            <div class="form-group tag-input-wrapper">
+              <label class="form-label">Fasilitas Include</label>
+              <div class="tag-container" id="tag-container">
+                <!-- Tags will appear here -->
+              </div>
+              <input type="text" class="form-input tag-input" id="tag-input" placeholder="Ketik fasilitas dan tekan Enter..." autocomplete="off">
+              <div class="tag-suggestions" id="tag-suggestions"></div>
             </div>
             
             <div style="display: flex; gap: 12px; margin-top: 24px;">
@@ -90,6 +184,22 @@
   <script src="../../assets/js/app.js"></script>
   <script src="../assets/js/admin.js"></script>
   <script>
+    // Predefined facilities
+    const PREDEFINED_FACILITIES = [
+      'Transportasi PP',
+      'Makan selama trip',
+      'Tenda & cooking set',
+      'Guide berpengalaman',
+      'P3K & asuransi',
+      'Dokumentasi',
+      'Snack & mineral water',
+      'Dokumentasi drone',
+      'Porter',
+      'Asuransi jiwa'
+    ];
+    
+    let currentTags = [];
+    
     // Load mountains dropdown
     function loadMountains() {
       const select = document.getElementById('trip-mountain');
@@ -101,10 +211,118 @@
       });
     }
     
+    // Tag Input Functions
+    function initTagInput() {
+      const input = document.getElementById('tag-input');
+      const container = document.getElementById('tag-container');
+      
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const text = input.value.trim();
+          if (text && !currentTags.includes(text)) {
+            addTag(text);
+            input.value = '';
+            hideSuggestions();
+          }
+        } else if (e.key === 'Backspace' && input.value === '' && currentTags.length > 0) {
+          removeTag(currentTags[currentTags.length - 1]);
+        }
+      });
+      
+      input.addEventListener('input', (e) => {
+        showSuggestions(e.target.value);
+      });
+      
+      input.addEventListener('blur', () => {
+        setTimeout(hideSuggestions, 200);
+      });
+      
+      // Click on container to focus input
+      container.addEventListener('click', () => {
+        input.focus();
+      });
+    }
+    
+    function addTag(text) {
+      if (!currentTags.includes(text)) {
+        currentTags.push(text);
+        renderTags();
+      }
+    }
+    
+    function removeTag(text) {
+      currentTags = currentTags.filter(t => t !== text);
+      renderTags();
+    }
+    
+    function renderTags() {
+      const container = document.getElementById('tag-container');
+      const input = document.getElementById('tag-input');
+      
+      // Remove existing tags (keep input)
+      container.querySelectorAll('.tag-item').forEach(tag => tag.remove());
+      
+      // Add tags before input
+      currentTags.forEach(tag => {
+        const tagEl = document.createElement('span');
+        tagEl.className = 'tag-item';
+        tagEl.innerHTML = `
+          ${tag}
+          <span class="tag-remove" onclick="removeTag('${tag}')">×</span>
+        `;
+        container.insertBefore(tagEl, input);
+      });
+    }
+    
+    function showSuggestions(query) {
+      const dropdown = document.getElementById('tag-suggestions');
+      
+      if (!query) {
+        hideSuggestions();
+        return;
+      }
+      
+      const matches = PREDEFINED_FACILITIES.filter(f => 
+        f.toLowerCase().includes(query.toLowerCase()) && 
+        !currentTags.includes(f)
+      );
+      
+      if (matches.length === 0) {
+        hideSuggestions();
+        return;
+      }
+      
+      dropdown.innerHTML = matches.map(f => `
+        <div class="tag-suggestion-item" onclick="addTagFromSuggestion('${f}')">
+          ${f}
+        </div>
+      `).join('');
+      
+      dropdown.style.display = 'block';
+    }
+    
+    function addTagFromSuggestion(text) {
+      addTag(text);
+      document.getElementById('tag-input').value = '';
+      hideSuggestions();
+      document.getElementById('tag-input').focus();
+    }
+    
+    function hideSuggestions() {
+      document.getElementById('tag-suggestions').style.display = 'none';
+    }
+    
+    function getTags() {
+      return [...currentTags];
+    }
+    
     // Save trip (dummy)
     function saveTrip(e) {
       e.preventDefault();
-      alert('✅ Trip berhasil disimpan! (Demo)');
+      const includes = getTags();
+      console.log('Saving trip with facilities:', includes);
+      alert('✅ Trip berhasil disimpan! (Demo)\n\nFasilitas: ' + includes.join(', '));
       window.location.href = 'index.html';
     }
     
@@ -122,7 +340,10 @@
           document.getElementById('trip-duration').value = trip.duration;
           document.getElementById('trip-price').value = trip.price;
           document.getElementById('trip-meeting').value = trip.meeting_point;
-          document.getElementById('trip-includes').value = trip.includes.join(', ');
+          
+          // Load tags
+          currentTags = [...trip.includes];
+          renderTags();
         }
       }
     }
@@ -130,6 +351,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       initAdmin();
       loadMountains();
+      initTagInput();
       loadTripData();
     });
   </script>
