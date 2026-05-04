@@ -51,6 +51,16 @@
   <!-- Main Content -->
   <main class="max-w-md mx-auto px-4 -mt-2 relative z-10">
     
+    <!-- Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-1 mb-4 flex">
+      <button onclick="showTab('detail')" id="tab-detail" class="flex-1 py-2 text-sm font-medium rounded-xl bg-forest text-white transition-all">
+        Detail
+      </button>
+      <button onclick="navigateTo('trip-schedule.html', {id: getURLParam('id')})" class="flex-1 py-2 text-sm font-medium rounded-xl text-slate-600 hover:bg-slate-50 transition-all">
+        🗓️ Jadwal
+      </button>
+    </div>
+    
     <!-- Quick Info Card -->
     <div class="bg-white rounded-2xl shadow-lg p-4 mb-4">
       <div class="flex items-center justify-between mb-3">
@@ -207,12 +217,14 @@
     let currentTrip = null;
     let currentOperator = null;
     let currentMountain = null;
+    let selectedSchedule = null;
     let selectedAddons = [];
     let participants = 1;
 
     // Load Trip Data
     function loadTrip() {
       const tripId = getURLParam('id');
+      const scheduleId = getURLParam('schedule_id');
       currentTrip = getTripById(tripId);
       
       if (!currentTrip) {
@@ -223,21 +235,29 @@
       currentOperator = getOperatorByTrip(tripId);
       currentMountain = getMountainByTrip(tripId);
       
-      // Update UI
+      // Get schedule (from URL param or first schedule)
+      let schedule = currentTrip.schedules[0];
+      if (scheduleId) {
+        const foundSchedule = getScheduleById(tripId, scheduleId);
+        if (foundSchedule) schedule = foundSchedule;
+      }
+      selectedSchedule = schedule;
+      
+      // Update UI with selected schedule
       document.getElementById('hero-image').src = currentMountain?.image || '';
       document.getElementById('trip-name').textContent = currentTrip.name;
       document.getElementById('trip-price').textContent = formatPrice(currentTrip.price);
-      document.getElementById('trip-date-start').textContent = formatDate(currentTrip.date_start);
-      document.getElementById('trip-date-end').textContent = formatDate(currentTrip.date_end);
+      document.getElementById('trip-date-start').textContent = formatDate(schedule.date_start);
+      document.getElementById('trip-date-end').textContent = formatDate(schedule.date_end);
       document.getElementById('trip-mountain').textContent = currentMountain?.name || '';
       document.getElementById('trip-route').textContent = currentTrip.route;
       document.getElementById('trip-duration').textContent = currentTrip.duration;
       
-      const quotaText = currentTrip.quota_remaining < 5 
-        ? `Sisa ${currentTrip.quota_remaining} slot (terbatas!)`
-        : `Sisa ${currentTrip.quota_remaining} slot dari ${currentTrip.quota_total}`;
+      const quotaText = schedule.quota_remaining < 5 
+        ? `Sisa ${schedule.quota_remaining} slot (terbatas!)`
+        : `Sisa ${schedule.quota_remaining} slot dari ${schedule.quota_total}`;
       document.getElementById('trip-quota').textContent = quotaText;
-      document.getElementById('trip-quota').className = `text-sm font-semibold ${currentTrip.quota_remaining < 5 ? 'text-red-500' : 'text-slate-800'}`;
+      document.getElementById('trip-quota').className = `text-sm font-semibold ${schedule.quota_remaining < 5 ? 'text-red-500' : 'text-slate-800'}`;
       
       // Operator info
       document.getElementById('operator-logo').src = currentOperator?.logo || '';
@@ -368,6 +388,7 @@
       // Save booking data to session
       const bookingData = {
         trip_id: currentTrip.id,
+        schedule_id: selectedSchedule.id,
         customer_name: name,
         customer_phone: phone,
         participants: participants,

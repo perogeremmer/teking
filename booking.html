@@ -60,6 +60,10 @@
           <span class="text-slate-500">Jumlah peserta</span>
           <span id="booking-participants" class="font-medium"></span>
         </div>
+        <div id="schedule-info" class="flex justify-between text-sm hidden">
+          <span class="text-slate-500">Jadwal dipilih</span>
+          <span id="selected-schedule" class="font-medium text-orange-600"></span>
+        </div>
       </div>
     </div>
 
@@ -157,6 +161,19 @@
       document.getElementById('price-per-person').textContent = formatPrice(currentTrip.price);
       document.getElementById('booking-participants').textContent = `${bookingData.participants} orang`;
       
+      // Show selected schedule if available
+      if (bookingData.schedule_id) {
+        const schedule = getScheduleById(currentTrip.id, bookingData.schedule_id);
+        if (schedule) {
+          document.getElementById('schedule-info').classList.remove('hidden');
+          document.getElementById('selected-schedule').textContent = 
+            `${formatDate(schedule.date_start)} - ${formatDate(schedule.date_end)}`;
+          // Update trip date display
+          document.getElementById('trip-date').textContent = 
+            `${formatDate(schedule.date_start)} - ${formatDate(schedule.date_end)}`;
+        }
+      }
+      
       // Customer
       document.getElementById('customer-name').textContent = bookingData.customer_name;
       document.getElementById('customer-phone').textContent = bookingData.customer_phone;
@@ -197,17 +214,32 @@
 
     // Confirm Booking
     function confirmBooking() {
+      let schedule = {
+        date_start: currentTrip.date_start,
+        date_end: currentTrip.date_end,
+        route: currentTrip.route,
+        duration: currentTrip.duration
+      };
+      
+      // Use selected schedule if available
+      if (bookingData.schedule_id) {
+        const selectedSchedule = getScheduleById(currentTrip.id, bookingData.schedule_id);
+        if (selectedSchedule) {
+          schedule = {
+            date_start: selectedSchedule.date_start,
+            date_end: selectedSchedule.date_end,
+            route: currentTrip.route,
+            duration: currentTrip.duration
+          };
+        }
+      }
+      
       const booking = {
         trip_id: currentTrip.id,
         trip_name: currentTrip.name,
         mountain: getMountainByTrip(currentTrip.id),
         operator: getOperatorByTrip(currentTrip.id),
-        schedule: {
-          date_start: currentTrip.date_start,
-          date_end: currentTrip.date_end,
-          route: currentTrip.route,
-          duration: currentTrip.duration
-        },
+        schedule: schedule,
         customerName: bookingData.customer_name,
         customerPhone: bookingData.customer_phone,
         participants: bookingData.participants,

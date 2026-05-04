@@ -241,19 +241,15 @@ const OPERATORS = [
 // ============================================
 
 const TRIPS = [
-  // --- CIREMAI (Jawa Barat) ---
+  // --- CIREMAI (Jawa Barat) - Tiga Dewa Adventure ---
   {
     id: 'trip-ciremai-1',
     operator_id: 'tigadewa',
     mountain_id: 'ciremai',
     name: 'Open Trip Ciremai via Apuy',
     route: 'Apuy',
-    date_start: '2024-05-14',
-    date_end: '2024-05-16',
     duration: '3 hari 2 malam',
     price: 850000,
-    quota_total: 15,
-    quota_remaining: 9,
     meeting_point: 'Stasiun KA Cirebon, 06.00 WIB',
     meeting_map: { lat: -6.7058, lng: 108.5573 },
     includes: ['Transportasi PP dari Cirebon', 'Makan selama trip (5x)', 'Tenda & cooking set', 'Guide berpengalaman', 'P3K & asuransi', 'Dokumentasi'],
@@ -261,20 +257,29 @@ const TRIPS = [
       { id: 'pole', name: 'Tracking Pole', price: 25000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' },
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 35000, icon: '🛏️' }
+    ],
+    schedules: [
+      { id: 'sched-c1-1', date_start: '2024-05-14', date_end: '2024-05-16', quota_total: 15, quota_remaining: 9 },
+      { id: 'sched-c1-2', date_start: '2024-05-21', date_end: '2024-05-23', quota_total: 15, quota_remaining: 11 },
+      { id: 'sched-c1-3', date_start: '2024-05-28', date_end: '2024-05-30', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-c1-4', date_start: '2024-06-04', date_end: '2024-06-06', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-c1-5', date_start: '2024-06-11', date_end: '2024-06-13', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-c1-6', date_start: '2024-06-18', date_end: '2024-06-20', quota_total: 15, quota_remaining: 14 },
+      { id: 'sched-c1-7', date_start: '2024-06-25', date_end: '2024-06-27', quota_total: 15, quota_remaining: 10 },
+      { id: 'sched-c1-8', date_start: '2024-07-02', date_end: '2024-07-04', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-c1-9', date_start: '2024-07-09', date_end: '2024-07-11', quota_total: 15, quota_remaining: 7 },
+      { id: 'sched-c1-10', date_start: '2024-07-16', date_end: '2024-07-18', quota_total: 15, quota_remaining: 13 }
     ]
   },
+  // --- CIREMAI - Linggarjati (Tiga Dewa) ---
   {
     id: 'trip-ciremai-2',
     operator_id: 'tigadewa',
     mountain_id: 'ciremai',
     name: 'Open Trip Ciremai via Linggarjati',
     route: 'Linggarjati',
-    date_start: '2024-05-17',
-    date_end: '2024-05-19',
     duration: '3 hari 2 malam',
     price: 850000,
-    quota_total: 12,
-    quota_remaining: 4,
     meeting_point: 'Terminal Kuningan, 05.30 WIB',
     meeting_map: { lat: -7.0149, lng: 108.4833 },
     includes: ['Transportasi PP dari Kuningan', 'Makan selama trip (5x)', 'Tenda & cooking set', 'Guide berpengalaman', 'P3K & asuransi', 'Dokumentasi'],
@@ -282,20 +287,29 @@ const TRIPS = [
       { id: 'pole', name: 'Tracking Pole', price: 25000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' },
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 35000, icon: '🛏️' }
+    ],
+    schedules: [
+      { id: 'sched-c2-1', date_start: '2024-05-17', date_end: '2024-05-19', quota_total: 12, quota_remaining: 4 },
+      { id: 'sched-c2-2', date_start: '2024-05-24', date_end: '2024-05-26', quota_total: 12, quota_remaining: 8 },
+      { id: 'sched-c2-3', date_start: '2024-05-31', date_end: '2024-06-02', quota_total: 12, quota_remaining: 6 },
+      { id: 'sched-c2-4', date_start: '2024-06-07', date_end: '2024-06-09', quota_total: 12, quota_remaining: 10 },
+      { id: 'sched-c2-5', date_start: '2024-06-14', date_end: '2024-06-16', quota_total: 12, quota_remaining: 3 },
+      { id: 'sched-c2-6', date_start: '2024-06-21', date_end: '2024-06-23', quota_total: 12, quota_remaining: 11 },
+      { id: 'sched-c2-7', date_start: '2024-06-28', date_end: '2024-06-30', quota_total: 12, quota_remaining: 9 },
+      { id: 'sched-c2-8', date_start: '2024-07-05', date_end: '2024-07-07', quota_total: 12, quota_remaining: 7 },
+      { id: 'sched-c2-9', date_start: '2024-07-12', date_end: '2024-07-14', quota_total: 12, quota_remaining: 5 },
+      { id: 'sched-c2-10', date_start: '2024-07-19', date_end: '2024-07-21', quota_total: 12, quota_remaining: 12 }
     ]
   },
+  // --- CIREMAI - Tebet Adventure ---
   {
     id: 'trip-ciremai-3',
     operator_id: 'tebet',
     mountain_id: 'ciremai',
     name: 'Adventure Ciremai via Apuy',
     route: 'Apuy',
-    date_start: '2024-05-15',
-    date_end: '2024-05-17',
     duration: '3 hari 2 malam',
     price: 800000,
-    quota_total: 20,
-    quota_remaining: 14,
     meeting_point: 'Stasiun KA Cirebon, 06.00 WIB',
     meeting_map: { lat: -6.7058, lng: 108.5573 },
     includes: ['Transportasi PP dari Cirebon', 'Makan selama trip (5x)', 'Tenda berkualitas', 'Guide ramah', 'Snack & mineral water', 'Dokumentasi drone'],
@@ -303,64 +317,89 @@ const TRIPS = [
       { id: 'pole', name: 'Tracking Pole', price: 20000, icon: '🥾' },
       { id: 'tent', name: 'Tenda Single', price: 60000, icon: '⛺' },
       { id: 'headlamp', name: 'Headlamp', price: 15000, icon: '🔦' }
+    ],
+    schedules: [
+      { id: 'sched-c3-1', date_start: '2024-05-15', date_end: '2024-05-17', quota_total: 20, quota_remaining: 14 },
+      { id: 'sched-c3-2', date_start: '2024-05-22', date_end: '2024-05-24', quota_total: 20, quota_remaining: 18 },
+      { id: 'sched-c3-3', date_start: '2024-05-29', date_end: '2024-05-31', quota_total: 20, quota_remaining: 16 },
+      { id: 'sched-c3-4', date_start: '2024-06-05', date_end: '2024-06-07', quota_total: 20, quota_remaining: 12 },
+      { id: 'sched-c3-5', date_start: '2024-06-12', date_end: '2024-06-14', quota_total: 20, quota_remaining: 19 },
+      { id: 'sched-c3-6', date_start: '2024-06-19', date_end: '2024-06-21', quota_total: 20, quota_remaining: 15 },
+      { id: 'sched-c3-7', date_start: '2024-06-26', date_end: '2024-06-28', quota_total: 20, quota_remaining: 20 },
+      { id: 'sched-c3-8', date_start: '2024-07-03', date_end: '2024-07-05', quota_total: 20, quota_remaining: 17 },
+      { id: 'sched-c3-9', date_start: '2024-07-10', date_end: '2024-07-12', quota_total: 20, quota_remaining: 8 },
+      { id: 'sched-c3-10', date_start: '2024-07-17', date_end: '2024-07-19', quota_total: 20, quota_remaining: 11 }
     ]
   },
 
-  // --- PAPANDAYAN (Jawa Barat) ---
+  // --- PAPANDAYAN (Jawa Barat) - Tiga Dewa ---
   {
     id: 'trip-papandayan-1',
     operator_id: 'tigadewa',
     mountain_id: 'papandayan',
     name: 'Open Trip Papandayan Camp David',
     route: 'Camp David',
-    date_start: '2024-05-15',
-    date_end: '2024-05-16',
     duration: '2 hari 1 malam',
     price: 650000,
-    quota_total: 20,
-    quota_remaining: 7,
     meeting_point: 'Terminal Garut, 07.00 WIB',
     meeting_map: { lat: -7.3920, lng: 107.9056 },
     includes: ['Transportasi PP dari Garut', 'Makan (3x)', 'Tenda & cooking set', 'Guide lokal', 'P3K', 'Dokumentasi'],
     addons: [
       { id: 'pole', name: 'Tracking Pole', price: 25000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' }
+    ],
+    schedules: [
+      { id: 'sched-p1-1', date_start: '2024-05-15', date_end: '2024-05-16', quota_total: 20, quota_remaining: 7 },
+      { id: 'sched-p1-2', date_start: '2024-05-18', date_end: '2024-05-19', quota_total: 20, quota_remaining: 12 },
+      { id: 'sched-p1-3', date_start: '2024-05-22', date_end: '2024-05-23', quota_total: 20, quota_remaining: 15 },
+      { id: 'sched-p1-4', date_start: '2024-05-25', date_end: '2024-05-26', quota_total: 20, quota_remaining: 9 },
+      { id: 'sched-p1-5', date_start: '2024-05-29', date_end: '2024-05-30', quota_total: 20, quota_remaining: 18 },
+      { id: 'sched-p1-6', date_start: '2024-06-01', date_end: '2024-06-02', quota_total: 20, quota_remaining: 20 },
+      { id: 'sched-p1-7', date_start: '2024-06-05', date_end: '2024-06-06', quota_total: 20, quota_remaining: 14 },
+      { id: 'sched-p1-8', date_start: '2024-06-08', date_end: '2024-06-09', quota_total: 20, quota_remaining: 6 },
+      { id: 'sched-p1-9', date_start: '2024-06-12', date_end: '2024-06-13', quota_total: 20, quota_remaining: 11 },
+      { id: 'sched-p1-10', date_start: '2024-06-15', date_end: '2024-06-16', quota_total: 20, quota_remaining: 16 }
     ]
   },
+  // --- PAPANDAYAN - Komunitas ---
   {
     id: 'trip-papandayan-2',
     operator_id: 'komunitas',
     mountain_id: 'papandayan',
     name: 'Explore Papandayan',
     route: 'Camp David',
-    date_start: '2024-05-18',
-    date_end: '2024-05-19',
     duration: '2 hari 1 malam',
     price: 600000,
-    quota_total: 25,
-    quota_remaining: 18,
     meeting_point: 'Terminal Garut, 07.00 WIB',
     meeting_map: { lat: -7.3920, lng: 107.9056 },
     includes: ['Transportasi PP', 'Makan (3x)', 'Tenda', 'Guide', 'Kegiatan edukasi alam', 'Dokumentasi'],
     addons: [
       { id: 'pole', name: 'Tracking Pole', price: 20000, icon: '🥾' },
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 30000, icon: '🛏️' }
+    ],
+    schedules: [
+      { id: 'sched-p2-1', date_start: '2024-05-18', date_end: '2024-05-19', quota_total: 25, quota_remaining: 18 },
+      { id: 'sched-p2-2', date_start: '2024-05-21', date_end: '2024-05-22', quota_total: 25, quota_remaining: 22 },
+      { id: 'sched-p2-3', date_start: '2024-05-25', date_end: '2024-05-26', quota_total: 25, quota_remaining: 15 },
+      { id: 'sched-p2-4', date_start: '2024-05-28', date_end: '2024-05-29', quota_total: 25, quota_remaining: 20 },
+      { id: 'sched-p2-5', date_start: '2024-06-01', date_end: '2024-06-02', quota_total: 25, quota_remaining: 12 },
+      { id: 'sched-p2-6', date_start: '2024-06-04', date_end: '2024-06-05', quota_total: 25, quota_remaining: 23 },
+      { id: 'sched-p2-7', date_start: '2024-06-08', date_end: '2024-06-09', quota_total: 25, quota_remaining: 17 },
+      { id: 'sched-p2-8', date_start: '2024-06-11', date_end: '2024-06-12', quota_total: 25, quota_remaining: 9 },
+      { id: 'sched-p2-9', date_start: '2024-06-15', date_end: '2024-06-16', quota_total: 25, quota_remaining: 25 },
+      { id: 'sched-p2-10', date_start: '2024-06-18', date_end: '2024-06-19', quota_total: 25, quota_remaining: 14 }
     ]
   },
 
-  // --- MERAPI (Jawa Tengah) ---
+  // --- MERAPI (Jawa Tengah) - Tiga Dewa ---
   {
     id: 'trip-merapi-1',
     operator_id: 'tigadewa',
     mountain_id: 'merapi',
     name: 'Sunrise Merapi via Selo',
     route: 'Selo',
-    date_start: '2024-05-14',
-    date_end: '2024-05-15',
     duration: '2 hari 1 malam',
     price: 550000,
-    quota_total: 10,
-    quota_remaining: 3,
     meeting_point: 'Basecamp Selo, 22.00 WIB',
     meeting_map: { lat: -7.5603, lng: 110.4425 },
     includes: ['Transportasi dari Jogja', 'Makan (3x)', 'Tenda', 'Guide berpengalaman', 'Headlamp', 'Dokumentasi'],
@@ -368,42 +407,59 @@ const TRIPS = [
       { id: 'carrier', name: 'Carrier 60L', price: 45000, icon: '🎒' },
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 30000, icon: '🛏️' },
       { id: 'pole', name: 'Tracking Pole', price: 20000, icon: '🥾' }
+    ],
+    schedules: [
+      { id: 'sched-m1-1', date_start: '2024-05-14', date_end: '2024-05-15', quota_total: 10, quota_remaining: 3 },
+      { id: 'sched-m1-2', date_start: '2024-05-17', date_end: '2024-05-18', quota_total: 10, quota_remaining: 7 },
+      { id: 'sched-m1-3', date_start: '2024-05-21', date_end: '2024-05-22', quota_total: 10, quota_remaining: 5 },
+      { id: 'sched-m1-4', date_start: '2024-05-24', date_end: '2024-05-25', quota_total: 10, quota_remaining: 9 },
+      { id: 'sched-m1-5', date_start: '2024-05-28', date_end: '2024-05-29', quota_total: 10, quota_remaining: 2 },
+      { id: 'sched-m1-6', date_start: '2024-06-04', date_end: '2024-06-05', quota_total: 10, quota_remaining: 8 },
+      { id: 'sched-m1-7', date_start: '2024-06-07', date_end: '2024-06-08', quota_total: 10, quota_remaining: 6 },
+      { id: 'sched-m1-8', date_start: '2024-06-11', date_end: '2024-06-12', quota_total: 10, quota_remaining: 10 },
+      { id: 'sched-m1-9', date_start: '2024-06-14', date_end: '2024-06-15', quota_total: 10, quota_remaining: 4 },
+      { id: 'sched-m1-10', date_start: '2024-06-18', date_end: '2024-06-19', quota_total: 10, quota_remaining: 1 }
     ]
   },
+  // --- MERAPI - Summit ---
   {
     id: 'trip-merapi-2',
     operator_id: 'summit',
     mountain_id: 'merapi',
     name: 'Merapi Expedition via Selo',
     route: 'Selo',
-    date_start: '2024-05-16',
-    date_end: '2024-05-17',
     duration: '2 hari 1 malam',
     price: 500000,
-    quota_total: 15,
-    quota_remaining: 11,
     meeting_point: 'Basecamp Selo, 22.00 WIB',
     meeting_map: { lat: -7.5603, lng: 110.4425 },
     includes: ['Transportasi dari Jogja', 'Makan (3x)', 'Tenda premium', 'Guide bersertifikat', 'P3K lengkap', 'Drone footage'],
     addons: [
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' },
       { id: 'sleeping_bag', name: 'Sleeping Bag -5°C', price: 40000, icon: '🛏️' }
+    ],
+    schedules: [
+      { id: 'sched-m2-1', date_start: '2024-05-16', date_end: '2024-05-17', quota_total: 15, quota_remaining: 11 },
+      { id: 'sched-m2-2', date_start: '2024-05-19', date_end: '2024-05-20', quota_total: 15, quota_remaining: 13 },
+      { id: 'sched-m2-3', date_start: '2024-05-23', date_end: '2024-05-24', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-m2-4', date_start: '2024-05-26', date_end: '2024-05-27', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-m2-5', date_start: '2024-05-30', date_end: '2024-05-31', quota_total: 15, quota_remaining: 6 },
+      { id: 'sched-m2-6', date_start: '2024-06-06', date_end: '2024-06-07', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-m2-7', date_start: '2024-06-09', date_end: '2024-06-10', quota_total: 15, quota_remaining: 9 },
+      { id: 'sched-m2-8', date_start: '2024-06-13', date_end: '2024-06-14', quota_total: 15, quota_remaining: 7 },
+      { id: 'sched-m2-9', date_start: '2024-06-16', date_end: '2024-06-17', quota_total: 15, quota_remaining: 14 },
+      { id: 'sched-m2-10', date_start: '2024-06-20', date_end: '2024-06-21', quota_total: 15, quota_remaining: 5 }
     ]
   },
 
-  // --- MERBABU (Jawa Tengah) ---
+  // --- MERBABU (Jawa Tengah) - Tebet ---
   {
     id: 'trip-merbabu-1',
     operator_id: 'tebet',
     mountain_id: 'merbabu',
     name: 'Open Trip Merbabu Savana',
     route: 'Suhat',
-    date_start: '2024-05-15',
-    date_end: '2024-05-17',
     duration: '3 hari 2 malam',
     price: 750000,
-    quota_total: 12,
-    quota_remaining: 6,
     meeting_point: 'Basecamp Suhat, 06.00 WIB',
     meeting_map: { lat: -7.4550, lng: 110.4400 },
     includes: ['Transportasi PP dari Jogja', 'Makan selama trip (5x)', 'Tenda & cooking set', 'Guide', 'P3K', 'Dokumentasi'],
@@ -411,64 +467,89 @@ const TRIPS = [
       { id: 'pole', name: 'Tracking Pole', price: 25000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' },
       { id: 'tent', name: 'Tenda (2P)', price: 70000, icon: '⛺' }
+    ],
+    schedules: [
+      { id: 'sched-mb1-1', date_start: '2024-05-15', date_end: '2024-05-17', quota_total: 12, quota_remaining: 6 },
+      { id: 'sched-mb1-2', date_start: '2024-05-22', date_end: '2024-05-24', quota_total: 12, quota_remaining: 9 },
+      { id: 'sched-mb1-3', date_start: '2024-05-29', date_end: '2024-05-31', quota_total: 12, quota_remaining: 12 },
+      { id: 'sched-mb1-4', date_start: '2024-06-05', date_end: '2024-06-07', quota_total: 12, quota_remaining: 4 },
+      { id: 'sched-mb1-5', date_start: '2024-06-12', date_end: '2024-06-14', quota_total: 12, quota_remaining: 8 },
+      { id: 'sched-mb1-6', date_start: '2024-06-19', date_end: '2024-06-21', quota_total: 12, quota_remaining: 11 },
+      { id: 'sched-mb1-7', date_start: '2024-06-26', date_end: '2024-06-28', quota_total: 12, quota_remaining: 7 },
+      { id: 'sched-mb1-8', date_start: '2024-07-03', date_end: '2024-07-05', quota_total: 12, quota_remaining: 10 },
+      { id: 'sched-mb1-9', date_start: '2024-07-10', date_end: '2024-07-12', quota_total: 12, quota_remaining: 3 },
+      { id: 'sched-mb1-10', date_start: '2024-07-17', date_end: '2024-07-19', quota_total: 12, quota_remaining: 5 }
     ]
   },
 
-  // --- PRAU (Jawa Tengah) ---
+  // --- PRAU (Jawa Tengah) - Hiking Buddies ---
   {
     id: 'trip-prau-1',
     operator_id: 'hikingbuddies',
     mountain_id: 'prau',
     name: 'Golden Sunrise Prau',
     route: 'Patak Banteng',
-    date_start: '2024-05-14',
-    date_end: '2024-05-15',
     duration: '2 hari 1 malam',
     price: 350000,
-    quota_total: 30,
-    quota_remaining: 20,
     meeting_point: 'Basecamp Patak Banteng, 11.00 WIB',
     meeting_map: { lat: -7.1917, lng: 109.9000 },
     includes: ['Transportasi dari Dieng', 'Makan (3x)', 'Tenda', 'Guide', 'Api unggun', 'Games & fun'],
     addons: [
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 25000, icon: '🛏️' },
       { id: 'mat', name: 'Matras', price: 10000, icon: '🛏️' }
+    ],
+    schedules: [
+      { id: 'sched-pr1-1', date_start: '2024-05-14', date_end: '2024-05-15', quota_total: 30, quota_remaining: 20 },
+      { id: 'sched-pr1-2', date_start: '2024-05-18', date_end: '2024-05-19', quota_total: 30, quota_remaining: 25 },
+      { id: 'sched-pr1-3', date_start: '2024-05-21', date_end: '2024-05-22', quota_total: 30, quota_remaining: 18 },
+      { id: 'sched-pr1-4', date_start: '2024-05-25', date_end: '2024-05-26', quota_total: 30, quota_remaining: 28 },
+      { id: 'sched-pr1-5', date_start: '2024-05-28', date_end: '2024-05-29', quota_total: 30, quota_remaining: 15 },
+      { id: 'sched-pr1-6', date_start: '2024-06-04', date_end: '2024-06-05', quota_total: 30, quota_remaining: 22 },
+      { id: 'sched-pr1-7', date_start: '2024-06-08', date_end: '2024-06-09', quota_total: 30, quota_remaining: 12 },
+      { id: 'sched-pr1-8', date_start: '2024-06-11', date_end: '2024-06-12', quota_total: 30, quota_remaining: 30 },
+      { id: 'sched-pr1-9', date_start: '2024-06-15', date_end: '2024-06-16', quota_total: 30, quota_remaining: 8 },
+      { id: 'sched-pr1-10', date_start: '2024-06-18', date_end: '2024-06-19', quota_total: 30, quota_remaining: 17 }
     ]
   },
+  // --- PRAU - Komunitas ---
   {
     id: 'trip-prau-2',
     operator_id: 'komunitas',
     mountain_id: 'prau',
     name: 'Prau Dieng Adventure',
     route: 'Dieng',
-    date_start: '2024-05-15',
-    date_end: '2024-05-16',
     duration: '2 hari 1 malam',
     price: 400000,
-    quota_total: 25,
-    quota_remaining: 22,
     meeting_point: 'Dieng Plateau, 10.00 WIB',
     meeting_map: { lat: -7.2000, lng: 109.9000 },
     includes: ['Transportasi', 'Makan (3x)', 'Tenda', 'Guide', 'Edukasi geologi', 'Dokumentasi'],
     addons: [
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 20000, icon: '🛏️' },
       { id: 'pole', name: 'Tracking Pole', price: 15000, icon: '🥾' }
+    ],
+    schedules: [
+      { id: 'sched-pr2-1', date_start: '2024-05-15', date_end: '2024-05-16', quota_total: 25, quota_remaining: 22 },
+      { id: 'sched-pr2-2', date_start: '2024-05-19', date_end: '2024-05-20', quota_total: 25, quota_remaining: 20 },
+      { id: 'sched-pr2-3', date_start: '2024-05-22', date_end: '2024-05-23', quota_total: 25, quota_remaining: 18 },
+      { id: 'sched-pr2-4', date_start: '2024-05-26', date_end: '2024-05-27', quota_total: 25, quota_remaining: 24 },
+      { id: 'sched-pr2-5', date_start: '2024-05-29', date_end: '2024-05-30', quota_total: 25, quota_remaining: 16 },
+      { id: 'sched-pr2-6', date_start: '2024-06-05', date_end: '2024-06-06', quota_total: 25, quota_remaining: 23 },
+      { id: 'sched-pr2-7', date_start: '2024-06-09', date_end: '2024-06-10', quota_total: 25, quota_remaining: 14 },
+      { id: 'sched-pr2-8', date_start: '2024-06-12', date_end: '2024-06-13', quota_total: 25, quota_remaining: 25 },
+      { id: 'sched-pr2-9', date_start: '2024-06-16', date_end: '2024-06-17', quota_total: 25, quota_remaining: 10 },
+      { id: 'sched-pr2-10', date_start: '2024-06-19', date_end: '2024-06-20', quota_total: 25, quota_remaining: 19 }
     ]
   },
 
-  // --- SEMERU (Jawa Timur) ---
+  // --- SEMERU (Jawa Timur) - Tiga Dewa ---
   {
     id: 'trip-semeru-1',
     operator_id: 'tigadewa',
     mountain_id: 'semeru',
     name: 'Expedition Mahameru',
     route: 'Ranu Pane',
-    date_start: '2024-05-17',
-    date_end: '2024-05-21',
     duration: '5 hari 4 malam',
     price: 1350000,
-    quota_total: 10,
-    quota_remaining: 4,
     meeting_point: 'Stasiun Malang / Surabaya, 07.00 WIB',
     meeting_map: { lat: -8.1500, lng: 112.6000 },
     includes: ['Transportasi PP', 'Makan selama trip (10x)', 'Tenda & cooking set', 'Guide berpengalaman', 'Porter', 'P3K & asuransi', 'Dokumentasi'],
@@ -477,20 +558,29 @@ const TRIPS = [
       { id: 'sleeping_bag', name: 'Sleeping Bag -10°C', price: 50000, icon: '🛏️' },
       { id: 'pole', name: 'Tracking Pole (2 pcs)', price: 40000, icon: '🥾' },
       { id: 'tent', name: 'Tenda Single', price: 80000, icon: '⛺' }
+    ],
+    schedules: [
+      { id: 'sched-s1-1', date_start: '2024-05-17', date_end: '2024-05-21', quota_total: 10, quota_remaining: 4 },
+      { id: 'sched-s1-2', date_start: '2024-05-24', date_end: '2024-05-28', quota_total: 10, quota_remaining: 7 },
+      { id: 'sched-s1-3', date_start: '2024-05-31', date_end: '2024-06-04', quota_total: 10, quota_remaining: 9 },
+      { id: 'sched-s1-4', date_start: '2024-06-07', date_end: '2024-06-11', quota_total: 10, quota_remaining: 6 },
+      { id: 'sched-s1-5', date_start: '2024-06-14', date_end: '2024-06-18', quota_total: 10, quota_remaining: 3 },
+      { id: 'sched-s1-6', date_start: '2024-06-21', date_end: '2024-06-25', quota_total: 10, quota_remaining: 8 },
+      { id: 'sched-s1-7', date_start: '2024-06-28', date_end: '2024-07-02', quota_total: 10, quota_remaining: 10 },
+      { id: 'sched-s1-8', date_start: '2024-07-05', date_end: '2024-07-09', quota_total: 10, quota_remaining: 5 },
+      { id: 'sched-s1-9', date_start: '2024-07-12', date_end: '2024-07-16', quota_total: 10, quota_remaining: 2 },
+      { id: 'sched-s1-10', date_start: '2024-07-19', date_end: '2024-07-23', quota_total: 10, quota_remaining: 7 }
     ]
   },
+  // --- SEMERU - Summit ---
   {
     id: 'trip-semeru-2',
     operator_id: 'summit',
     mountain_id: 'semeru',
     name: 'Semeru Extreme',
     route: 'Ranu Pane',
-    date_start: '2024-05-24',
-    date_end: '2024-05-28',
     duration: '5 hari 4 malam',
     price: 1450000,
-    quota_total: 8,
-    quota_remaining: 6,
     meeting_point: 'Bandara Abdul Rachman Saleh, 06.00 WIB',
     meeting_map: { lat: -8.1500, lng: 112.6000 },
     includes: ['Transportasi dari bandara', 'Makan premium (10x)', 'Tenda premium', 'Guide bersertifikat', 'Porter profesional', 'P3K lengkap', 'Drone & GoPro'],
@@ -498,94 +588,190 @@ const TRIPS = [
       { id: 'carrier', name: 'Carrier 80L Osprey', price: 100000, icon: '🎒' },
       { id: 'sleeping_bag', name: 'Sleeping Bag -15°C', price: 75000, icon: '🛏️' },
       { id: 'headlamp', name: 'Headlamp Fenix', price: 25000, icon: '🔦' }
+    ],
+    schedules: [
+      { id: 'sched-s2-1', date_start: '2024-05-24', date_end: '2024-05-28', quota_total: 8, quota_remaining: 6 },
+      { id: 'sched-s2-2', date_start: '2024-05-31', date_end: '2024-06-04', quota_total: 8, quota_remaining: 8 },
+      { id: 'sched-s2-3', date_start: '2024-06-07', date_end: '2024-06-11', quota_total: 8, quota_remaining: 5 },
+      { id: 'sched-s2-4', date_start: '2024-06-14', date_end: '2024-06-18', quota_total: 8, quota_remaining: 3 },
+      { id: 'sched-s2-5', date_start: '2024-06-21', date_end: '2024-06-25', quota_total: 8, quota_remaining: 7 },
+      { id: 'sched-s2-6', date_start: '2024-06-28', date_end: '2024-07-02', quota_total: 8, quota_remaining: 4 },
+      { id: 'sched-s2-7', date_start: '2024-07-05', date_end: '2024-07-09', quota_total: 8, quota_remaining: 2 },
+      { id: 'sched-s2-8', date_start: '2024-07-12', date_end: '2024-07-16', quota_total: 8, quota_remaining: 8 },
+      { id: 'sched-s2-9', date_start: '2024-07-19', date_end: '2024-07-23', quota_total: 8, quota_remaining: 6 },
+      { id: 'sched-s2-10', date_start: '2024-07-26', date_end: '2024-07-30', quota_total: 8, quota_remaining: 1 }
     ]
   },
 
-  // --- BROMO (Jawa Timur) ---
+  // --- BROMO (Jawa Timur) - Tebet ---
   {
     id: 'trip-bromo-1',
     operator_id: 'tebet',
     mountain_id: 'bromo',
     name: 'Bromo Midnight Tour',
     route: 'Sunrise Point',
-    date_start: '2024-05-14',
-    date_end: '2024-05-14',
     duration: '1 hari',
     price: 450000,
-    quota_total: 40,
-    quota_remaining: 15,
     meeting_point: 'Hotel Probolinggo / Malang, 00.00 WIB',
     meeting_map: { lat: -7.9425, lng: 112.9530 },
     includes: ['Jeep 4WD', 'Breakfast', 'Guide lokal', 'Masker', 'Dokumentasi'],
     addons: [
       { id: 'horse', name: 'Sewa Kuda Bromo', price: 150000, icon: '🐴' },
       { id: 'jacket', name: 'Jacket Tebal', price: 30000, icon: '🧥' }
+    ],
+    schedules: [
+      { id: 'sched-b1-1', date_start: '2024-05-14', date_end: '2024-05-14', quota_total: 40, quota_remaining: 15 },
+      { id: 'sched-b1-2', date_start: '2024-05-16', date_end: '2024-05-16', quota_total: 40, quota_remaining: 28 },
+      { id: 'sched-b1-3', date_start: '2024-05-18', date_end: '2024-05-18', quota_total: 40, quota_remaining: 35 },
+      { id: 'sched-b1-4', date_start: '2024-05-21', date_end: '2024-05-21', quota_total: 40, quota_remaining: 22 },
+      { id: 'sched-b1-5', date_start: '2024-05-23', date_end: '2024-05-23', quota_total: 40, quota_remaining: 38 },
+      { id: 'sched-b1-6', date_start: '2024-05-25', date_end: '2024-05-25', quota_total: 40, quota_remaining: 19 },
+      { id: 'sched-b1-7', date_start: '2024-05-28', date_end: '2024-05-28', quota_total: 40, quota_remaining: 30 },
+      { id: 'sched-b1-8', date_start: '2024-05-30', date_end: '2024-05-30', quota_total: 40, quota_remaining: 25 },
+      { id: 'sched-b1-9', date_start: '2024-06-01', date_end: '2024-06-01', quota_total: 40, quota_remaining: 33 },
+      { id: 'sched-b1-10', date_start: '2024-06-04', date_end: '2024-06-04', quota_total: 40, quota_remaining: 17 }
     ]
   },
+  // --- BROMO - Hiking Buddies ---
   {
     id: 'trip-bromo-2',
     operator_id: 'hikingbuddies',
     mountain_id: 'bromo',
     name: 'Bromo Sunrise Fun Trip',
     route: 'Sunrise Point',
-    date_start: '2024-05-15',
-    date_end: '2024-05-15',
     duration: '1 hari',
     price: 400000,
-    quota_total: 35,
-    quota_remaining: 28,
     meeting_point: 'Hotel Malang, 00.00 WIB',
     meeting_map: { lat: -7.9425, lng: 112.9530 },
     includes: ['Jeep 4WD', 'Breakfast', 'Guide', 'Masker', 'Snack', 'Dokumentasi'],
     addons: [
       { id: 'horse', name: 'Sewa Kuda', price: 125000, icon: '🐴' },
       { id: 'jacket', name: 'Jacket', price: 25000, icon: '🧥' }
+    ],
+    schedules: [
+      { id: 'sched-b2-1', date_start: '2024-05-15', date_end: '2024-05-15', quota_total: 35, quota_remaining: 28 },
+      { id: 'sched-b2-2', date_start: '2024-05-17', date_end: '2024-05-17', quota_total: 35, quota_remaining: 30 },
+      { id: 'sched-b2-3', date_start: '2024-05-19', date_end: '2024-05-19', quota_total: 35, quota_remaining: 22 },
+      { id: 'sched-b2-4', date_start: '2024-05-22', date_end: '2024-05-22', quota_total: 35, quota_remaining: 15 },
+      { id: 'sched-b2-5', date_start: '2024-05-24', date_end: '2024-05-24', quota_total: 35, quota_remaining: 32 },
+      { id: 'sched-b2-6', date_start: '2024-05-26', date_end: '2024-05-26', quota_total: 35, quota_remaining: 20 },
+      { id: 'sched-b2-7', date_start: '2024-05-29', date_end: '2024-05-29', quota_total: 35, quota_remaining: 27 },
+      { id: 'sched-b2-8', date_start: '2024-06-02', date_end: '2024-06-02', quota_total: 35, quota_remaining: 18 },
+      { id: 'sched-b2-9', date_start: '2024-06-05', date_end: '2024-06-05', quota_total: 35, quota_remaining: 35 },
+      { id: 'sched-b2-10', date_start: '2024-06-07', date_end: '2024-06-07', quota_total: 35, quota_remaining: 12 }
     ]
   },
 
-  // --- GEDE (Jawa Barat) ---
+  // --- GEDE (Jawa Barat) - Komunitas ---
   {
     id: 'trip-gede-1',
     operator_id: 'komunitas',
     mountain_id: 'gede',
     name: 'Explore Gede Pangrango',
     route: 'Cibodas',
-    date_start: '2024-05-20',
-    date_end: '2024-05-21',
     duration: '2 hari 1 malam',
     price: 650000,
-    quota_total: 15,
-    quota_remaining: 12,
     meeting_point: 'Kebun Raya Cibodas, 07.00 WIB',
     meeting_map: { lat: -6.7300, lng: 106.9800 },
     includes: ['Transportasi dari Bogor', 'Makan (3x)', 'Tenda', 'Guide', 'Edukasi flora fauna', 'Dokumentasi'],
     addons: [
       { id: 'pole', name: 'Tracking Pole', price: 20000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 45000, icon: '🎒' }
+    ],
+    schedules: [
+      { id: 'sched-g1-1', date_start: '2024-05-20', date_end: '2024-05-21', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-g1-2', date_start: '2024-05-23', date_end: '2024-05-24', quota_total: 15, quota_remaining: 14 },
+      { id: 'sched-g1-3', date_start: '2024-05-27', date_end: '2024-05-28', quota_total: 15, quota_remaining: 9 },
+      { id: 'sched-g1-4', date_start: '2024-05-30', date_end: '2024-05-31', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-g1-5', date_start: '2024-06-03', date_end: '2024-06-04', quota_total: 15, quota_remaining: 11 },
+      { id: 'sched-g1-6', date_start: '2024-06-06', date_end: '2024-06-07', quota_total: 15, quota_remaining: 7 },
+      { id: 'sched-g1-7', date_start: '2024-06-10', date_end: '2024-06-11', quota_total: 15, quota_remaining: 13 },
+      { id: 'sched-g1-8', date_start: '2024-06-13', date_end: '2024-06-14', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-g1-9', date_start: '2024-06-17', date_end: '2024-06-18', quota_total: 15, quota_remaining: 10 },
+      { id: 'sched-g1-10', date_start: '2024-06-20', date_end: '2024-06-21', quota_total: 15, quota_remaining: 6 }
     ]
   },
 
-  // --- WUKIR (DIY) ---
+  // --- WUKIR (DIY) - Hiking Buddies ---
   {
     id: 'trip-wukir-1',
     operator_id: 'hikingbuddies',
     mountain_id: 'wukir',
     name: 'Sunset Bukit Wukir',
     route: 'Puncak Wukir',
-    date_start: '2024-05-18',
-    date_end: '2024-05-18',
     duration: '1 hari',
     price: 250000,
-    quota_total: 25,
-    quota_remaining: 20,
     meeting_point: 'Kampus UGM, 14.00 WIB',
     meeting_map: { lat: -7.7700, lng: 110.3800 },
     includes: ['Transportasi dari Jogja', 'Snack & minum', 'Guide', 'Dokumentasi', 'Games'],
     addons: [
       { id: 'mat', name: 'Matras', price: 5000, icon: '🛏️' }
+    ],
+    schedules: [
+      { id: 'sched-w1-1', date_start: '2024-05-18', date_end: '2024-05-18', quota_total: 25, quota_remaining: 20 },
+      { id: 'sched-w1-2', date_start: '2024-05-21', date_end: '2024-05-21', quota_total: 25, quota_remaining: 22 },
+      { id: 'sched-w1-3', date_start: '2024-05-25', date_end: '2024-05-25', quota_total: 25, quota_remaining: 18 },
+      { id: 'sched-w1-4', date_start: '2024-05-28', date_end: '2024-05-28', quota_total: 25, quota_remaining: 15 },
+      { id: 'sched-w1-5', date_start: '2024-06-01', date_end: '2024-06-01', quota_total: 25, quota_remaining: 23 },
+      { id: 'sched-w1-6', date_start: '2024-06-04', date_end: '2024-06-04', quota_total: 25, quota_remaining: 19 },
+      { id: 'sched-w1-7', date_start: '2024-06-08', date_end: '2024-06-08', quota_total: 25, quota_remaining: 12 },
+      { id: 'sched-w1-8', date_start: '2024-06-11', date_end: '2024-06-11', quota_total: 25, quota_remaining: 25 },
+      { id: 'sched-w1-9', date_start: '2024-06-15', date_end: '2024-06-15', quota_total: 25, quota_remaining: 9 },
+      { id: 'sched-w1-10', date_start: '2024-06-18', date_end: '2024-06-18', quota_total: 25, quota_remaining: 17 }
     ]
   }
 ];
+
+// ============================================
+// BACKWARD COMPATIBILITY: Add single schedule properties
+// ============================================
+
+TRIPS.forEach(trip => {
+  const firstSchedule = trip.schedules[0];
+  if (firstSchedule) {
+    trip.date_start = firstSchedule.date_start;
+    trip.date_end = firstSchedule.date_end;
+    trip.quota_total = firstSchedule.quota_total;
+    trip.quota_remaining = firstSchedule.quota_remaining;
+  }
+});
+
+// ============================================
+// CALENDAR HELPERS
+// ============================================
+
+function getTripSchedules(tripId) {
+  const trip = getTripById(tripId);
+  return trip ? trip.schedules : [];
+}
+
+function getScheduleById(tripId, scheduleId) {
+  const schedules = getTripSchedules(tripId);
+  return schedules.find(s => s.id === scheduleId);
+}
+
+function getSchedulesByMonth(tripId, year, month) {
+  const schedules = getTripSchedules(tripId);
+  return schedules.filter(s => {
+    const date = new Date(s.date_start);
+    return date.getFullYear() === year && date.getMonth() === month;
+  });
+}
+
+function hasScheduleOnDate(tripId, dateStr) {
+  const schedules = getTripSchedules(tripId);
+  return schedules.some(s => s.date_start === dateStr);
+}
+
+function getScheduleByDate(tripId, dateStr) {
+  const schedules = getTripSchedules(tripId);
+  return schedules.find(s => s.date_start === dateStr);
+}
+
+function getScheduleDates(tripId) {
+  const schedules = getTripSchedules(tripId);
+  return schedules.map(s => s.date_start);
+}
 
 // ============================================
 // UTILITIES
@@ -597,6 +783,11 @@ function formatPrice(price) {
 
 function formatDate(dateStr) {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  return new Date(dateStr).toLocaleDateString('id-ID', options);
+}
+
+function formatShortDate(dateStr) {
+  const options = { day: 'numeric', month: 'short' };
   return new Date(dateStr).toLocaleDateString('id-ID', options);
 }
 

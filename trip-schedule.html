@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Trip - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-24">
+  
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-3">
+      <div class="flex items-center space-x-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <div>
+          <h1 class="text-white font-bold text-lg">Jadwal Trip</h1>
+          <p id="trip-subtitle" class="text-white/70 text-sm"></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-md mx-auto px-4 py-4">
+    
+    <!-- Trip Info Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <div class="flex items-center space-x-3">
+        <img id="trip-image" src="" alt="" class="w-16 h-16 rounded-xl object-cover">
+        <div class="flex-1">
+          <h2 id="trip-name" class="font-bold text-slate-800"></h2>
+          <p id="trip-operator" class="text-xs text-slate-500"></p>
+          <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1">
+            <span>⛰️ <span id="trip-mountain"></span></span>
+            <span>💰 <span id="trip-price"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar Navigation -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-lg">←</button>
+        <h3 id="calendar-month" class="font-bold text-lg text-slate-800"></h3>
+        <button onclick="changeMonth(1)" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-lg">→</button>
+      </div>
+      
+      <!-- Days Header -->
+      <div class="calendar-grid mb-2">
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Sen</div>
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Sel</div>
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Rab</div>
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Kam</div>
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Jum🌙</div>
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Sab🌙</div>
+        <div class="text-center text-xs font-medium text-slate-400 py-2">Min🌙</div>
+      </div>
+      
+      <!-- Calendar Grid -->
+      <div id="calendar-days" class="calendar-grid"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <div class="flex items-center space-x-4 text-xs">
+        <div class="flex items-center space-x-1">
+          <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+          <span class="text-slate-600">Ada trip</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <span class="w-3 h-3 rounded-full border-2 border-orange-500"></span>
+          <span class="text-slate-600">Hari ini</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <span class="w-3 h-3 rounded-full bg-slate-200"></span>
+          <span class="text-slate-600">Tidak tersedia</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule List -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+      <h3 class="font-bold text-slate-800 mb-3">📅 Jadwal Tersedia</h3>
+      <div id="schedule-list" class="space-y-2"></div>
+    </div>
+
+  </main>
+
+  <!-- Schedule Detail Popup -->
+  <div id="schedule-popup" class="fixed inset-0 bg-black/50 z-50 hidden flex items-end">
+    <div class="bg-white rounded-t-3xl w-full max-w-md mx-auto p-6 transform transition-transform duration-300 translate-y-full">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Detail Jadwal</h3>
+        <button onclick="closePopup()" class="text-slate-400 text-xl">✕</button>
+      </div>
+      
+      <div id="popup-content" class="space-y-3"></div>
+      
+      <button onclick="bookSchedule()" class="w-full mt-4 py-3 bg-orange-500 text-white font-semibold rounded-xl">
+        Booking Jadwal Ini
+      </button>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentTrip = null;
+    let currentSchedule = null;
+    let currentDate = new Date(2024, 4, 1); // May 2024
+
+    // Load Trip
+    function loadTrip() {
+      const tripId = getURLParam('id');
+      currentTrip = getTripById(tripId);
+      
+      if (!currentTrip) {
+        showToast('Trip tidak ditemukan', 'error');
+        return;
+      }
+      
+      const mountain = getMountainByTrip(tripId);
+      const operator = getOperatorByTrip(tripId);
+      
+      document.getElementById('trip-name').textContent = currentTrip.name;
+      document.getElementById('trip-subtitle').textContent = `${mountain?.name} - ${operator?.name}`;
+      document.getElementById('trip-image').src = mountain?.image || '';
+      document.getElementById('trip-operator').textContent = operator?.name || '';
+      document.getElementById('trip-mountain').textContent = mountain?.name || '';
+      document.getElementById('trip-price').textContent = formatPrice(currentTrip.price);
+      
+      renderCalendar();
+      renderScheduleList();
+    }
+
+    // Render Calendar
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      document.getElementById('calendar-month').textContent = 
+        new Date(year, month).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+      
+      const firstDay = new Date(year, month, 1).getDay();
+      const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1; // Senin = 0
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      const container = document.getElementById('calendar-days');
+      let html = '';
+      
+      // Empty cells
+      for (let i = 0; i < adjustedFirstDay; i++) {
+        html += `<div class="calendar-day text-slate-200"></div>`;
+      }
+      
+      // Days
+      const today = new Date().toISOString().split('T')[0];
+      const scheduleDates = getScheduleDates(currentTrip.id);
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const hasSchedule = scheduleDates.includes(dateStr);
+        const isToday = dateStr === today;
+        
+        let classes = 'calendar-day rounded-lg text-sm cursor-pointer transition-all';
+        
+        if (hasSchedule) {
+          classes += ' bg-orange-500 text-white font-bold';
+        } else if (isToday) {
+          classes += ' border-2 border-orange-500 text-orange-600 font-bold';
+        } else {
+          classes += ' text-slate-700 hover:bg-slate-100';
+        }
+        
+        html += `<div class="${classes}" onclick="selectDate('${dateStr}')">${day}</div>`;
+      }
+      
+      container.innerHTML = html;
+    }
+
+    // Change Month
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+      renderScheduleList();
+    }
+
+    // Render Schedule List
+    function renderScheduleList() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const schedules = getSchedulesByMonth(currentTrip.id, year, month);
+      
+      const container = document.getElementById('schedule-list');
+      
+      if (schedules.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-4 text-slate-400 text-sm">
+            Tidak ada jadwal di bulan ini
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = schedules.map(sched => {
+        const isLow = sched.quota_remaining < 5;
+        return `
+          <div onclick="showScheduleDetail('${sched.id}')" 
+               class="flex items-center justify-between p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
+            <div>
+              <p class="text-sm font-semibold text-slate-800">${formatDate(sched.date_start)} - ${formatDate(sched.date_end)}</p>
+              <span class="text-xs ${isLow ? 'text-red-500' : 'text-green-600'}">
+                ${isLow ? '🔥' : '✅'} Sisa ${sched.quota_remaining} slot
+              </span>
+            </div>
+            <span class="text-slate-400">></span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Select Date
+    function selectDate(dateStr) {
+      const schedule = getScheduleByDate(currentTrip.id, dateStr);
+      if (schedule) {
+        showScheduleDetail(schedule.id);
+      }
+    }
+
+    // Show Schedule Detail Popup
+    function showScheduleDetail(scheduleId) {
+      const schedule = getScheduleById(currentTrip.id, scheduleId);
+      if (!schedule) return;
+      
+      currentSchedule = schedule;
+      
+      const popup = document.getElementById('schedule-popup');
+      const content = document.getElementById('popup-content');
+      
+      content.innerHTML = `
+        <div class="flex items-center space-x-3 mb-3">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
+            <span class="text-2xl">📅</span>
+          </div>
+          <div>
+            <p class="font-bold text-slate-800">${formatDate(schedule.date_start)} - ${formatDate(schedule.date_end)}</p>
+            <p class="text-xs text-slate-500">${currentTrip.duration}</p>
+          </div>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-500">Kuota</span>
+            <span class="font-medium ${schedule.quota_remaining < 5 ? 'text-red-500' : 'text-slate-800'}">
+              ${schedule.quota_remaining} / ${schedule.quota_total} slot
+            </span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-500">Harga</span>
+            <span class="font-medium text-orange-600">${formatPrice(currentTrip.price)}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-500">Meeting Point</span>
+            <span class="font-medium text-slate-800 text-right max-w-[60%]">${currentTrip.meeting_point}</span>
+          </div>
+        </div>
+      `;
+      
+      popup.classList.remove('hidden');
+      setTimeout(() => {
+        popup.querySelector('.bg-white').classList.remove('translate-y-full');
+      }, 10);
+    }
+
+    // Close Popup
+    function closePopup() {
+      const popup = document.getElementById('schedule-popup');
+      popup.querySelector('.bg-white').classList.add('translate-y-full');
+      setTimeout(() => {
+        popup.classList.add('hidden');
+      }, 300);
+    }
+
+    // Book Schedule
+    function bookSchedule() {
+      if (!currentSchedule) return;
+      
+      // Save selected schedule to session
+      sessionStorage.setItem('selectedSchedule', JSON.stringify(currentSchedule));
+      
+      // Navigate to trip detail with schedule info
+      navigateTo('trip-detail.html', { 
+        id: currentTrip.id, 
+        schedule_id: currentSchedule.id 
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTrip();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>
