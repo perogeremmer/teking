@@ -36,7 +36,7 @@
   <!-- Sticky Header -->
   <header class="sticky top-0 z-40 bg-forest shadow-lg">
     <div class="max-w-md mx-auto px-4 py-3">
-      <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center mb-3">
         <div class="flex items-center space-x-2">
           <span class="text-2xl">🏔️</span>
           <div>
@@ -44,9 +44,6 @@
             <p class="text-white/70 text-[10px]">Marketplace</p>
           </div>
         </div>
-        <button onclick="navigateTo('profile.html')" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-          <span class="text-sm">👤</span>
-        </button>
       </div>
       
       <div id="search-container"></div>
@@ -127,6 +124,12 @@
       return TRIPS.filter(t => t.mountain_id === mountainId).length;
     }
 
+    // Helper: Get trip count for a province
+    function getProvinceTripCount(provinceId) {
+      const mountainsInProvince = MOUNTAINS.filter(m => m.province === provinceId).map(m => m.id);
+      return TRIPS.filter(t => mountainsInProvince.includes(t.mountain_id)).length;
+    }
+
     // Helper: Get trip count for an operator
     function getOperatorTripCount(operatorId) {
       return TRIPS.filter(t => t.operator_id === operatorId).length;
@@ -164,7 +167,7 @@
                  alt="${prov.name}" 
                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-            <span class="absolute bottom-2 left-2 text-white text-xs font-semibold">${getMountainActiveTrips(prov.id)} Trip</span>
+            <span class="absolute bottom-2 left-2 text-white text-xs font-semibold">${getProvinceTripCount(prov.id)} Trip</span>
           </div>
           <p class="text-sm font-semibold text-slate-700 text-center">${prov.name}</p>
         </div>
