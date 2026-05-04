@@ -6,6 +6,73 @@
   <title>Form Trip - Admin Operator</title>
   <link rel="stylesheet" href="../assets/css/admin.css">
   <style>
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .search-select-wrapper {
+      position: relative;
+    }
+
+    .search-select-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      background: white;
+    }
+
+    .search-select-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      max-height: 250px;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+
+    .search-select-option {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.2s;
+    }
+
+    .search-select-option:hover {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .search-select-option.selected {
+      background: #fff7ed;
+      color: #c2410c;
+      font-weight: 600;
+    }
+
     .tag-input-wrapper {
       position: relative;
     }
@@ -160,7 +227,7 @@
         <div class="card-body">
           <form id="trip-form" onsubmit="saveTrip(event)">
             
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Nama Trip *</label>
                 <input type="text" class="form-input" id="trip-name" placeholder="Contoh: Open Trip Ciremai via Apuy" required>
@@ -168,9 +235,11 @@
               
               <div class="form-group">
                 <label class="form-label">Gunung *</label>
-                <select class="form-select" id="trip-mountain" required>
-                  <option value="">Pilih Gunung</option>
-                </select>
+                <input type="hidden" id="trip-mountain" required>
+                <div class="search-select-wrapper">
+                  <input type="text" class="form-input search-select-input" id="mountain-search" placeholder="Cari gunung..." autocomplete="off" readonly>
+                  <div class="search-select-dropdown" id="mountain-dropdown"></div>
+                </div>
               </div>
               
               <div class="form-group">
@@ -244,15 +313,68 @@
     
     let currentTags = [];
     
-    // Load mountains dropdown
+    // Load mountains to searchable dropdown
     function loadMountains() {
-      const select = document.getElementById('trip-mountain');
-      MOUNTAINS.forEach(m => {
-        const option = document.createElement('option');
-        option.value = m.id;
-        option.textContent = m.name;
-        select.appendChild(option);
+      const hiddenInput = document.getElementById('trip-mountain');
+      const searchInput = document.getElementById('mountain-search');
+      const dropdown = document.getElementById('mountain-dropdown');
+      
+      // Show dropdown on click
+      searchInput.addEventListener('click', () => {
+        renderMountainOptions();
+        dropdown.style.display = 'block';
       });
+      
+      // Filter on input
+      searchInput.addEventListener('input', () => {
+        renderMountainOptions(searchInput.value);
+        dropdown.style.display = 'block';
+      });
+      
+      // Prevent blur when clicking dropdown
+      dropdown.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+      });
+      
+      // Close when clicking outside
+      document.addEventListener('click', (e) => {
+        const wrapper = document.querySelector('.search-select-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+          dropdown.style.display = 'none';
+        }
+      });
+    }
+    
+    function renderMountainOptions(searchQuery = '') {
+      const dropdown = document.getElementById('mountain-dropdown');
+      const hiddenInput = document.getElementById('trip-mountain');
+      const searchInput = document.getElementById('mountain-search');
+      
+      let filtered = MOUNTAINS;
+      if (searchQuery) {
+        filtered = MOUNTAINS.filter(m => 
+          m.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+      
+      dropdown.innerHTML = filtered.map(m => `
+        <div class="search-select-option ${hiddenInput.value === m.id ? 'selected' : ''}" 
+             onclick="selectMountain('${m.id}', '${m.name}')"
+             data-id="${m.id}"
+             data-name="${m.name}">
+          ${m.name}
+        </div>
+      `).join('');
+      
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="search-select-option" style="color: #94a3b8; cursor: default;">Gunung tidak ditemukan</div>';
+      }
+    }
+    
+    function selectMountain(id, name) {
+      document.getElementById('trip-mountain').value = id;
+      document.getElementById('mountain-search').value = name;
+      document.getElementById('mountain-dropdown').style.display = 'none';
     }
     
     // Tag Input Functions
@@ -421,7 +543,9 @@
         const trip = getTripById(tripId);
         if (trip) {
           document.getElementById('trip-name').value = trip.name;
+          const mountain = MOUNTAINS.find(m => m.id === trip.mountain_id);
           document.getElementById('trip-mountain').value = trip.mountain_id;
+          document.getElementById('mountain-search').value = mountain ? mountain.name : '';
           document.getElementById('trip-route').value = trip.route;
           document.getElementById('trip-duration').value = trip.duration;
           document.getElementById('trip-price').value = trip.price;
