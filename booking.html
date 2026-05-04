@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konfirmasi Booking - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-24">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-3">
+      <div class="flex items-center space-x-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <div>
+          <h1 class="text-white font-bold text-lg">Konfirmasi Booking</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-md mx-auto px-4 py-4">
+    
+    <!-- Trip Summary -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-3">🎒 Detail Trip</h3>
+      
+      <div class="flex space-x-3 mb-3">
+        <img id="trip-image" src="" alt="" class="w-20 h-20 rounded-xl object-cover">
+        <div class="flex-1">
+          <h4 id="trip-name" class="font-bold text-slate-800 text-sm"></h4>
+          <p id="trip-operator" class="text-xs text-slate-500"></p>
+          <div class="text-xs text-slate-500 mt-1">
+            <div>📅 <span id="trip-date"></span></div>
+            <div>⏱️ <span id="trip-duration"></span></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-slate-100 pt-3 space-y-1">
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Harga per orang</span>
+          <span id="price-per-person" class="font-medium"></span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Jumlah peserta</span>
+          <span id="booking-participants" class="font-medium"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-3">👤 Data Pemesan</h3>
+      
+      <div class="space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Nama</span>
+          <span id="customer-name" class="font-medium"></span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">No. HP</span>
+          <span id="customer-phone" class="font-medium"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add-ons -->
+    <div id="addons-section" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4 hidden">
+      <h3 class="font-bold text-slate-800 mb-3">🛒 Add-on</h3>
+      <div id="addons-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Price Breakdown -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-3">💰 Rincian Harga</h3>
+      
+      <div id="price-breakdown" class="space-y-2"></div>
+      
+      <div class="border-t border-slate-100 pt-3 mt-3">
+        <div class="flex justify-between">
+          <span class="font-bold">Total</span>
+          <span id="total-price" class="font-bold text-orange-600 text-lg"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="bg-orange-50 rounded-2xl border border-orange-100 p-4 mb-4">
+      <h3 class="font-bold text-orange-800 text-sm mb-2">📋 Ketentuan</h3>
+      <ul class="text-xs text-orange-700 space-y-1">
+        <li>• Booking akan diproses setelah konfirmasi dari operator</li>
+        <li>• Pembayaran dilakukan langsung ke operator</li>
+        <li>• Pembatalan H-3 dikenakan biaya 50%</li>
+        <li>• Bawa KTP dan surat keterangan sehat</li>
+      </ul>
+    </div>
+
+  </main>
+
+  <!-- Sticky Footer -->
+  <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto p-4">
+    <button onclick="confirmBooking()" 
+            class="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold text-sm shadow-lg active:scale-95 transition-transform">
+      ✅ Konfirmasi Booking
+    </button>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let bookingData = null;
+    let currentTrip = null;
+
+    // Load Booking Data
+    function loadBookingData() {
+      const stored = sessionStorage.getItem('currentBooking');
+      
+      if (!stored) {
+        showToast('Data booking tidak ditemukan', 'error');
+        setTimeout(() => navigateTo('index.html'), 1500);
+        return;
+      }
+      
+      bookingData = JSON.parse(stored);
+      currentTrip = getTripById(bookingData.trip_id);
+      
+      if (!currentTrip) {
+        showToast('Trip tidak ditemukan', 'error');
+        return;
+      }
+      
+      const mountain = getMountainByTrip(currentTrip.id);
+      const operator = getOperatorByTrip(currentTrip.id);
+      
+      // Trip info
+      document.getElementById('trip-image').src = mountain?.image || '';
+      document.getElementById('trip-name').textContent = currentTrip.name;
+      document.getElementById('trip-operator').textContent = operator?.name || '';
+      document.getElementById('trip-date').textContent = `${formatDate(currentTrip.date_start)} - ${formatDate(currentTrip.date_end)}`;
+      document.getElementById('trip-duration').textContent = currentTrip.duration;
+      
+      // Price
+      document.getElementById('price-per-person').textContent = formatPrice(currentTrip.price);
+      document.getElementById('booking-participants').textContent = `${bookingData.participants} orang`;
+      
+      // Customer
+      document.getElementById('customer-name').textContent = bookingData.customer_name;
+      document.getElementById('customer-phone').textContent = bookingData.customer_phone;
+      
+      // Add-ons
+      if (bookingData.addons && bookingData.addons.length > 0) {
+        document.getElementById('addons-section').classList.remove('hidden');
+        document.getElementById('addons-list').innerHTML = bookingData.addons.map(a => `
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-600">${a.name} x ${bookingData.participants}</span>
+            <span class="font-medium">${formatPrice(a.price * bookingData.participants)}</span>
+          </div>
+        `).join('');
+      }
+      
+      // Price breakdown
+      const tripTotal = currentTrip.price * bookingData.participants;
+      let addonTotal = 0;
+      bookingData.addons.forEach(a => {
+        addonTotal += a.price * bookingData.participants;
+      });
+      
+      document.getElementById('price-breakdown').innerHTML = `
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Trip (${bookingData.participants} orang)</span>
+          <span class="font-medium">${formatPrice(tripTotal)}</span>
+        </div>
+        ${addonTotal > 0 ? `
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-500">Add-on</span>
+            <span class="font-medium">${formatPrice(addonTotal)}</span>
+          </div>
+        ` : ''}
+      `;
+      
+      document.getElementById('total-price').textContent = formatPrice(bookingData.total_price);
+    }
+
+    // Confirm Booking
+    function confirmBooking() {
+      const booking = {
+        trip_id: currentTrip.id,
+        trip_name: currentTrip.name,
+        mountain: getMountainByTrip(currentTrip.id),
+        operator: getOperatorByTrip(currentTrip.id),
+        schedule: {
+          date_start: currentTrip.date_start,
+          date_end: currentTrip.date_end,
+          route: currentTrip.route,
+          duration: currentTrip.duration
+        },
+        customerName: bookingData.customer_name,
+        customerPhone: bookingData.customer_phone,
+        participants: bookingData.participants,
+        addons: bookingData.addons,
+        totalPrice: bookingData.total_price
+      };
+      
+      addBooking(booking);
+      
+      // Clear session
+      sessionStorage.removeItem('currentBooking');
+      
+      showToast('Booking berhasil! Silakan cek My Trips');
+      
+      setTimeout(() => {
+        navigateTo('my-trips.html');
+      }, 1500);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadBookingData();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>

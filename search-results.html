@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cari Gunung - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-20">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-3">
+      <div class="flex items-center space-x-3 mb-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <div>
+          <h1 class="text-white font-bold text-lg">Cari Gunung</h1>
+        </div>
+      </div>
+      
+      <div id="search-container"></div>
+    </div>
+  </header>
+
+  <!-- Active Filters -->
+  <div class="max-w-md mx-auto px-4 py-3">
+    <div id="active-filters" class="flex flex-wrap gap-2 mb-3"></div>
+    
+    <div class="flex space-x-2 overflow-x-auto hide-scrollbar">
+      <button onclick="filterByDifficulty('')" 
+              class="filter-btn px-4 py-2 bg-forest text-white rounded-full text-xs font-medium whitespace-nowrap"
+              data-difficulty="">
+        Semua Level
+      </button>
+      <button onclick="filterByDifficulty('Mudah')" 
+              class="filter-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+              data-difficulty="Mudah">
+        🟢 Mudah
+      </button>
+      <button onclick="filterByDifficulty('Sedang')" 
+              class="filter-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+              data-difficulty="Sedang">
+        🟡 Sedang
+      </button>
+      <button onclick="filterByDifficulty('Sulit')" 
+              class="filter-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+              data-difficulty="Sulit">
+        🔴 Sulit
+      </button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <main class="max-w-md mx-auto px-4">
+    <div id="results-count" class="text-xs text-slate-500 mb-3"></div>
+    <div id="results-container" class="space-y-3"></div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto h-16 flex"></nav>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentProvince = '';
+    let currentDifficulty = '';
+    let currentSearch = '';
+
+    // Helper: Get active trip count for a mountain
+    function getMountainActiveTrips(mountainId) {
+      return TRIPS.filter(t => t.mountain_id === mountainId).length;
+    }
+
+    // Helper: Get best price for a mountain
+    function getBestPriceForMountain(mountainId) {
+      const trips = TRIPS.filter(t => t.mountain_id === mountainId);
+      if (trips.length === 0) return 0;
+      return Math.min(...trips.map(t => t.price));
+    }
+
+    // Render Results
+    function renderResults() {
+      const mountains = filterMountains(currentSearch, currentProvince, currentDifficulty);
+      const container = document.getElementById('results-container');
+      const countEl = document.getElementById('results-count');
+      
+      // Update active filters display
+      updateActiveFilters();
+      
+      countEl.textContent = `${mountains.length} gunung ditemukan`;
+      
+      if (mountains.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4">🏔️</div>
+            <p class="text-slate-500 font-medium">Tidak ada gunung ditemukan</p>
+            <p class="text-slate-400 text-sm mt-1">Coba ubah kata kunci atau filter pencarianmu</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = mountains.map(mountain => `
+        <div onclick="navigateTo('mountain-detail.html', {id: '${mountain.id}'})" 
+             class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
+          <div class="relative h-48">
+            <img src="${mountain.image}" 
+                 alt="${mountain.name}" 
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+            
+            <button onclick="event.stopPropagation(); toggleWishlistIcon('${mountain.id}')" 
+                    class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md"
+                    id="wishlist-btn-${mountain.id}">
+              <span class="${isInWishlist(mountain.id) ? 'text-red-500' : 'text-slate-300'}">❤️</span>
+            </button>
+            
+            <div class="absolute bottom-3 left-3 right-3">
+              <h3 class="text-white font-bold text-lg">${mountain.name}</h3>
+              <div class="flex items-center space-x-3 text-white/80 text-xs">
+                <span>⛰️ ${mountain.height}</span>
+                <span class="${mountain.difficulty === 'Sulit' ? 'text-red-300' : mountain.difficulty === 'Sedang' ? 'text-yellow-300' : 'text-green-300'}">
+                  📊 ${mountain.difficulty}
+                </span>
+                <span>🏔️ ${getMountainActiveTrips(mountain.id)} trip</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <p class="text-sm text-slate-600 mb-3 line-clamp-2">${mountain.description}</p>
+            
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-400">Mulai dari</span>
+              <span class="text-sm font-bold text-orange-600">${formatPrice(getBestPriceForMountain(mountain.id))}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update Active Filters Display
+    function updateActiveFilters() {
+      const container = document.getElementById('active-filters');
+      let filters = [];
+      
+      if (currentProvince) {
+        const prov = PROVINCES.find(p => p.id === currentProvince);
+        filters.push({ label: prov?.name || currentProvince, type: 'province' });
+      }
+      
+      if (currentDifficulty) {
+        filters.push({ label: currentDifficulty, type: 'difficulty' });
+      }
+      
+      if (currentSearch) {
+        filters.push({ label: `"${currentSearch}"`, type: 'search' });
+      }
+      
+      if (filters.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      container.innerHTML = filters.map(f => `
+        <span class="inline-flex items-center px-2 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-medium">
+          ${f.label}
+          <button onclick="clearFilter('${f.type}')" class="ml-1 text-orange-500">✕</button>
+        </span>
+      `).join('');
+    }
+
+    // Clear Filter
+    function clearFilter(type) {
+      if (type === 'province') currentProvince = '';
+      if (type === 'difficulty') {
+        currentDifficulty = '';
+        filterByDifficulty('');
+      }
+      if (type === 'search') {
+        currentSearch = '';
+        document.getElementById('search-input').value = '';
+      }
+      renderResults();
+    }
+
+    // Filter by Difficulty
+    function filterByDifficulty(difficulty) {
+      currentDifficulty = difficulty;
+      
+      // Update button styles
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.difficulty === difficulty) {
+          btn.className = 'filter-btn px-4 py-2 bg-forest text-white rounded-full text-xs font-medium whitespace-nowrap';
+        } else {
+          btn.className = 'filter-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap';
+        }
+      });
+      
+      renderResults();
+    }
+
+    // Toggle Wishlist
+    function toggleWishlistIcon(mountainId) {
+      const isAdded = toggleWishlist(mountainId);
+      showToast(isAdded ? 'Ditambahkan ke wishlist' : 'Dihapus dari wishlist');
+      
+      document.querySelectorAll(`#wishlist-btn-${mountainId} span`).forEach(span => {
+        span.className = isAdded ? 'text-red-500' : 'text-slate-300';
+      });
+    }
+
+    // Search Handler
+    function handleSearch(query) {
+      currentSearch = query;
+      renderResults();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      currentProvince = getURLParam('province') || '';
+      
+      renderResults();
+      renderSearchBar('search-container', handleSearch);
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>

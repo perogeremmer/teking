@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-20">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-4">
+      <div class="flex items-center space-x-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <h1 class="text-white font-bold text-lg">Profile</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Profile Card -->
+  <div class="max-w-md mx-auto px-4 -mt-2">
+    <div class="bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-orange-100 rounded-full -mr-16 -mt-16 opacity-50"></div>
+      
+      <div class="flex items-center space-x-4 relative z-10">
+        <img id="user-avatar" 
+             src="" 
+             alt="Profile" 
+             class="w-20 h-20 rounded-2xl object-cover shadow-md">
+        <div class="flex-1">
+          <h2 id="user-name" class="font-bold text-xl text-slate-800"></h2>
+          <p id="user-email" class="text-sm text-slate-500 mb-1"></p>
+          <p id="user-phone" class="text-xs text-slate-400"></p>
+        </div>
+      </div>
+      
+      <div class="mt-4 pt-4 border-t border-slate-100">
+        <p class="text-xs text-slate-400">
+          Member sejak <span id="member-since"></span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="max-w-md mx-auto px-4 py-4">
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-100">
+        <span class="text-3xl">🏔️</span>
+        <p id="stat-trips" class="text-2xl font-bold text-forest mt-2">0</p>
+        <p class="text-xs text-slate-500">Total Trip</p>
+      </div>
+      <div class="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-100">
+        <span class="text-3xl">⛰️</span>
+        <p id="stat-mountains" class="text-2xl font-bold text-orange-500 mt-2">0</p>
+        <p class="text-xs text-slate-500">Gunung Didaki</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu List -->
+  <div class="max-w-md mx-auto px-4 pb-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      
+      <!-- Edit Profile -->
+      <button onclick="showEditProfile()" class="w-full px-4 py-4 flex items-center space-x-3 border-b border-slate-50 active:bg-slate-50">
+        <span class="text-xl">✏️</span>
+        <span class="flex-1 text-left text-sm font-medium">Edit Profil</span>
+        <span class="text-slate-400">></span>
+      </button>
+      
+      <!-- Wishlist -->
+      <button onclick="navigateTo('index.html')" class="w-full px-4 py-4 flex items-center space-x-3 border-b border-slate-50 active:bg-slate-50">
+        <span class="text-xl">❤️</span>
+        <span class="flex-1 text-left text-sm font-medium">Wishlist</span>
+        <span id="wishlist-count" class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">0</span>
+      </button>
+      
+      <!-- My Trips -->
+      <button onclick="navigateTo('my-trips.html')" class="w-full px-4 py-4 flex items-center space-x-3 border-b border-slate-50 active:bg-slate-50">
+        <span class="text-xl">🏔️</span>
+        <span class="flex-1 text-left text-sm font-medium">My Trips</span>
+        <span class="text-slate-400">></span>
+      </button>
+      
+      <!-- Settings -->
+      <button onclick="showToast('Fitur dalam pengembangan')" class="w-full px-4 py-4 flex items-center space-x-3 border-b border-slate-50 active:bg-slate-50">
+        <span class="text-xl">⚙️</span>
+        <span class="flex-1 text-left text-sm font-medium">Pengaturan</span>
+        <span class="text-slate-400">></span>
+      </button>
+      
+      <!-- Help -->
+      <button onclick="showToast('Fitur dalam pengembangan')" class="w-full px-4 py-4 flex items-center space-x-3 border-b border-slate-50 active:bg-slate-50">
+        <span class="text-xl">❓</span>
+        <span class="flex-1 text-left text-sm font-medium">Bantuan</span>
+        <span class="text-slate-400">></span>
+      </button>
+      
+      <!-- Logout -->
+      <button onclick="logout()" class="w-full px-4 py-4 flex items-center space-x-3 text-red-500 active:bg-red-50">
+        <span class="text-xl">🚪</span>
+        <span class="flex-1 text-left text-sm font-medium">Keluar</span>
+      </button>
+      
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="edit-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-sm p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Edit Profil</h3>
+        <button onclick="closeEditModal()" class="text-slate-400">✕</button>
+      </div>
+      
+      <form id="edit-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Nama Lengkap</label>
+          <input type="text" 
+                 id="edit-name" 
+                 required
+                 class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50">
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Email</label>
+          <input type="email" 
+                 id="edit-email" 
+                 required
+                 class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50">
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Nomor HP</label>
+          <input type="tel" 
+                 id="edit-phone" 
+                 required
+                 class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50">
+        </div>
+        
+        <button type="submit" 
+                class="w-full py-3 bg-forest text-white font-semibold rounded-xl">
+          Simpan Perubahan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto h-16 flex"></nav>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    // Load Profile
+    function loadProfile() {
+      const profile = JSON.parse(localStorage.getItem('userProfile')) || USER_PROFILE;
+      
+      document.getElementById('user-avatar').src = profile.avatar;
+      document.getElementById('user-name').textContent = profile.name;
+      document.getElementById('user-email').textContent = profile.email;
+      document.getElementById('user-phone').textContent = profile.phone;
+      document.getElementById('member-since').textContent = profile.memberSince;
+      
+      // Update stats
+      const bookings = getBookings();
+      document.getElementById('stat-trips').textContent = bookings.length;
+      
+      const uniqueMountains = new Set(bookings.map(b => b.mountain?.id).filter(Boolean)).size;
+      document.getElementById('stat-mountains').textContent = uniqueMountains;
+      
+      // Update wishlist count
+      document.getElementById('wishlist-count').textContent = getWishlist().length;
+    }
+
+    // Show Edit Modal
+    function showEditProfile() {
+      const profile = JSON.parse(localStorage.getItem('userProfile')) || USER_PROFILE;
+      
+      document.getElementById('edit-name').value = profile.name;
+      document.getElementById('edit-email').value = profile.email;
+      document.getElementById('edit-phone').value = profile.phone;
+      
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    // Close Edit Modal
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    // Save Profile
+    document.addEventListener('DOMContentLoaded', () => {
+      const editForm = document.getElementById('edit-form');
+      if (editForm) {
+        editForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          
+          const profile = {
+            ...USER_PROFILE,
+            name: document.getElementById('edit-name').value,
+            email: document.getElementById('edit-email').value,
+            phone: document.getElementById('edit-phone').value
+          };
+          
+          localStorage.setItem('userProfile', JSON.stringify(profile));
+          showToast('Profil berhasil diperbarui');
+          closeEditModal();
+          loadProfile();
+        });
+      }
+    });
+
+    // Logout
+    function logout() {
+      if (confirm('Yakin ingin keluar?')) {
+        localStorage.removeItem('wishlist');
+        localStorage.removeItem('bookings');
+        localStorage.removeItem('userProfile');
+        showToast('Berhasil keluar');
+        setTimeout(() => {
+          navigateTo('index.html');
+        }, 1000);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfile();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>

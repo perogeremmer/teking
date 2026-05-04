@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Trips - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-20">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-4">
+      <div class="flex items-center space-x-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <div>
+          <h1 class="text-white font-bold text-lg">My Trips</h1>
+          <p class="text-white/70 text-sm">Riwayat booking trip</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="max-w-md mx-auto px-4 py-4">
+    <div class="grid grid-cols-3 gap-3">
+      <div class="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-100">
+        <p id="total-bookings" class="text-2xl font-bold text-forest">0</p>
+        <p class="text-xs text-slate-500">Total Booking</p>
+      </div>
+      <div class="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-100">
+        <p id="active-trips" class="text-2xl font-bold text-orange-500">0</p>
+        <p class="text-xs text-slate-500">Menunggu</p>
+      </div>
+      <div class="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-100">
+        <p id="confirmed-trips" class="text-2xl font-bold text-green-500">0</p>
+        <p class="text-xs text-slate-500">Dikonfirmasi</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="max-w-md mx-auto px-4 pb-3">
+    <div class="flex space-x-2 overflow-x-auto hide-scrollbar">
+      <button onclick="filterBookings('all')" 
+              class="tab-btn px-4 py-2 bg-forest text-white rounded-full text-xs font-medium whitespace-nowrap"
+              data-filter="all">
+        Semua
+      </button>
+      <button onclick="filterBookings('active')" 
+              class="tab-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+              data-filter="active">
+        🟡 Menunggu
+      </button>
+      <button onclick="filterBookings('confirmed')" 
+              class="tab-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+              data-filter="confirmed">
+        🟢 Dikonfirmasi
+      </button>
+      <button onclick="filterBookings('cancelled')" 
+              class="tab-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+              data-filter="cancelled">
+        🔴 Dibatalkan
+      </button>
+    </div>
+  </div>
+
+  <!-- Bookings List -->
+  <main class="max-w-md mx-auto px-4">
+    <div id="bookings-container" class="space-y-3"></div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto h-16 flex"></nav>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentFilter = 'all';
+
+    // Render Bookings
+    function renderBookings() {
+      const bookings = getBookings();
+      const container = document.getElementById('bookings-container');
+      
+      // Update stats
+      document.getElementById('total-bookings').textContent = bookings.length;
+      document.getElementById('active-trips').textContent = bookings.filter(b => b.status === 'Menunggu Konfirmasi').length;
+      document.getElementById('confirmed-trips').textContent = bookings.filter(b => b.status === 'Dikonfirmasi').length;
+      
+      // Filter bookings
+      let filtered = bookings;
+      if (currentFilter === 'active') {
+        filtered = bookings.filter(b => b.status === 'Menunggu Konfirmasi');
+      } else if (currentFilter === 'confirmed') {
+        filtered = bookings.filter(b => b.status === 'Dikonfirmasi');
+      } else if (currentFilter === 'cancelled') {
+        filtered = bookings.filter(b => b.status === 'Dibatalkan');
+      }
+      
+      // Sort by newest
+      filtered.sort((a, b) => b.id - a.id);
+      
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4">🏔️</div>
+            <p class="text-slate-500 font-medium">Belum ada booking</p>
+            <p class="text-slate-400 text-sm mt-1">Yuk, jelajahi gunung dan booking trip pertama!</p>
+            <button onclick="navigateTo('index.html')" 
+                    class="mt-4 px-6 py-2 bg-forest text-white text-sm font-medium rounded-xl">
+              Jelajahi Gunung
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = filtered.map(booking => `
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div class="p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-2">
+                <img src="${booking.mountain?.image || ''}" 
+                     alt="${booking.mountain?.name || ''}" 
+                     class="w-12 h-12 rounded-xl object-cover">
+                <div>
+                  <h4 class="font-bold text-slate-800 text-sm">${booking.trip_name || booking.mountain?.name}</h4>
+                  <p class="text-xs text-slate-500">${booking.operator?.name || ''}</p>
+                </div>
+              </div>
+              <span class="px-2 py-1 text-[10px] font-medium rounded-full ${getStatusColor(booking.status)}">
+                ${booking.status}
+              </span>
+            </div>
+            
+            <div class="space-y-1.5 mb-3">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Tanggal</span>
+                <span class="font-medium">${formatDate(booking.schedule?.date_start)} - ${formatDate(booking.schedule?.date_end)}</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Jalur</span>
+                <span class="font-medium">${booking.schedule?.route || '-'}</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Peserta</span>
+                <span class="font-medium">${booking.participants} orang</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Pemesan</span>
+                <span class="font-medium">${booking.customerName}</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">No. HP</span>
+                <span class="font-medium">${booking.customerPhone}</span>
+              </div>
+              ${booking.addons?.length > 0 ? `
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-500">Add-on</span>
+                  <span class="font-medium">${booking.addons.map(a => a.name).join(', ')}</span>
+                </div>
+              ` : ''}
+            </div>
+            
+            <div class="border-t border-slate-100 pt-3 flex items-center justify-between">
+              <span class="text-xs text-slate-500">Total</span>
+              <span class="text-sm font-bold text-orange-600">${formatPrice(booking.totalPrice)}</span>
+            </div>
+          </div>
+          
+          ${booking.status !== 'Dibatalkan' && booking.status !== 'Selesai' ? `
+            <div class="px-4 pb-4">
+              <button onclick="cancelBooking(${booking.id})" 
+                      class="w-full py-2 border border-red-200 text-red-500 text-xs font-medium rounded-xl hover:bg-red-50 transition-colors">
+                Batalkan Booking
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Get Status Color
+    function getStatusColor(status) {
+      switch(status) {
+        case 'Menunggu Konfirmasi': return 'bg-yellow-100 text-yellow-700';
+        case 'Dikonfirmasi': return 'bg-green-100 text-green-700';
+        case 'Selesai': return 'bg-blue-100 text-blue-700';
+        case 'Dibatalkan': return 'bg-red-100 text-red-700';
+        default: return 'bg-slate-100 text-slate-600';
+      }
+    }
+
+    // Filter Bookings
+    function filterBookings(filter) {
+      currentFilter = filter;
+      
+      // Update tab styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+          btn.className = 'tab-btn px-4 py-2 bg-forest text-white rounded-full text-xs font-medium whitespace-nowrap';
+        } else {
+          btn.className = 'tab-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap';
+        }
+      });
+      
+      renderBookings();
+    }
+
+    // Cancel Booking
+    function cancelBooking(bookingId) {
+      if (!confirm('Yakin ingin membatalkan booking ini?')) return;
+      
+      const bookings = getBookings();
+      const index = bookings.findIndex(b => b.id === bookingId);
+      
+      if (index > -1) {
+        bookings[index].status = 'Dibatalkan';
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        showToast('Booking dibatalkan');
+        renderBookings();
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderBookings();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>

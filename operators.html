@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Operator - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-20">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-3">
+      <div class="flex items-center space-x-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <div>
+          <h1 class="text-white font-bold text-lg">Daftar Operator</h1>
+          <p class="text-white/70 text-sm">Pilih operator terpercaya</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search -->
+  <div class="max-w-md mx-auto px-4 py-3">
+    <div class="relative">
+      <input type="text" 
+             id="search-operator"
+             placeholder="Cari operator..." 
+             class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+             oninput="filterOperators(this.value)"
+      >
+      <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="max-w-md mx-auto px-4 pb-3">
+    <p id="operator-count" class="text-xs text-slate-500"></p>
+  </div>
+
+  <!-- Operators List -->
+  <main class="max-w-md mx-auto px-4">
+    <div id="operators-container" class="space-y-3"></div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto h-16 flex"></nav>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    // Helper: Get trip count for an operator
+    function getOperatorTripCount(operatorId) {
+      return TRIPS.filter(t => t.operator_id === operatorId).length;
+    }
+
+    // Render Operators
+    function renderOperators(operators = OPERATORS) {
+      const container = document.getElementById('operators-container');
+      const countEl = document.getElementById('operator-count');
+      
+      countEl.textContent = `${operators.length} operator terdaftar`;
+      
+      if (operators.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4">🏔️</div>
+            <p class="text-slate-500 font-medium">Tidak ada operator ditemukan</p>
+            <p class="text-slate-400 text-sm mt-1">Coba ubah kata kunci pencarian</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = operators.map(op => `
+        <div onclick="navigateTo('operator-detail.html', {id: '${op.id}'})" 
+             class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 cursor-pointer active:scale-[0.98] transition-transform">
+          <div class="flex items-start space-x-3">
+            <div class="relative flex-shrink-0">
+              <img src="${op.logo}" 
+                   alt="${op.name}" 
+                   class="w-16 h-16 rounded-xl object-cover">
+              ${op.verified ? `
+                <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] border-2 border-white">
+                  ✓
+                </span>
+              ` : ''}
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="font-bold text-slate-800 truncate">${op.name}</h3>
+                <span class="text-slate-400 text-sm">></span>
+              </div>
+              
+              <div class="flex items-center space-x-3 text-xs text-slate-500 mb-2">
+                <span class="flex items-center">
+                  <span class="text-yellow-500 mr-0.5">⭐</span>
+                  ${op.rating}
+                </span>
+                <span>🏔️ ${getOperatorTripCount(op.id)} trip</span>
+                ${op.verified ? '<span class="text-blue-500">✓ Terverifikasi</span>' : ''}
+              </div>
+              
+              <p class="text-xs text-slate-600 line-clamp-2">${op.description}</p>
+              
+              <div class="flex items-center space-x-2 mt-2">
+                <a href="https://wa.me/${op.contact.whatsapp}" 
+                   target="_blank"
+                   onclick="event.stopPropagation()"
+                   class="flex items-center space-x-1 px-2 py-1 bg-green-50 text-green-600 rounded-lg text-[10px] font-medium">
+                  <span>💬</span>
+                  <span>WA</span>
+                </a>
+                <a href="https://instagram.com/${op.contact.instagram.replace('@', '')}" 
+                   target="_blank"
+                   onclick="event.stopPropagation()"
+                   class="flex items-center space-x-1 px-2 py-1 bg-pink-50 text-pink-600 rounded-lg text-[10px] font-medium">
+                  <span>📷</span>
+                  <span>IG</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter Operators
+    function filterOperators(query) {
+      const filtered = OPERATORS.filter(op => 
+        op.name.toLowerCase().includes(query.toLowerCase()) ||
+        op.description.toLowerCase().includes(query.toLowerCase())
+      );
+      renderOperators(filtered);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderOperators();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>

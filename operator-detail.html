@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Operator - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-20">
+  
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-forest shadow-lg">
+    <div class="max-w-md mx-auto px-4 py-3">
+      <div class="flex items-center space-x-3">
+        <button onclick="history.back()" class="text-white text-xl">←</button>
+        <div>
+          <h1 class="text-white font-bold text-lg">Detail Operator</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Operator Profile -->
+  <div class="max-w-md mx-auto px-4 py-4">
+    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+      <div class="relative inline-block mb-3">
+        <img id="operator-logo" 
+             src="" 
+             alt="" 
+             class="w-20 h-20 rounded-2xl object-cover shadow-md mx-auto">
+        <span id="verified-badge" class="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs hidden">
+          ✓
+        </span>
+      </div>
+      
+      <h2 id="operator-name" class="font-bold text-xl text-slate-800 mb-1"></h2>
+      
+      <div class="flex items-center justify-center space-x-3 text-sm text-slate-500 mb-3">
+        <span>⭐ <span id="operator-rating"></span></span>
+        <span>🏔️ <span id="operator-trips"></span> trip</span>
+      </div>
+      
+      <p id="operator-desc" class="text-sm text-slate-600 mb-4"></p>
+      
+      <div class="flex space-x-2 justify-center">
+        <a id="wa-link" href="#" target="_blank" 
+           class="flex items-center space-x-1 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-medium">
+          <span>💬</span>
+          <span>WhatsApp</span>
+        </a>
+        <a id="ig-link" href="#" target="_blank"
+           class="flex items-center space-x-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl text-sm font-medium">
+          <span>📷</span>
+          <span>Instagram</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter by Mountain -->
+  <div class="max-w-md mx-auto px-4 pb-3">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-bold text-slate-800">🎒 Trip yang Tersedia</h3>
+    </div>
+    
+    <div class="flex space-x-2 overflow-x-auto hide-scrollbar">
+      <button onclick="filterByMountain('')" 
+              class="mountain-filter-btn px-4 py-2 bg-forest text-white rounded-full text-xs font-medium whitespace-nowrap"
+              data-mountain="">
+        Semua Gunung
+      </button>
+      <div id="mountain-filters"></div>
+    </div>
+  </div>
+
+  <!-- Trips List -->
+  <main class="max-w-md mx-auto px-4">
+    <div id="trips-container" class="space-y-3"></div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto h-16 flex"></nav>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentOperator = null;
+    let currentMountainFilter = '';
+
+    // Load Operator Data
+    function loadOperator() {
+      const operatorId = getURLParam('id');
+      currentOperator = getOperatorById(operatorId);
+      
+      if (!currentOperator) {
+        showToast('Operator tidak ditemukan', 'error');
+        return;
+      }
+      
+      // Update UI
+      document.getElementById('operator-logo').src = currentOperator.logo;
+      document.getElementById('operator-logo').alt = currentOperator.name;
+      document.getElementById('operator-name').textContent = currentOperator.name;
+      document.getElementById('operator-rating').textContent = currentOperator.rating;
+      document.getElementById('operator-trips').textContent = TRIPS.filter(t => t.operator_id === currentOperator.id).length;
+      document.getElementById('operator-desc').textContent = currentOperator.description;
+      
+      // Verified badge
+      if (currentOperator.verified) {
+        document.getElementById('verified-badge').classList.remove('hidden');
+      }
+      
+      // Contact links
+      if (currentOperator.contact.whatsapp) {
+        document.getElementById('wa-link').href = `https://wa.me/${currentOperator.contact.whatsapp}`;
+      }
+      if (currentOperator.contact.instagram) {
+        document.getElementById('ig-link').href = `https://instagram.com/${currentOperator.contact.instagram.replace('@', '')}`;
+      }
+      
+      // Render mountain filters
+      renderMountainFilters();
+      
+      // Render trips
+      renderTrips();
+    }
+
+    // Render Mountain Filters
+    function renderMountainFilters() {
+      const trips = getTripsByOperator(currentOperator.id);
+      const mountainIds = [...new Set(trips.map(t => t.mountain_id))];
+      
+      const container = document.getElementById('mountain-filters');
+      container.innerHTML = mountainIds.map(mId => {
+        const mountain = getMountainById(mId);
+        return `
+          <button onclick="filterByMountain('${mId}')" 
+                  class="mountain-filter-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap"
+                  data-mountain="${mId}">
+            ${mountain?.name || mId}
+          </button>
+        `;
+      }).join('');
+    }
+
+    // Render Trips
+    function renderTrips() {
+      let trips = getTripsByOperator(currentOperator.id);
+      
+      if (currentMountainFilter) {
+        trips = trips.filter(t => t.mountain_id === currentMountainFilter);
+      }
+      
+      // Sort by date
+      trips.sort((a, b) => new Date(a.date_start) - new Date(b.date_start));
+      
+      const container = document.getElementById('trips-container');
+      
+      if (trips.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8">
+            <div class="text-4xl mb-2">📅</div>
+            <p class="text-slate-500 text-sm">Tidak ada trip untuk filter ini</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = trips.map(trip => {
+        const mountain = getMountainById(trip.mountain_id);
+        const isLowQuota = trip.quota_remaining < 5;
+        
+        return `
+          <div onclick="navigateTo('trip-detail.html', {id: '${trip.id}'})" 
+               class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
+            <div class="relative h-32">
+              <img src="${mountain?.image || ''}" 
+                   alt="${mountain?.name || ''}" 
+                   class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute bottom-2 left-3 right-3">
+                <h4 class="text-white font-bold text-sm">${trip.name}</h4>
+                <p class="text-white/80 text-xs">${mountain?.name || ''} • ${trip.route}</p>
+              </div>
+            </div>
+            
+            <div class="p-3">
+              <div class="flex items-center justify-between mb-2">
+                <div class="text-xs text-slate-500">
+                  📅 ${formatDate(trip.date_start)} - ${formatDate(trip.date_end)}
+                </div>
+                <span class="text-xs ${isLowQuota ? 'text-red-500 font-semibold' : 'text-green-600'}">
+                  ${isLowQuota ? '🔥' : '✅'} Sisa ${trip.quota_remaining}
+                </span>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-slate-400">${trip.duration}</span>
+                <span class="text-sm font-bold text-orange-600">${formatPrice(trip.price)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Filter by Mountain
+    function filterByMountain(mountainId) {
+      currentMountainFilter = mountainId;
+      
+      // Update button styles
+      document.querySelectorAll('.mountain-filter-btn').forEach(btn => {
+        if (btn.dataset.mountain === mountainId) {
+          btn.className = 'mountain-filter-btn px-4 py-2 bg-forest text-white rounded-full text-xs font-medium whitespace-nowrap';
+        } else {
+          btn.className = 'mountain-filter-btn px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-full text-xs font-medium whitespace-nowrap';
+        }
+      });
+      
+      renderTrips();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadOperator();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>

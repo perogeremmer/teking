@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Trip - Open Trip Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: '#064e3b',
+            'forest-light': '#065f46',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-24">
+  
+  <!-- Hero Image -->
+  <div class="relative h-64">
+    <img id="hero-image" src="" alt="" class="w-full h-full object-cover">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+    
+    <button onclick="history.back()" 
+            class="absolute top-4 left-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg z-10">
+      <span class="text-lg">←</span>
+    </button>
+    
+    <div class="absolute bottom-4 left-4 right-4">
+      <p class="text-orange-400 text-xs font-semibold mb-1">Open Trip</p>
+      <h1 id="trip-name" class="text-white font-bold text-xl mb-1"></h1>
+      <div class="flex items-center space-x-2">
+        <img id="operator-logo-small" src="" alt="" class="w-5 h-5 rounded object-cover">
+        <span id="operator-name-small" class="text-white/80 text-sm"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-md mx-auto px-4 -mt-4 relative z-10">
+    
+    <!-- Quick Info Card -->
+    <div class="bg-white rounded-2xl shadow-lg p-4 mb-4">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs text-slate-500">Harga per orang</span>
+        <span id="trip-price" class="text-2xl font-bold text-orange-600"></span>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="flex items-center space-x-2 p-2 bg-slate-50 rounded-xl">
+          <span>📅</span>
+          <div>
+            <p class="text-[10px] text-slate-500">Berangkat</p>
+            <p id="trip-date-start" class="text-xs font-semibold"></p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 p-2 bg-slate-50 rounded-xl">
+          <span>🏠</span>
+          <div>
+            <p class="text-[10px] text-slate-500">Pulang</p>
+            <p id="trip-date-end" class="text-xs font-semibold"></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="space-y-1">
+        <div class="flex items-center text-xs text-slate-600">
+          <span class="w-5">⛰️</span>
+          <span id="trip-mountain"></span>
+        </div>
+        <div class="flex items-center text-xs text-slate-600">
+          <span class="w-5">🛤️</span>
+          <span id="trip-route"></span>
+        </div>
+        <div class="flex items-center text-xs text-slate-600">
+          <span class="w-5">⏱️</span>
+          <span id="trip-duration"></span>
+        </div>
+        <div class="flex items-center text-xs text-slate-600">
+          <span class="w-5">👥</span>
+          <span id="trip-quota"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operator Info -->
+    <div onclick="navigateTo('operator-detail.html', {id: document.getElementById('operator-id-store').value})"
+         class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4 cursor-pointer active:scale-[0.98] transition-transform">
+      <div class="flex items-center space-x-3">
+        <img id="operator-logo" src="" alt="" class="w-12 h-12 rounded-xl object-cover">
+        <div class="flex-1">
+          <div class="flex items-center space-x-2">
+            <h3 id="operator-name" class="font-bold text-sm"></h3>
+            <span id="operator-verified" class="hidden text-blue-500 text-xs">✓</span>
+          </div>
+          <div class="flex items-center space-x-3 text-xs text-slate-500">
+            <span>⭐ <span id="operator-rating"></span></span>
+            <span>🏔️ <span id="operator-trips"></span> trip</span>
+          </div>
+        </div>
+        <span class="text-slate-400">></span>
+      </div>
+      <input type="hidden" id="operator-id-store">
+    </div>
+
+    <!-- Meeting Point -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-2">📍 Meeting Point</h3>
+      <p id="meeting-point" class="text-sm text-slate-600 mb-3"></p>
+      <div id="meeting-map"></div>
+    </div>
+
+    <!-- Fasilitas -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-3">✅ Fasilitas Include</h3>
+      <div id="includes-container" class="space-y-2"></div>
+    </div>
+
+    <!-- Add-on -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-3">🛒 Sewa Alat (Opsional)</h3>
+      <div id="addons-container" class="space-y-2"></div>
+    </div>
+
+    <!-- Form Booking -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
+      <h3 class="font-bold text-slate-800 mb-3">📝 Data Pemesan</h3>
+      
+      <form id="booking-form" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Nama Lengkap</label>
+          <input type="text" 
+                 id="booking-name" 
+                 required
+                 class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+                 placeholder="Masukkan nama lengkap">
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Nomor HP</label>
+          <input type="tel" 
+                 id="booking-phone" 
+                 required
+                 class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+                 placeholder="08xxxxxxxxxx">
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Jumlah Peserta</label>
+          <div class="flex items-center space-x-3">
+            <button type="button" onclick="updateParticipants(-1)" class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-lg font-bold">-</button>
+            <input type="number" 
+                   id="booking-participants" 
+                   value="1" 
+                   min="1" 
+                   max="10"
+                   readonly
+                   class="w-20 text-center px-3 py-2 border border-slate-200 rounded-xl text-sm font-bold">
+            <button type="button" onclick="updateParticipants(1)" class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-lg font-bold">+</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Sticky Footer -->
+  <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 max-w-md mx-auto p-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-xs text-slate-500">Total</p>
+        <p id="total-price" class="text-xl font-bold text-orange-600">Rp 0</p>
+      </div>
+      <button onclick="goToBooking()" 
+              class="bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg active:scale-95 transition-transform">
+        Booking Sekarang →
+      </button>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentTrip = null;
+    let currentOperator = null;
+    let currentMountain = null;
+    let selectedAddons = [];
+    let participants = 1;
+
+    // Load Trip Data
+    function loadTrip() {
+      const tripId = getURLParam('id');
+      currentTrip = getTripById(tripId);
+      
+      if (!currentTrip) {
+        showToast('Trip tidak ditemukan', 'error');
+        return;
+      }
+      
+      currentOperator = getOperatorByTrip(tripId);
+      currentMountain = getMountainByTrip(tripId);
+      
+      // Update UI
+      document.getElementById('hero-image').src = currentMountain?.image || '';
+      document.getElementById('trip-name').textContent = currentTrip.name;
+      document.getElementById('trip-price').textContent = formatPrice(currentTrip.price);
+      document.getElementById('trip-date-start').textContent = formatDate(currentTrip.date_start);
+      document.getElementById('trip-date-end').textContent = formatDate(currentTrip.date_end);
+      document.getElementById('trip-mountain').textContent = currentMountain?.name || '';
+      document.getElementById('trip-route').textContent = `Jalur: ${currentTrip.route}`;
+      document.getElementById('trip-duration').textContent = `Durasi: ${currentTrip.duration}`;
+      
+      const quotaText = currentTrip.quota_remaining < 5 
+        ? `Sisa ${currentTrip.quota_remaining} slot (terbatas!)`
+        : `Sisa ${currentTrip.quota_remaining} slot dari ${currentTrip.quota_total}`;
+      document.getElementById('trip-quota').textContent = quotaText;
+      document.getElementById('trip-quota').className = currentTrip.quota_remaining < 5 ? 'text-red-500 font-semibold' : '';
+      
+      // Operator info
+      document.getElementById('operator-logo').src = currentOperator?.logo || '';
+      document.getElementById('operator-logo-small').src = currentOperator?.logo || '';
+      document.getElementById('operator-name').textContent = currentOperator?.name || '';
+      document.getElementById('operator-name-small').textContent = currentOperator?.name || '';
+      document.getElementById('operator-rating').textContent = currentOperator?.rating || 0;
+      document.getElementById('operator-trips').textContent = getTripsByOperator(currentOperator?.id).length || 0;
+      document.getElementById('operator-id-store').value = currentOperator?.id || '';
+      
+      if (currentOperator?.verified) {
+        document.getElementById('operator-verified').classList.remove('hidden');
+      }
+      
+      // Meeting point
+      document.getElementById('meeting-point').textContent = currentTrip.meeting_point;
+      
+      // Meeting map
+      if (currentTrip.meeting_map) {
+        renderMap('meeting-map', currentTrip.meeting_map, 14);
+      }
+      
+      // Includes
+      renderIncludes();
+      
+      // Addons
+      renderAddons();
+      
+      // Update total
+      updateTotal();
+    }
+
+    // Render Includes
+    function renderIncludes() {
+      const container = document.getElementById('includes-container');
+      container.innerHTML = currentTrip.includes.map(item => `
+        <div class="flex items-center space-x-2">
+          <span class="text-green-500">✓</span>
+          <span class="text-sm text-slate-600">${item}</span>
+        </div>
+      `).join('');
+    }
+
+    // Render Addons
+    function renderAddons() {
+      const container = document.getElementById('addons-container');
+      
+      if (!currentTrip.addons || currentTrip.addons.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-4 text-slate-400 text-sm">
+            Tidak ada add-on untuk trip ini
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = currentTrip.addons.map(addon => `
+        <label class="flex items-center space-x-3 p-3 rounded-xl border border-slate-100 cursor-pointer active:bg-slate-50">
+          <input type="checkbox" 
+                 value="${addon.id}" 
+                 onchange="toggleAddon('${addon.id}')"
+                 class="w-5 h-5 rounded border-slate-300 text-orange-500 focus:ring-orange-500">
+          <span class="text-lg">${addon.icon}</span>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-800">${addon.name}</p>
+          </div>
+          <span class="text-sm text-orange-600 font-medium">${formatPrice(addon.price)}</span>
+        </label>
+      `).join('');
+    }
+
+    // Toggle Addon
+    function toggleAddon(addonId) {
+      const addon = currentTrip.addons.find(a => a.id === addonId);
+      const index = selectedAddons.findIndex(a => a.id === addonId);
+      
+      if (index > -1) {
+        selectedAddons.splice(index, 1);
+      } else {
+        selectedAddons.push(addon);
+      }
+      
+      updateTotal();
+    }
+
+    // Update Participants
+    function updateParticipants(change) {
+      const newValue = participants + change;
+      if (newValue >= 1 && newValue <= 10) {
+        participants = newValue;
+        document.getElementById('booking-participants').value = participants;
+        updateTotal();
+      }
+    }
+
+    // Update Total Price
+    function updateTotal() {
+      let total = 0;
+      
+      // Trip price
+      if (currentTrip) {
+        total += currentTrip.price * participants;
+      }
+      
+      // Addons
+      selectedAddons.forEach(addon => {
+        total += addon.price * participants;
+      });
+      
+      document.getElementById('total-price').textContent = formatPrice(total);
+    }
+
+    // Go to Booking Page
+    function goToBooking() {
+      const name = document.getElementById('booking-name').value;
+      const phone = document.getElementById('booking-phone').value;
+      
+      if (!name || !phone) {
+        showToast('Mohon lengkapi data pemesan', 'error');
+        return;
+      }
+      
+      if (participants > currentTrip.quota_remaining) {
+        showToast(`Kuota tidak mencukupi. Sisa hanya ${currentTrip.quota_remaining} slot`, 'error');
+        return;
+      }
+      
+      // Save booking data to session
+      const bookingData = {
+        trip_id: currentTrip.id,
+        customer_name: name,
+        customer_phone: phone,
+        participants: participants,
+        addons: selectedAddons.map(a => ({ id: a.id, name: a.name, price: a.price })),
+        total_price: calculateTotal()
+      };
+      
+      sessionStorage.setItem('currentBooking', JSON.stringify(bookingData));
+      
+      navigateTo('booking.html', { trip_id: currentTrip.id });
+    }
+
+    // Calculate Total
+    function calculateTotal() {
+      let total = (currentTrip?.price || 0) * participants;
+      selectedAddons.forEach(addon => {
+        total += addon.price * participants;
+      });
+      return total;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTrip();
+      renderBottomNav();
+    });
+  </script>
+</body>
+</html>
