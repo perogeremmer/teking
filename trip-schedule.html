@@ -20,32 +20,57 @@
     }
   </script>
   <style>
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    .calendar-wrapper { 
+      display: grid; 
+      grid-template-columns: repeat(7, 1fr); 
+      gap: 1px; 
+      background-color: #e2e8f0; 
+      border: 1px solid #e2e8f0; 
+      border-radius: 12px; 
+      overflow: hidden;
+      position: relative;
+    }
     .calendar-cell { 
       background: white;
-      min-height: 64px;
+      min-height: 80px;
       padding: 4px;
       display: flex;
       flex-direction: column;
       position: relative;
+      z-index: 1;
     }
     .calendar-cell:hover { background-color: #f8fafc; }
+    .schedule-bar-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 2;
+      padding-top: 28px;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
     .schedule-bar {
-      height: 16px;
-      border-radius: 3px;
-      font-size: 9px;
+      height: 18px;
+      border-radius: 4px;
+      font-size: 10px;
       display: flex;
       align-items: center;
-      padding: 0 4px;
+      padding: 0 6px;
       color: white;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 1px;
+      margin-bottom: 2px;
+      pointer-events: auto;
       cursor: pointer;
+      position: relative;
+      z-index: 3;
     }
-    .schedule-bar:hover { opacity: 0.8; }
+    .schedule-bar:hover { opacity: 0.85; transform: scale(1.02); }
     .more-badge {
       font-size: 9px;
       color: #f97316;
@@ -54,16 +79,27 @@
     }
     .today-cell { background-color: #fff7ed !important; }
     .today-number { 
-      width: 22px; 
-      height: 22px; 
+      width: 24px; 
+      height: 24px; 
       background-color: #f97316; 
       color: white; 
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
+    }
+    .day-number {
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 4px;
+      z-index: 2;
+      position: relative;
+    }
+    .has-schedule {
+      cursor: pointer;
     }
   </style>
 </head>
@@ -109,30 +145,30 @@
       </div>
       
       <!-- Days Header -->
-      <div class="calendar-grid mb-0">
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Sen</span></div>
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Sel</span></div>
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Rab</span></div>
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Kam</span></div>
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Jum</span></div>
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Sab</span></div>
-        <div class="calendar-cell bg-slate-50 items-center justify-center"><span class="text-xs font-medium text-slate-500">Min</span></div>
+      <div class="calendar-wrapper mb-0">
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Sen</span></div>
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Sel</span></div>
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Rab</span></div>
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Kam</span></div>
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Jum</span></div>
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Sab</span></div>
+        <div class="calendar-cell bg-slate-50 items-center justify-center" style="min-height: 36px;"><span class="text-xs font-medium text-slate-500">Min</span></div>
       </div>
       
       <!-- Calendar Grid -->
-      <div id="calendar-days" class="calendar-grid"></div>
+      <div id="calendar-days" class="calendar-wrapper"></div>
     </div>
 
     <!-- Legend -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-4">
-      <p class="text-xs text-slate-500 mb-2">Klik tanggal untuk lihat detail jadwal</p>
-      <div class="flex flex-wrap gap-2 text-xs">
+      <p class="text-xs text-slate-500 mb-2">Klik tanggal atau bar jadwal untuk detail</p>
+      <div class="flex flex-wrap gap-3 text-xs">
         <div class="flex items-center space-x-1">
-          <span class="w-8 h-3 rounded bg-orange-500"></span>
-          <span class="text-slate-600">Tersedia</span>
+          <span class="w-8 h-4 rounded bg-orange-500"></span>
+          <span class="text-slate-600">Jadwal tersedia</span>
         </div>
         <div class="flex items-center space-x-1">
-          <span class="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">15</span>
+          <span class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">15</span>
           <span class="text-slate-600">Hari ini</span>
         </div>
       </div>
@@ -146,7 +182,7 @@
 
   </main>
 
-  <!-- Schedule Popup (Multiple Schedules) -->
+  <!-- Schedule Popup -->
   <div id="schedule-popup" class="fixed inset-0 bg-black/50 z-50 hidden flex items-end">
     <div class="bg-white rounded-t-3xl w-full max-w-md mx-auto p-6 transform transition-transform duration-300 translate-y-full">
       <div class="flex items-center justify-between mb-4">
@@ -166,7 +202,7 @@
       'bg-orange-500',
       'bg-orange-600', 
       'bg-amber-500',
-      'bg-yellow-500',
+      'bg-yellow-600',
       'bg-red-500'
     ];
 
@@ -194,7 +230,7 @@
       renderScheduleList();
     }
 
-    // Render Calendar - Google Calendar Style
+    // Render Calendar - Google Calendar Style with Spanning Bars
     function renderCalendar() {
       dayjs.locale('id');
       const year = currentDate.getFullYear();
@@ -210,58 +246,122 @@
       const prevMonthDays = new Date(year, month, 0).getDate();
       
       const container = document.getElementById('calendar-days');
-      let html = '';
+      
+      // Calculate all cells first
+      let cells = [];
       
       // Previous month days
       for (let i = adjustedFirstDay - 1; i >= 0; i--) {
         const day = prevMonthDays - i;
-        html += `<div class="calendar-cell bg-slate-50"><span class="text-xs text-slate-300">${day}</span></div>`;
+        cells.push({
+          day,
+          dateStr: null,
+          isCurrentMonth: false,
+          isToday: false
+        });
       }
       
       // Current month days
       for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const schedules = getAllSchedulesOnDate(currentTrip.id, dateStr);
-        const isToday = dateStr === today;
-        
-        let cellClass = 'calendar-cell';
-        if (isToday) cellClass += ' today-cell';
-        
-        let barsHtml = '';
-        const maxBars = 3;
-        
-        schedules.slice(0, maxBars).forEach((sched, idx) => {
-          const colorClass = scheduleColors[idx % scheduleColors.length];
-          const label = schedules.length === 1 ? 'Trip' : `#${idx + 1}`;
-          barsHtml += `
-            <div class="schedule-bar ${colorClass}" onclick="event.stopPropagation(); selectSchedule('${sched.id}')">
-              ${label}
-            </div>
-          `;
+        cells.push({
+          day,
+          dateStr,
+          isCurrentMonth: true,
+          isToday: dateStr === today
         });
-        
-        if (schedules.length > maxBars) {
-          barsHtml += `<span class="more-badge">+${schedules.length - maxBars} lainnya</span>`;
-        }
-        
-        const numberClass = isToday ? 'today-number' : 'text-xs text-slate-700 font-medium';
-        const clickHandler = schedules.length > 0 ? `onclick="showDateSchedules('${dateStr}')"` : '';
-        
-        html += `
-          <div class="${cellClass}" ${clickHandler} style="cursor: ${schedules.length > 0 ? 'pointer' : 'default'}">
-            <div class="${numberClass} mb-1">${day}</div>
-            ${barsHtml}
-          </div>
-        `;
       }
       
-      // Next month days (fill remaining cells to complete the grid)
+      // Next month days
       const totalCells = adjustedFirstDay + daysInMonth;
       const remainingCells = (7 - (totalCells % 7)) % 7;
       
       for (let day = 1; day <= remainingCells; day++) {
-        html += `<div class="calendar-cell bg-slate-50"><span class="text-xs text-slate-300">${day}</span></div>`;
+        cells.push({
+          day,
+          dateStr: null,
+          isCurrentMonth: false,
+          isToday: false
+        });
       }
+      
+      // Get all schedules for this month
+      const monthSchedules = getSchedulesByMonth(currentTrip.id, year, month);
+      
+      // Calculate bar positions
+      const barData = [];
+      
+      monthSchedules.forEach((sched, idx) => {
+        const startDate = dayjs(sched.date_start);
+        const endDate = dayjs(sched.date_end);
+        
+        // Find start cell index
+        let startCellIdx = -1;
+        for (let i = 0; i < cells.length; i++) {
+          if (cells[i].dateStr === sched.date_start) {
+            startCellIdx = i;
+            break;
+          }
+        }
+        
+        if (startCellIdx === -1) return;
+        
+        // Calculate span (how many cells)
+        const duration = endDate.diff(startDate, 'day') + 1;
+        const colorClass = scheduleColors[idx % scheduleColors.length];
+        
+        barData.push({
+          startIdx: startCellIdx,
+          span: Math.min(duration, 7 - (startCellIdx % 7)), // Don't span beyond week
+          schedule: sched,
+          colorClass
+        });
+      });
+      
+      // Render cells
+      let html = '';
+      
+      cells.forEach((cell, idx) => {
+        const barsForCell = barData.filter(b => b.startIdx === idx);
+        
+        if (!cell.isCurrentMonth) {
+          html += `<div class="calendar-cell bg-slate-50"><span class="text-xs text-slate-300">${cell.day}</span></div>`;
+          return;
+        }
+        
+        let cellClass = 'calendar-cell';
+        if (cell.isToday) cellClass += ' today-cell';
+        
+        // Check if this date has any schedule (for click handler)
+        const hasSchedule = getAllSchedulesOnDate(currentTrip.id, cell.dateStr).length > 0;
+        if (hasSchedule) cellClass += ' has-schedule';
+        
+        // Render bars that start on this cell
+        let barsHtml = '';
+        barsForCell.forEach(bar => {
+          // Calculate width based on span
+          const widthPercent = bar.span * 100;
+          barsHtml += `
+            <div class="schedule-bar ${bar.colorClass}" 
+                 style="width: calc(${widthPercent}% + ${(bar.span - 1)}px); z-index: 10;"
+                 onclick="event.stopPropagation(); selectSchedule('${bar.schedule.id}')">
+              ${bar.span > 1 ? formatShortDate(bar.schedule.date_start) + ' - ' + formatShortDate(bar.schedule.date_end) : 'Trip'}
+            </div>
+          `;
+        });
+        
+        const numberClass = cell.isToday ? 'today-number' : 'day-number';
+        const clickHandler = hasSchedule ? `onclick="showDateSchedules('${cell.dateStr}')"` : '';
+        
+        html += `
+          <div class="${cellClass}" ${clickHandler}>
+            <div class="${numberClass}">${cell.day}</div>
+            <div style="flex: 1; position: relative;">
+              ${barsHtml}
+            </div>
+          </div>
+        `;
+      });
       
       container.innerHTML = html;
     }
@@ -276,7 +376,6 @@
         return;
       }
       
-      // Multiple schedules - show popup list
       document.getElementById('popup-title').textContent = `Jadwal ${dayjs(dateStr).format('D MMMM YYYY')}`;
       
       const content = document.getElementById('popup-content');
