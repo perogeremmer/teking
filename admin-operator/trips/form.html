@@ -14,52 +14,64 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding: 8px 12px;
-      border: 1px solid #d1d5db;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
       border-radius: 8px;
-      margin-bottom: 8px;
-      min-height: 44px;
+      margin-bottom: 12px;
+      min-height: 60px;
       background: white;
       align-items: center;
+      cursor: text;
+    }
+    
+    .tag-placeholder {
+      color: #94a3b8;
+      font-size: 14px;
+      width: 100%;
     }
     
     .tag-item {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 12px;
+      gap: 6px;
+      padding: 6px 14px;
       background: #fff7ed;
-      border: 1px solid #fed7aa;
+      border: 1px solid #f97316;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 14px;
       color: #c2410c;
-      font-weight: 500;
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     
     .tag-remove {
       cursor: pointer;
       font-weight: bold;
-      margin-left: 4px;
+      margin-left: 2px;
       color: #9a3412;
-      font-size: 16px;
+      font-size: 18px;
       line-height: 1;
+      padding: 0 2px;
     }
     
     .tag-remove:hover {
-      color: #c2410c;
+      color: #dc2626;
     }
     
     .tag-input {
-      border: none !important;
-      padding: 0 !important;
+      border: 1px solid #d1d5db !important;
+      padding: 8px 12px !important;
       flex: 1;
       min-width: 150px;
-      background: transparent;
+      background: white;
+      border-radius: 6px;
+      margin-top: 8px;
     }
     
     .tag-input:focus {
       outline: none;
-      box-shadow: none;
+      border-color: #f97316 !important;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
     }
     
     .tag-suggestions {
@@ -73,9 +85,31 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 100;
-      max-height: 200px;
+      max-height: 250px;
       overflow-y: auto;
       margin-top: 4px;
+    }
+    
+    .tag-suggestions-header {
+      padding: 8px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .tag-suggestions-close {
+      cursor: pointer;
+      font-size: 16px;
+      color: #94a3b8;
+    }
+    
+    .tag-suggestions-close:hover {
+      color: #475569;
     }
     
     .tag-suggestion-item {
@@ -161,11 +195,15 @@
             </div>
             
             <div class="form-group tag-input-wrapper">
-              <label class="form-label">Fasilitas Include</label>
-              <div class="tag-container" id="tag-container">
-                <!-- Tags will appear here -->
+              <label class="form-label" style="margin-bottom: 8px; display: block;">Fasilitas Include</label>
+              <div style="border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; min-height: 60px; background: white;" id="tag-display-area">
+                <span id="tag-placeholder" style="color: #94a3b8; font-size: 14px;">Belum ada fasilitas</span>
+                <div id="tag-list" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
               </div>
-              <input type="text" class="form-input tag-input" id="tag-input" placeholder="Ketik fasilitas dan tekan Enter..." autocomplete="off">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" class="form-input" id="tag-input" placeholder="Ketik fasilitas..." style="flex: 1;" autocomplete="off">
+                <button type="button" class="btn btn-secondary" onclick="manualAddTag()">Tambah</button>
+              </div>
               <div class="tag-suggestions" id="tag-suggestions"></div>
             </div>
             
@@ -184,6 +222,12 @@
   <script src="../../assets/js/app.js"></script>
   <script src="../assets/js/admin.js"></script>
   <script>
+    // Global error handler
+    window.onerror = function(msg, url, line) {
+      console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + line);
+      return false;
+    };
+    
     // Predefined facilities
     const PREDEFINED_FACILITIES = [
       'Transportasi PP',
@@ -214,19 +258,19 @@
     // Tag Input Functions
     function initTagInput() {
       const input = document.getElementById('tag-input');
-      const container = document.getElementById('tag-container');
+      const dropdown = document.getElementById('tag-suggestions');
+      
+      if (!input) {
+        console.error('Tag input not found!');
+        return;
+      }
       
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
-          const text = input.value.trim();
-          if (text && !currentTags.includes(text)) {
-            addTag(text);
-            input.value = '';
-            hideSuggestions();
-          }
-        } else if (e.key === 'Backspace' && input.value === '' && currentTags.length > 0) {
-          removeTag(currentTags[currentTags.length - 1]);
+          manualAddTag();
+        } else if (e.key === 'Escape') {
+          hideSuggestions();
         }
       });
       
@@ -234,14 +278,34 @@
         showSuggestions(e.target.value);
       });
       
-      input.addEventListener('blur', () => {
-        setTimeout(hideSuggestions, 200);
+      // Show all suggestions on focus
+      input.addEventListener('focus', () => {
+        showSuggestions('');
       });
       
-      // Click on container to focus input
-      container.addEventListener('click', () => {
-        input.focus();
+      // Prevent blur when clicking inside dropdown
+      dropdown.addEventListener('mousedown', (e) => {
+        e.preventDefault();
       });
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const wrapper = document.querySelector('.tag-input-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        hideSuggestions();
+      }
+    });
+    
+    function manualAddTag() {
+      const input = document.getElementById('tag-input');
+      const text = input.value.trim();
+      
+      if (text && !currentTags.includes(text)) {
+        addTag(text);
+        input.value = '';
+        hideSuggestions();
+      }
     }
     
     function addTag(text) {
@@ -257,47 +321,63 @@
     }
     
     function renderTags() {
-      const container = document.getElementById('tag-container');
-      const input = document.getElementById('tag-input');
+      const tagList = document.getElementById('tag-list');
+      const placeholder = document.getElementById('tag-placeholder');
       
-      // Remove existing tags (keep input)
-      container.querySelectorAll('.tag-item').forEach(tag => tag.remove());
+      if (!tagList) return;
       
-      // Add tags before input
-      currentTags.forEach(tag => {
-        const tagEl = document.createElement('span');
-        tagEl.className = 'tag-item';
-        tagEl.innerHTML = `
+      // Show/hide placeholder
+      if (placeholder) {
+        placeholder.style.display = currentTags.length > 0 ? 'none' : 'inline';
+      }
+      
+      // Render tags
+      tagList.innerHTML = currentTags.map(tag => `
+        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #fff7ed; border: 1px solid #f97316; border-radius: 20px; font-size: 14px; color: #c2410c; font-weight: 600;">
           ${tag}
-          <span class="tag-remove" onclick="removeTag('${tag}')">×</span>
-        `;
-        container.insertBefore(tagEl, input);
-      });
+          <span onclick="removeTag('${tag}')" style="cursor: pointer; font-weight: bold; margin-left: 2px; color: #9a3412; font-size: 18px;">×</span>
+        </span>
+      `).join('');
     }
     
     function showSuggestions(query) {
       const dropdown = document.getElementById('tag-suggestions');
       
-      if (!query) {
-        hideSuggestions();
-        return;
+      // Filter facilities - if query is empty, show all available
+      let matches;
+      if (!query || query.trim() === '') {
+        // Show all predefined facilities that haven't been selected
+        matches = PREDEFINED_FACILITIES.filter(f => !currentTags.includes(f));
+      } else {
+        matches = PREDEFINED_FACILITIES.filter(f => 
+          f.toLowerCase().includes(query.toLowerCase()) && 
+          !currentTags.includes(f)
+        );
       }
-      
-      const matches = PREDEFINED_FACILITIES.filter(f => 
-        f.toLowerCase().includes(query.toLowerCase()) && 
-        !currentTags.includes(f)
-      );
       
       if (matches.length === 0) {
-        hideSuggestions();
+        dropdown.innerHTML = `
+          <div class="tag-suggestions-header">
+            <span>Fasilitas</span>
+            <span class="tag-suggestions-close" onclick="hideSuggestions()">✕</span>
+          </div>
+          <div class="tag-suggestion-item" style="color: #94a3b8; cursor: default;">Semua fasilitas sudah ditambahkan</div>
+        `;
+        dropdown.style.display = 'block';
         return;
       }
       
-      dropdown.innerHTML = matches.map(f => `
-        <div class="tag-suggestion-item" onclick="addTagFromSuggestion('${f}')">
-          ${f}
+      dropdown.innerHTML = `
+        <div class="tag-suggestions-header">
+          <span>Pilih fasilitas</span>
+          <span class="tag-suggestions-close" onclick="hideSuggestions()">✕</span>
         </div>
-      `).join('');
+        ${matches.map(f => `
+          <div class="tag-suggestion-item" onclick="addTagFromSuggestion('${f}')">
+            ${f}
+          </div>
+        `).join('')}
+      `;
       
       dropdown.style.display = 'block';
     }
@@ -305,7 +385,9 @@
     function addTagFromSuggestion(text) {
       addTag(text);
       document.getElementById('tag-input').value = '';
-      hideSuggestions();
+      // Re-show suggestions with remaining options
+      showSuggestions('');
+      // Keep focus on input
       document.getElementById('tag-input').focus();
     }
     
@@ -347,6 +429,14 @@
         }
       }
     }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const wrapper = document.querySelector('.tag-input-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        hideSuggestions();
+      }
+    });
     
     document.addEventListener('DOMContentLoaded', () => {
       initAdmin();
