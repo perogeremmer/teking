@@ -305,16 +305,22 @@ const TRIPS = [
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 35000, icon: '🛏️' }
     ],
     schedules: [
-      { id: 'sched-c2-1', date_start: '2026-05-17', date_end: '2026-05-19', quota_total: 12, quota_remaining: 4 },
-      { id: 'sched-c2-2', date_start: '2026-05-24', date_end: '2026-05-26', quota_total: 12, quota_remaining: 8 },
-      { id: 'sched-c2-3', date_start: '2026-05-31', date_end: '2026-06-02', quota_total: 12, quota_remaining: 6 },
-      { id: 'sched-c2-4', date_start: '2026-06-07', date_end: '2026-06-09', quota_total: 12, quota_remaining: 10 },
-      { id: 'sched-c2-5', date_start: '2026-06-14', date_end: '2026-06-16', quota_total: 12, quota_remaining: 3 },
-      { id: 'sched-c2-6', date_start: '2026-06-21', date_end: '2026-06-23', quota_total: 12, quota_remaining: 11 },
-      { id: 'sched-c2-7', date_start: '2026-06-28', date_end: '2026-06-30', quota_total: 12, quota_remaining: 9 },
-      { id: 'sched-c2-8', date_start: '2026-07-05', date_end: '2026-07-07', quota_total: 12, quota_remaining: 7 },
-      { id: 'sched-c2-9', date_start: '2026-07-12', date_end: '2026-07-14', quota_total: 12, quota_remaining: 5 },
-      { id: 'sched-c2-10', date_start: '2026-07-19', date_end: '2026-07-21', quota_total: 12, quota_remaining: 12 }
+      // MEI 2026 - Overlapping schedules
+      { id: 'sched-c2-m1', date_start: '2026-05-01', date_end: '2026-05-03', quota_total: 12, quota_remaining: 4 },
+      { id: 'sched-c2-m2', date_start: '2026-05-02', date_end: '2026-05-04', quota_total: 12, quota_remaining: 8 },
+      { id: 'sched-c2-m3', date_start: '2026-05-07', date_end: '2026-05-09', quota_total: 12, quota_remaining: 6 },
+      { id: 'sched-c2-m4', date_start: '2026-05-08', date_end: '2026-05-10', quota_total: 12, quota_remaining: 10 },
+      { id: 'sched-c2-m5', date_start: '2026-05-14', date_end: '2026-05-16', quota_total: 12, quota_remaining: 3 },
+      { id: 'sched-c2-m6', date_start: '2026-05-15', date_end: '2026-05-17', quota_total: 12, quota_remaining: 11 },
+      { id: 'sched-c2-m7', date_start: '2026-05-21', date_end: '2026-05-23', quota_total: 12, quota_remaining: 9 },
+      { id: 'sched-c2-m8', date_start: '2026-05-22', date_end: '2026-05-24', quota_total: 12, quota_remaining: 7 },
+      { id: 'sched-c2-m9', date_start: '2026-05-28', date_end: '2026-05-30', quota_total: 12, quota_remaining: 5 },
+      { id: 'sched-c2-m10', date_start: '2026-05-29', date_end: '2026-05-31', quota_total: 12, quota_remaining: 12 },
+      // JUNI 2026
+      { id: 'sched-c2-j1', date_start: '2026-06-04', date_end: '2026-06-06', quota_total: 12, quota_remaining: 8 },
+      { id: 'sched-c2-j2', date_start: '2026-06-11', date_end: '2026-06-13', quota_total: 12, quota_remaining: 4 },
+      { id: 'sched-c2-j3', date_start: '2026-06-18', date_end: '2026-06-20', quota_total: 12, quota_remaining: 10 },
+      { id: 'sched-c2-j4', date_start: '2026-06-25', date_end: '2026-06-27', quota_total: 12, quota_remaining: 7 }
     ]
   },
   // --- CIREMAI - Tebet Adventure ---
@@ -365,16 +371,20 @@ const TRIPS = [
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' }
     ],
     schedules: [
-      { id: 'sched-p1-1', date_start: '2026-05-15', date_end: '2026-05-16', quota_total: 20, quota_remaining: 7 },
-      { id: 'sched-p1-2', date_start: '2026-05-18', date_end: '2026-05-19', quota_total: 20, quota_remaining: 12 },
-      { id: 'sched-p1-3', date_start: '2026-05-22', date_end: '2026-05-23', quota_total: 20, quota_remaining: 15 },
-      { id: 'sched-p1-4', date_start: '2026-05-25', date_end: '2026-05-26', quota_total: 20, quota_remaining: 9 },
-      { id: 'sched-p1-5', date_start: '2026-05-29', date_end: '2026-05-30', quota_total: 20, quota_remaining: 18 },
-      { id: 'sched-p1-6', date_start: '2026-06-01', date_end: '2026-06-02', quota_total: 20, quota_remaining: 20 },
-      { id: 'sched-p1-7', date_start: '2026-06-05', date_end: '2026-06-06', quota_total: 20, quota_remaining: 14 },
-      { id: 'sched-p1-8', date_start: '2026-06-08', date_end: '2026-06-09', quota_total: 20, quota_remaining: 6 },
-      { id: 'sched-p1-9', date_start: '2026-06-12', date_end: '2026-06-13', quota_total: 20, quota_remaining: 11 },
-      { id: 'sched-p1-10', date_start: '2026-06-15', date_end: '2026-06-16', quota_total: 20, quota_remaining: 16 }
+      // MEI 2026 - Overlapping schedules
+      { id: 'sched-p1-m1', date_start: '2026-05-01', date_end: '2026-05-02', quota_total: 20, quota_remaining: 7 },
+      { id: 'sched-p1-m2', date_start: '2026-05-02', date_end: '2026-05-03', quota_total: 20, quota_remaining: 12 },
+      { id: 'sched-p1-m3', date_start: '2026-05-08', date_end: '2026-05-09', quota_total: 20, quota_remaining: 15 },
+      { id: 'sched-p1-m4', date_start: '2026-05-09', date_end: '2026-05-10', quota_total: 20, quota_remaining: 9 },
+      { id: 'sched-p1-m5', date_start: '2026-05-15', date_end: '2026-05-16', quota_total: 20, quota_remaining: 18 },
+      { id: 'sched-p1-m6', date_start: '2026-05-16', date_end: '2026-05-17', quota_total: 20, quota_remaining: 5 },
+      { id: 'sched-p1-m7', date_start: '2026-05-22', date_end: '2026-05-23', quota_total: 20, quota_remaining: 11 },
+      { id: 'sched-p1-m8', date_start: '2026-05-23', date_end: '2026-05-24', quota_total: 20, quota_remaining: 8 },
+      { id: 'sched-p1-m9', date_start: '2026-05-29', date_end: '2026-05-30', quota_total: 20, quota_remaining: 16 },
+      { id: 'sched-p1-m10', date_start: '2026-05-30', date_end: '2026-05-31', quota_total: 20, quota_remaining: 3 },
+      // JUNI 2026
+      { id: 'sched-p1-j1', date_start: '2026-06-05', date_end: '2026-06-06', quota_total: 20, quota_remaining: 14 },
+      { id: 'sched-p1-j2', date_start: '2026-06-12', date_end: '2026-06-13', quota_total: 20, quota_remaining: 6 }
     ]
   },
   // --- PAPANDAYAN - Komunitas ---
@@ -425,16 +435,19 @@ const TRIPS = [
       { id: 'pole', name: 'Tracking Pole', price: 20000, icon: '🥾' }
     ],
     schedules: [
-      { id: 'sched-m1-1', date_start: '2026-05-14', date_end: '2026-05-15', quota_total: 10, quota_remaining: 3 },
-      { id: 'sched-m1-2', date_start: '2026-05-17', date_end: '2026-05-18', quota_total: 10, quota_remaining: 7 },
-      { id: 'sched-m1-3', date_start: '2026-05-21', date_end: '2026-05-22', quota_total: 10, quota_remaining: 5 },
-      { id: 'sched-m1-4', date_start: '2026-05-24', date_end: '2026-05-25', quota_total: 10, quota_remaining: 9 },
-      { id: 'sched-m1-5', date_start: '2026-05-28', date_end: '2026-05-29', quota_total: 10, quota_remaining: 2 },
-      { id: 'sched-m1-6', date_start: '2026-06-04', date_end: '2026-06-05', quota_total: 10, quota_remaining: 8 },
-      { id: 'sched-m1-7', date_start: '2026-06-07', date_end: '2026-06-08', quota_total: 10, quota_remaining: 6 },
-      { id: 'sched-m1-8', date_start: '2026-06-11', date_end: '2026-06-12', quota_total: 10, quota_remaining: 10 },
-      { id: 'sched-m1-9', date_start: '2026-06-14', date_end: '2026-06-15', quota_total: 10, quota_remaining: 4 },
-      { id: 'sched-m1-10', date_start: '2026-06-18', date_end: '2026-06-19', quota_total: 10, quota_remaining: 1 }
+      // MEI 2026 - Overlapping schedules
+      { id: 'sched-m1-m1', date_start: '2026-05-01', date_end: '2026-05-02', quota_total: 10, quota_remaining: 3 },
+      { id: 'sched-m1-m2', date_start: '2026-05-02', date_end: '2026-05-03', quota_total: 10, quota_remaining: 7 },
+      { id: 'sched-m1-m3', date_start: '2026-05-08', date_end: '2026-05-09', quota_total: 10, quota_remaining: 5 },
+      { id: 'sched-m1-m4', date_start: '2026-05-09', date_end: '2026-05-10', quota_total: 10, quota_remaining: 9 },
+      { id: 'sched-m1-m5', date_start: '2026-05-15', date_end: '2026-05-16', quota_total: 10, quota_remaining: 2 },
+      { id: 'sched-m1-m6', date_start: '2026-05-16', date_end: '2026-05-17', quota_total: 10, quota_remaining: 8 },
+      { id: 'sched-m1-m7', date_start: '2026-05-22', date_end: '2026-05-23', quota_total: 10, quota_remaining: 6 },
+      { id: 'sched-m1-m8', date_start: '2026-05-23', date_end: '2026-05-24', quota_total: 10, quota_remaining: 10 },
+      { id: 'sched-m1-m9', date_start: '2026-05-29', date_end: '2026-05-30', quota_total: 10, quota_remaining: 4 },
+      { id: 'sched-m1-m10', date_start: '2026-05-30', date_end: '2026-05-31', quota_total: 10, quota_remaining: 1 },
+      // JUNI 2026
+      { id: 'sched-m1-j1', date_start: '2026-06-05', date_end: '2026-06-06', quota_total: 10, quota_remaining: 8 }
     ]
   },
   // --- MERAPI - Summit ---
