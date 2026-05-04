@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan Profil - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Pengaturan Profil</h1>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🏢 Informasi Operator</span>
+          </div>
+          <div class="card-body">
+            <form onsubmit="saveProfile(event)">
+              <div class="form-group">
+                <label class="form-label">Nama Operator</label>
+                <input type="text" class="form-input" id="profile-name" value="Tiga Dewa Adventure">
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Deskripsi</label>
+                <textarea class="form-textarea" id="profile-desc">Operator profesional dengan pengalaman lebih dari 5 tahun. Menyediakan trip berkualitas dengan guide bersertifikat dan fasilitas lengkap.</textarea>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">No. Telepon</label>
+                <input type="text" class="form-input" id="profile-phone" value="0812-3456-7890">
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">WhatsApp</label>
+                <input type="text" class="form-input" id="profile-wa" value="6281234567890">
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Instagram</label>
+                <input type="text" class="form-input" id="profile-ig" value="@tigadewaadventure">
+              </div>
+              
+              <button type="submit" class="btn btn-primary">💾 Simpan Perubahan</button>
+            </form>
+          </div>
+        </div>
+        
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📊 Statistik Performa</span>
+            </div>
+            <div class="card-body">
+              <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: #64748b;">Rating</label>
+                <p style="font-size: 24px; font-weight: 700; color: #f97316;">⭐ 4.9/5.0</p>
+              </div>
+              
+              <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: #64748b;">Total Trip Terdaftar</label>
+                <p style="font-size: 20px; font-weight: 700;">🏔️ 5 Trip</p>
+              </div>
+              
+              <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: #64748b;">Total Booking (2026)</label>
+                <p style="font-size: 20px; font-weight: 700;">📝 42 Booking</p>
+              </div>
+              
+              <div>
+                <label style="font-size: 12px; color: #64748b;">Status Verifikasi</label>
+                <p><span class="badge badge-confirmed">✅ Terverifikasi</span></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🔐 Keamanan</span>
+            </div>
+            <div class="card-body">
+              <button class="btn btn-secondary" onclick="alert('🔐 Ganti password (Demo)')" style="width: 100%; margin-bottom: 8px;">
+                🔑 Ganti Password
+              </button>
+              <button class="btn btn-secondary" onclick="logout()" style="width: 100%;">
+                🚪 Logout
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    function saveProfile(e) {
+      e.preventDefault();
+      alert('✅ Profil berhasil diupdate! (Demo)');
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+    });
+  </script>
+</body>
+</html>

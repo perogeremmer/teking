@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Pendapatan - Admin Operator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Laporan Pendapatan</h1>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Total Pendapatan (2026)</span>
+            <span class="stat-card-icon">💰</span>
+          </div>
+          <div class="stat-card-value" id="total-revenue">Rp 0</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Total Booking</span>
+            <span class="stat-card-icon">📝</span>
+          </div>
+          <div class="stat-card-value" id="total-bookings">0</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Rata-rata per Booking</span>
+            <span class="stat-card-icon">📊</span>
+          </div>
+          <div class="stat-card-value" id="avg-booking">Rp 0</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Trip Terlaris</span>
+            <span class="stat-card-icon">🏆</span>
+          </div>
+          <div class="stat-card-value" id="top-trip">-</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📈 Pendapatan per Bulan</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📋 Rincian per Trip</span>
+        </div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trip</th>
+                <th>Jumlah Booking</th>
+                <th>Total Peserta</th>
+                <th>Pendapatan</th>
+              </tr>
+            </thead>
+            <tbody id="trip-revenue-table">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    function loadRevenueReport() {
+      const trips = getOperatorTrips();
+      const bookings = getOperatorBookings().filter(b => b.status !== 'cancelled');
+      
+      // Calculate totals
+      const totalRevenue = calculateRevenue(bookings);
+      const totalBookings = bookings.length;
+      const avgBooking = totalBookings > 0 ? totalRevenue / totalBookings : 0;
+      
+      document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
+      document.getElementById('total-bookings').textContent = totalBookings;
+      document.getElementById('avg-booking').textContent = formatCurrency(avgBooking);
+      
+      // Find top trip
+      const tripStats = {};
+      bookings.forEach(b => {
+        if (!tripStats[b.trip_id]) {
+          tripStats[b.trip_id] = { count: 0, revenue: 0 };
+        }
+        tripStats[b.trip_id].count++;
+        tripStats[b.trip_id].revenue += b.total;
+      });
+      
+      let topTripId = null;
+      let maxRevenue = 0;
+      
+      Object.entries(tripStats).forEach(([tripId, stats]) => {
+        if (stats.revenue > maxRevenue) {
+          maxRevenue = stats.revenue;
+          topTripId = tripId;
+        }
+      });
+      
+      const topTrip = getTripById(topTripId);
+      document.getElementById('top-trip').textContent = topTrip ? topTrip.name.split(' ').slice(0, 3).join(' ') : '-';
+      
+      // Render chart
+      renderRevenueChart();
+      
+      // Render table
+      const tbody = document.getElementById('trip-revenue-table');
+      tbody.innerHTML = trips.map(trip => {
+        const tripBookings = bookings.filter(b => b.trip_id === trip.id);
+        const tripRevenue = tripBookings.reduce((sum, b) => sum + b.total, 0);
+        const totalParticipants = tripBookings.reduce((sum, b) => sum + b.participants.length, 0);
+        
+        return `
+          <tr>
+            <td>${trip.name}</td>
+            <td>${tripBookings.length}</td>
+            <td>${totalParticipants} orang</td>
+            <td>${formatCurrency(tripRevenue)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    function renderRevenueChart() {
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+          datasets: [{
+            label: 'Pendapatan (juta)',
+            data: [15, 22, 18, 28, 35, 30, 25, 32, 28, 38, 42, 45],
+            backgroundColor: '#f97316',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return 'Rp ' + value + 'jt';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadRevenueReport();
+    });
+  </script>
+</body>
+</html>

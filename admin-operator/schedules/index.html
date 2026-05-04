@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Trip - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <style>
+    .schedule-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .cal-day {
+      background: white;
+      min-height: 100px;
+      padding: 8px;
+      font-size: 12px;
+    }
+    .cal-day-header {
+      text-align: center;
+      font-weight: 600;
+      padding: 8px;
+      background: #f8fafc;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+    .cal-day-number {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .cal-event {
+      font-size: 10px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      margin-bottom: 2px;
+      color: white;
+      font-weight: 600;
+    }
+    .trip-selector {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Jadwal Trip</h1>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="trip-selector">
+        <label class="form-label">Pilih Trip:</label>
+        <select class="form-select" id="trip-select" onchange="loadSchedules()" style="width: 300px;">
+          <option value="">-- Pilih Trip --</option>
+        </select>
+      </div>
+      
+      <div id="schedule-content" style="display: none;">
+        
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📅 Kalender Jadwal - Mei 2026</span>
+            <button class="btn btn-primary btn-sm" onclick="addSchedule()">➕ Tambah Jadwal</button>
+          </div>
+          <div class="card-body">
+            <!-- Calendar Header -->
+            <div class="schedule-calendar">
+              <div class="cal-day-header">Sen</div>
+              <div class="cal-day-header">Sel</div>
+              <div class="cal-day-header">Rab</div>
+              <div class="cal-day-header">Kam</div>
+              <div class="cal-day-header">Jum</div>
+              <div class="cal-day-header">Sab</div>
+              <div class="cal-day-header">Min</div>
+            </div>
+            <!-- Calendar Grid -->
+            <div id="calendar-grid" class="schedule-calendar"></div>
+            
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Daftar Jadwal</span>
+          </div>
+          <div class="card-body">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Kuota Total</th>
+                  <th>Sisa Kuota</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="schedules-table">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    let currentTrip = null;
+    
+    function loadTripOptions() {
+      const select = document.getElementById('trip-select');
+      const trips = getOperatorTrips();
+      
+      trips.forEach(trip => {
+        const option = document.createElement('option');
+        option.value = trip.id;
+        option.textContent = trip.name;
+        select.appendChild(option);
+      });
+      
+      // Check URL param
+      const urlParams = new URLSearchParams(window.location.search);
+      const tripId = urlParams.get('trip');
+      if (tripId) {
+        select.value = tripId;
+        loadSchedules();
+      }
+    }
+    
+    function loadSchedules() {
+      const tripId = document.getElementById('trip-select').value;
+      if (!tripId) {
+        document.getElementById('schedule-content').style.display = 'none';
+        return;
+      }
+      
+      currentTrip = getTripById(tripId);
+      document.getElementById('schedule-content').style.display = 'block';
+      
+      renderCalendar();
+      renderSchedulesTable();
+    }
+    
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      
+      // May 2026
+      const year = 2026;
+      const month = 4; // May (0-indexed)
+      
+      const firstDay = new Date(year, month, 1);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - ((firstDay.getDay() + 6) % 7));
+      
+      for (let i = 0; i < 42; i++) {
+        const cellDate = new Date(startDate);
+        cellDate.setDate(startDate.getDate() + i);
+        
+        const dayEl = document.createElement('div');
+        dayEl.className = 'cal-day';
+        
+        const cellDateStr = dayjs(cellDate).format('YYYY-MM-DD');
+        
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'cal-day-number';
+        dayNumber.textContent = cellDate.getDate();
+        dayEl.appendChild(dayNumber);
+        
+        // Find schedules for this date
+        const schedules = getAllSchedulesOnDate(currentTrip.id, cellDateStr);
+        
+        schedules.forEach((sched, idx) => {
+          const eventEl = document.createElement('div');
+          eventEl.className = 'cal-event';
+          eventEl.style.background = ['#f97316', '#ea580c', '#d97706'][idx % 3];
+          eventEl.textContent = `${dayjs(sched.date_start).format('D')}-${dayjs(sched.date_end).format('D')}`;
+          dayEl.appendChild(eventEl);
+        });
+        
+        grid.appendChild(dayEl);
+      }
+    }
+    
+    function renderSchedulesTable() {
+      const tbody = document.getElementById('schedules-table');
+      
+      tbody.innerHTML = currentTrip.schedules.map(sched => {
+        const isFull = sched.quota_remaining === 0;
+        const isLow = sched.quota_remaining < 5 && !isFull;
+        
+        return `
+          <tr>
+            <td>${formatDate(sched.date_start)} - ${formatDate(sched.date_end)}</td>
+            <td>${sched.quota_total}</td>
+            <td>${sched.quota_remaining}</td>
+            <td>
+              ${isFull ? '<span class="badge badge-cancelled">Penuh</span>' : 
+                isLow ? '<span class="badge badge-pending">Hampir Penuh</span>' : 
+                '<span class="badge badge-confirmed">Tersedia</span>'}
+            </td>
+            <td>
+              <button class="btn btn-sm btn-secondary" onclick="editSchedule('${sched.id}')">✏️ Edit</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    function addSchedule() {
+      alert('➕ Tambah jadwal (Demo)');
+    }
+    
+    function editSchedule(scheduleId) {
+      alert(`✏️ Edit jadwal ${scheduleId} (Demo)`);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadTripOptions();
+    });
+  </script>
+</body>
+</html>

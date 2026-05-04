@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Admin Open Trip</title>
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-logo">
+        <div style="font-size: 48px;">🏔️</div>
+        <h1>Ayo Mendaki</h1>
+        <p>Dashboard Operator Open Trip</p>
+      </div>
+      
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" value="tigadewa" placeholder="Masukkan username">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" value="password123" placeholder="Masukkan password">
+        </div>
+        
+        <button type="submit" class="login-btn">🔑 Login</button>
+      </form>
+      
+      <p style="text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8;">
+        Demo: Klik login langsung masuk
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

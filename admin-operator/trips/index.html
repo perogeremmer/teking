@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Trip - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Manajemen Trip</h1>
+      </div>
+      <div class="header-right">
+        <button class="notification-btn">🔔</button>
+        <div class="user-profile" onclick="logout()">
+          <img src="" alt="" class="operator-logo">
+          <span class="operator-name"></span>
+        </div>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="search-bar">
+        <input type="text" class="search-input" id="search-trip" placeholder="🔍 Cari trip..." onkeyup="filterTrips()">
+        <select class="form-select" id="filter-status" onchange="filterTrips()" style="width: 150px;">
+          <option value="">Semua Status</option>
+          <option value="active">Aktif</option>
+          <option value="inactive">Nonaktif</option>
+        </select>
+        <a href="form.html" class="btn btn-primary">➕ Tambah Trip</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trip</th>
+                <th>Gunung</th>
+                <th>Harga</th>
+                <th>Jadwal Aktif</th>
+                <th>Booking</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="trips-table">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    function loadTrips() {
+      const trips = getOperatorTrips();
+      const tbody = document.getElementById('trips-table');
+      
+      tbody.innerHTML = trips.map(trip => {
+        const mountain = getMountainByTrip(trip.id);
+        const activeSchedules = trip.schedules.filter(s => s.quota_remaining > 0).length;
+        const totalBookings = getOperatorBookings().filter(b => b.trip_id === trip.id).length;
+        
+        return `
+          <tr>
+            <td>
+              <strong>${trip.name}</strong><br>
+              <span style="font-size: 12px; color: #64748b;">${trip.route} • ${trip.duration}</span>
+            </td>
+            <td>${mountain?.name || '-'}</td>
+            <td>${formatCurrency(trip.price)}</td>
+            <td>${activeSchedules} jadwal</td>
+            <td>${totalBookings} booking</td>
+            <td>
+              <a href="form.html?id=${trip.id}" class="btn btn-sm btn-secondary">✏️ Edit</a>
+              <a href="../schedules/index.html?trip=${trip.id}" class="btn btn-sm btn-secondary">📅 Jadwal</a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    function filterTrips() {
+      const search = document.getElementById('search-trip').value.toLowerCase();
+      const status = document.getElementById('filter-status').value;
+      const rows = document.querySelectorAll('#trips-table tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const show = text.includes(search);
+        row.style.display = show ? '' : 'none';
+      });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadTrips();
+    });
+  </script>
+</body>
+</html>

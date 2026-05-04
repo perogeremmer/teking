@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Trip - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Tambah/Edit Trip</h1>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="card">
+        <div class="card-body">
+          <form id="trip-form" onsubmit="saveTrip(event)">
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+              <div class="form-group">
+                <label class="form-label">Nama Trip *</label>
+                <input type="text" class="form-input" id="trip-name" placeholder="Contoh: Open Trip Ciremai via Apuy" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Gunung *</label>
+                <select class="form-select" id="trip-mountain" required>
+                  <option value="">Pilih Gunung</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Route/Jalur *</label>
+                <input type="text" class="form-input" id="trip-route" placeholder="Contoh: Apuy" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Durasi *</label>
+                <input type="text" class="form-input" id="trip-duration" placeholder="Contoh: 3 hari 2 malam" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Harga (Rp) *</label>
+                <input type="number" class="form-input" id="trip-price" placeholder="850000" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Meeting Point *</label>
+                <input type="text" class="form-input" id="trip-meeting" placeholder="Contoh: Stasiun KA Cirebon, 06.00 WIB" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Fasilitas Include (pisahkan dengan koma)</label>
+              <textarea class="form-textarea" id="trip-includes" placeholder="Transportasi PP, Makan selama trip, Tenda & cooking set..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+              <button type="submit" class="btn btn-primary">💾 Simpan Trip</button>
+              <a href="index.html" class="btn btn-secondary">❌ Batal</a>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    // Load mountains dropdown
+    function loadMountains() {
+      const select = document.getElementById('trip-mountain');
+      MOUNTAINS.forEach(m => {
+        const option = document.createElement('option');
+        option.value = m.id;
+        option.textContent = m.name;
+        select.appendChild(option);
+      });
+    }
+    
+    // Save trip (dummy)
+    function saveTrip(e) {
+      e.preventDefault();
+      alert('✅ Trip berhasil disimpan! (Demo)');
+      window.location.href = 'index.html';
+    }
+    
+    // Load trip data if editing
+    function loadTripData() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tripId = urlParams.get('id');
+      
+      if (tripId) {
+        const trip = getTripById(tripId);
+        if (trip) {
+          document.getElementById('trip-name').value = trip.name;
+          document.getElementById('trip-mountain').value = trip.mountain_id;
+          document.getElementById('trip-route').value = trip.route;
+          document.getElementById('trip-duration').value = trip.duration;
+          document.getElementById('trip-price').value = trip.price;
+          document.getElementById('trip-meeting').value = trip.meeting_point;
+          document.getElementById('trip-includes').value = trip.includes.join(', ');
+        }
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadMountains();
+      loadTripData();
+    });
+  </script>
+</body>
+</html>

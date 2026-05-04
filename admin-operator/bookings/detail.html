@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Booking - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Detail Booking</h1>
+      </div>
+      <div class="header-right">
+        <a href="index.html" class="btn btn-secondary">← Kembali</a>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div id="booking-detail">
+        <!-- Content rendered by JS -->
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    function loadBookingDetail() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookingId = urlParams.get('id');
+      
+      const booking = BOOKINGS.find(b => b.id === bookingId);
+      if (!booking) {
+        document.getElementById('booking-detail').innerHTML = '<p>Booking tidak ditemukan</p>';
+        return;
+      }
+      
+      const trip = getTripById(booking.trip_id);
+      const schedule = trip?.schedules.find(s => s.id === booking.schedule_id);
+      
+      const container = document.getElementById('booking-detail');
+      container.innerHTML = `
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+          
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">📝 Informasi Booking</span>
+                <span>${getStatusBadge(booking.status)}</span>
+              </div>
+              <div class="card-body">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                  <div>
+                    <label style="font-size: 12px; color: #64748b;">ID Booking</label>
+                    <p style="font-weight: 600;">#${booking.id.split('-')[1]}</p>
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #64748b;">Tanggal Booking</label>
+                    <p style="font-weight: 600;">${formatDate(booking.created_at)}</p>
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #64748b;">Trip</label>
+                    <p style="font-weight: 600;">${trip?.name || '-'}</p>
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #64748b;">Jadwal</label>
+                    <p style="font-weight: 600;">${schedule ? `${formatDate(schedule.date_start)} - ${formatDate(schedule.date_end)}` : '-'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">👤 Data Customer</span>
+              </div>
+              <div class="card-body">
+                <p><strong>${booking.lead_name}</strong></p>
+                <p style="color: #64748b; font-size: 14px;">📱 ${booking.lead_phone}</p>
+                <p style="color: #64748b; font-size: 14px;">✉️ ${booking.lead_email}</p>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">👥 Daftar Peserta (${booking.participants.length} orang)</span>
+              </div>
+              <div class="card-body">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Nama</th>
+                      <th>No. KTP</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${booking.participants.map((p, i) => `
+                      <tr>
+                        <td>${i + 1}</td>
+                        <td>${p.name}</td>
+                        <td>${p.ktp}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">💰 Ringkasan Biaya</span>
+              </div>
+              <div class="card-body">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <span>Harga Trip</span>
+                  <span>${formatCurrency(booking.trip_price)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <span>Jumlah Peserta</span>
+                  <span>x ${booking.participants.length}</span>
+                </div>
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+                <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 16px;">
+                  <span>Total</span>
+                  <span>${formatCurrency(booking.total)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">⚡ Update Status</span>
+              </div>
+              <div class="card-body">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <button class="btn btn-primary" onclick="updateStatus('confirmed')" ${booking.status !== 'pending' ? 'disabled' : ''}>
+                    ✅ Konfirmasi Booking
+                  </button>
+                  <button class="btn btn-secondary" onclick="updateStatus('completed')" ${booking.status !== 'confirmed' ? 'disabled' : ''}>
+                    ✔️ Tandai Selesai
+                  </button>
+                  <button class="btn btn-secondary" onclick="updateStatus('cancelled')" ${booking.status === 'completed' || booking.status === 'cancelled' ? 'disabled' : ''}>
+                    ❌ Batalkan Booking
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      `;
+    }
+    
+    function updateStatus(newStatus) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookingId = urlParams.get('id');
+      
+      const booking = BOOKINGS.find(b => b.id === bookingId);
+      if (booking) {
+        booking.status = newStatus;
+        alert(`✅ Status booking diupdate menjadi: ${newStatus}`);
+        loadBookingDetail();
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadBookingDetail();
+    });
+  </script>
+</body>
+</html>
