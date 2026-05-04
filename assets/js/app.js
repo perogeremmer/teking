@@ -760,12 +760,43 @@ function getSchedulesByMonth(tripId, year, month) {
 
 function hasScheduleOnDate(tripId, dateStr) {
   const schedules = getTripSchedules(tripId);
-  return schedules.some(s => s.date_start === dateStr);
+  const checkDate = new Date(dateStr + 'T00:00:00');
+  
+  return schedules.some(s => {
+    const start = new Date(s.date_start + 'T00:00:00');
+    const end = new Date(s.date_end + 'T00:00:00');
+    return checkDate >= start && checkDate <= end;
+  });
+}
+
+function getScheduleTypeOnDate(tripId, dateStr) {
+  const schedules = getTripSchedules(tripId);
+  const checkDate = new Date(dateStr + 'T00:00:00');
+  
+  for (const s of schedules) {
+    const start = new Date(s.date_start + 'T00:00:00');
+    const end = new Date(s.date_end + 'T00:00:00');
+    
+    if (checkDate >= start && checkDate <= end) {
+      if (start.getTime() === end.getTime()) return { type: 'single', schedule: s };
+      if (checkDate.getTime() === start.getTime()) return { type: 'start', schedule: s };
+      if (checkDate.getTime() === end.getTime()) return { type: 'end', schedule: s };
+      return { type: 'mid', schedule: s };
+    }
+  }
+  
+  return null;
 }
 
 function getScheduleByDate(tripId, dateStr) {
   const schedules = getTripSchedules(tripId);
-  return schedules.find(s => s.date_start === dateStr);
+  const checkDate = new Date(dateStr + 'T00:00:00');
+  
+  return schedules.find(s => {
+    const start = new Date(s.date_start + 'T00:00:00');
+    const end = new Date(s.date_end + 'T00:00:00');
+    return checkDate >= start && checkDate <= end;
+  });
 }
 
 function getScheduleDates(tripId) {
