@@ -49,7 +49,7 @@
   </div>
 
   <!-- Main Content -->
-  <main class="max-w-md mx-auto px-4 -mt-4 relative z-10">
+  <main class="max-w-md mx-auto px-4 -mt-2 relative z-10">
     
     <!-- Quick Info Card -->
     <div class="bg-white rounded-2xl shadow-lg p-4 mb-4">
@@ -59,38 +59,50 @@
       </div>
       
       <div class="grid grid-cols-2 gap-3 mb-3">
-        <div class="flex items-center space-x-2 p-2 bg-slate-50 rounded-xl">
-          <span>📅</span>
+        <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl">
+          <span class="text-lg">📅</span>
           <div>
-            <p class="text-[10px] text-slate-500">Berangkat</p>
-            <p id="trip-date-start" class="text-xs font-semibold"></p>
+            <p class="text-xs text-slate-500">Berangkat</p>
+            <p id="trip-date-start" class="text-sm font-semibold text-slate-800"></p>
           </div>
         </div>
-        <div class="flex items-center space-x-2 p-2 bg-slate-50 rounded-xl">
-          <span>🏠</span>
+        <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl">
+          <span class="text-lg">🏠</span>
           <div>
-            <p class="text-[10px] text-slate-500">Pulang</p>
-            <p id="trip-date-end" class="text-xs font-semibold"></p>
+            <p class="text-xs text-slate-500">Pulang</p>
+            <p id="trip-date-end" class="text-sm font-semibold text-slate-800"></p>
           </div>
         </div>
       </div>
       
-      <div class="space-y-1">
-        <div class="flex items-center text-xs text-slate-600">
-          <span class="w-5">⛰️</span>
-          <span id="trip-mountain"></span>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl">
+          <span class="text-lg">⛰️</span>
+          <div>
+            <p class="text-xs text-slate-500">Gunung</p>
+            <p id="trip-mountain" class="text-sm font-semibold text-slate-800"></p>
+          </div>
         </div>
-        <div class="flex items-center text-xs text-slate-600">
-          <span class="w-5">🛤️</span>
-          <span id="trip-route"></span>
+        <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl">
+          <span class="text-lg">🛤️</span>
+          <div>
+            <p class="text-xs text-slate-500">Jalur</p>
+            <p id="trip-route" class="text-sm font-semibold text-slate-800"></p>
+          </div>
         </div>
-        <div class="flex items-center text-xs text-slate-600">
-          <span class="w-5">⏱️</span>
-          <span id="trip-duration"></span>
+        <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl">
+          <span class="text-lg">⏱️</span>
+          <div>
+            <p class="text-xs text-slate-500">Durasi</p>
+            <p id="trip-duration" class="text-sm font-semibold text-slate-800"></p>
+          </div>
         </div>
-        <div class="flex items-center text-xs text-slate-600">
-          <span class="w-5">👥</span>
-          <span id="trip-quota"></span>
+        <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl">
+          <span class="text-lg">👥</span>
+          <div>
+            <p class="text-xs text-slate-500">Kuota</p>
+            <p id="trip-quota" class="text-sm font-semibold text-slate-800"></p>
+          </div>
         </div>
       </div>
     </div>
@@ -218,14 +230,14 @@
       document.getElementById('trip-date-start').textContent = formatDate(currentTrip.date_start);
       document.getElementById('trip-date-end').textContent = formatDate(currentTrip.date_end);
       document.getElementById('trip-mountain').textContent = currentMountain?.name || '';
-      document.getElementById('trip-route').textContent = `Jalur: ${currentTrip.route}`;
-      document.getElementById('trip-duration').textContent = `Durasi: ${currentTrip.duration}`;
+      document.getElementById('trip-route').textContent = currentTrip.route;
+      document.getElementById('trip-duration').textContent = currentTrip.duration;
       
       const quotaText = currentTrip.quota_remaining < 5 
         ? `Sisa ${currentTrip.quota_remaining} slot (terbatas!)`
         : `Sisa ${currentTrip.quota_remaining} slot dari ${currentTrip.quota_total}`;
       document.getElementById('trip-quota').textContent = quotaText;
-      document.getElementById('trip-quota').className = currentTrip.quota_remaining < 5 ? 'text-red-500 font-semibold' : '';
+      document.getElementById('trip-quota').className = `text-sm font-semibold ${currentTrip.quota_remaining < 5 ? 'text-red-500' : 'text-slate-800'}`;
       
       // Operator info
       document.getElementById('operator-logo').src = currentOperator?.logo || '';
