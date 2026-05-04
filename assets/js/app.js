@@ -930,8 +930,203 @@ function isInWishlist(mountainId) {
 // BOOKINGS
 // ============================================
 
+// Dummy bookings for demo
+const BOOKINGS = [
+  {
+    id: 'book-001',
+    trip_id: 'trip-ciremai-1',
+    schedule_id: 'sched-c1-m1',
+    lead_name: 'Budi Santoso',
+    lead_phone: '0812-3456-7890',
+    lead_email: 'budi@email.com',
+    participants: [
+      { name: 'Budi Santoso', ktp: '3171234567890001' },
+      { name: 'Ani Wulandari', ktp: '3171234567890002' },
+      { name: 'Dedi Pratama', ktp: '3171234567890003' }
+    ],
+    trip_price: 850000,
+    addons: [],
+    total: 2550000,
+    status: 'confirmed',
+    created_at: '2026-04-15'
+  },
+  {
+    id: 'book-002',
+    trip_id: 'trip-ciremai-1',
+    schedule_id: 'sched-c1-m2',
+    lead_name: 'Rina Susanti',
+    lead_phone: '0813-9876-5432',
+    lead_email: 'rina@email.com',
+    participants: [
+      { name: 'Rina Susanti', ktp: '3171234567890004' },
+      { name: 'Agus Wijaya', ktp: '3171234567890005' }
+    ],
+    trip_price: 850000,
+    addons: [
+      { id: 'pole', name: 'Tracking Pole', price: 25000 }
+    ],
+    total: 1750000,
+    status: 'pending',
+    created_at: '2026-04-20'
+  },
+  {
+    id: 'book-003',
+    trip_id: 'trip-ciremai-1',
+    schedule_id: 'sched-c1-m7',
+    lead_name: 'Dewi Kusuma',
+    lead_phone: '0815-1122-3344',
+    lead_email: 'dewi@email.com',
+    participants: [
+      { name: 'Dewi Kusuma', ktp: '3171234567890006' },
+      { name: 'Bayu Aji', ktp: '3171234567890007' },
+      { name: 'Citra Lestari', ktp: '3171234567890008' },
+      { name: 'Fajar Maulana', ktp: '3171234567890009' }
+    ],
+    trip_price: 850000,
+    addons: [
+      { id: 'carrier', name: 'Carrier 60L', price: 50000 }
+    ],
+    total: 3450000,
+    status: 'completed',
+    created_at: '2026-04-25'
+  },
+  {
+    id: 'book-004',
+    trip_id: 'trip-ciremai-2',
+    schedule_id: 'sched-c2-1',
+    lead_name: 'Eko Prasetyo',
+    lead_phone: '0816-5544-3322',
+    lead_email: 'eko@email.com',
+    participants: [
+      { name: 'Eko Prasetyo', ktp: '3171234567890010' }
+    ],
+    trip_price: 850000,
+    addons: [],
+    total: 850000,
+    status: 'pending',
+    created_at: '2026-04-28'
+  },
+  {
+    id: 'book-005',
+    trip_id: 'trip-papandayan-1',
+    schedule_id: 'sched-p1-1',
+    lead_name: 'Fitriani',
+    lead_phone: '0817-7788-9900',
+    lead_email: 'fitri@email.com',
+    participants: [
+      { name: 'Fitriani', ktp: '3171234567890011' },
+      { name: 'Hendra Gunawan', ktp: '3171234567890012' }
+    ],
+    trip_price: 650000,
+    addons: [],
+    total: 1300000,
+    status: 'confirmed',
+    created_at: '2026-04-22'
+  },
+  {
+    id: 'book-006',
+    trip_id: 'trip-merapi-1',
+    schedule_id: 'sched-m1-1',
+    lead_name: 'Irfan Hakim',
+    lead_phone: '0818-1234-5678',
+    lead_email: 'irfan@email.com',
+    participants: [
+      { name: 'Irfan Hakim', ktp: '3171234567890013' },
+      { name: 'Joko Widodo', ktp: '3171234567890014' },
+      { name: 'Kartini Sari', ktp: '3171234567890015' }
+    ],
+    trip_price: 550000,
+    addons: [
+      { id: 'pole', name: 'Tracking Pole', price: 20000 }
+    ],
+    total: 1710000,
+    status: 'pending',
+    created_at: '2026-05-01'
+  },
+  {
+    id: 'book-007',
+    trip_id: 'trip-semeru-1',
+    schedule_id: 'sched-s1-1',
+    lead_name: 'Lina Marlina',
+    lead_phone: '0819-8765-4321',
+    lead_email: 'lina@email.com',
+    participants: [
+      { name: 'Lina Marlina', ktp: '3171234567890016' },
+      { name: 'Maman Supratman', ktp: '3171234567890017' },
+      { name: 'Nani Wijaya', ktp: '3171234567890018' },
+      { name: 'Omar Faruq', ktp: '3171234567890019' },
+      { name: 'Putri Ayu', ktp: '3171234567890020' }
+    ],
+    trip_price: 1350000,
+    addons: [
+      { id: 'carrier', name: 'Carrier 80L', price: 75000 }
+    ],
+    total: 6825000,
+    status: 'confirmed',
+    created_at: '2026-04-30'
+  },
+  {
+    id: 'book-008',
+    trip_id: 'trip-ciremai-1',
+    schedule_id: 'sched-c1-m8',
+    lead_name: 'Qori Amalia',
+    lead_phone: '0821-1111-2222',
+    lead_email: 'qori@email.com',
+    participants: [
+      { name: 'Qori Amalia', ktp: '3171234567890021' },
+      { name: 'Rudi Hartono', ktp: '3171234567890022' }
+    ],
+    trip_price: 850000,
+    addons: [],
+    total: 1700000,
+    status: 'completed',
+    created_at: '2026-04-18'
+  },
+  {
+    id: 'book-009',
+    trip_id: 'trip-prau-1',
+    schedule_id: 'sched-pr1-1',
+    lead_name: 'Sinta Dewi',
+    lead_phone: '0822-3333-4444',
+    lead_email: 'sinta@email.com',
+    participants: [
+      { name: 'Sinta Dewi', ktp: '3171234567890023' },
+      { name: 'Toni Sujono', ktp: '3171234567890024' },
+      { name: 'Umi Kalsum', ktp: '3171234567890025' }
+    ],
+    trip_price: 350000,
+    addons: [],
+    total: 1050000,
+    status: 'cancelled',
+    created_at: '2026-04-10'
+  },
+  {
+    id: 'book-010',
+    trip_id: 'trip-ciremai-1',
+    schedule_id: 'sched-c1-m3',
+    lead_name: 'Vino Bastian',
+    lead_phone: '0823-5555-6666',
+    lead_email: 'vino@email.com',
+    participants: [
+      { name: 'Vino Bastian', ktp: '3171234567890026' }
+    ],
+    trip_price: 850000,
+    addons: [
+      { id: 'sleeping_bag', name: 'Sleeping Bag', price: 35000 }
+    ],
+    total: 885000,
+    status: 'confirmed',
+    created_at: '2026-05-02'
+  }
+];
+
 function getBookings() {
-  return JSON.parse(localStorage.getItem('bookings') || '[]');
+  const stored = localStorage.getItem('bookings');
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  // Return dummy data for demo
+  return BOOKINGS;
 }
 
 function addBooking(booking) {
