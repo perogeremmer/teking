@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Point - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Meeting Point</h1>
+      </div>
+      <div class="header-right">
+        <button class="notification-btn">🔔</button>
+        <div class="user-profile" onclick="logout()">
+          <img src="" alt="" class="operator-logo">
+          <span class="operator-name"></span>
+        </div>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="search-bar">
+        <input type="text" class="search-input" id="search-meeting-point" placeholder="🔍 Cari meeting point..." onkeyup="filterMeetingPoints()">
+        <select class="form-select" id="filter-mountain" onchange="filterMeetingPoints()" style="width: 180px;">
+          <option value="">Semua Gunung</option>
+        </select>
+        <a href="form.html" class="btn btn-primary">➕ Tambah Meeting Point</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Gunung</th>
+                <th>Tambahan Harga</th>
+                <th>Koordinat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="meeting-points-table">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div style="margin-top: 16px; padding: 16px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #059669;">
+        <p style="margin: 0; font-size: 14px; color: #065f46;">
+          <strong>💡 Tips:</strong> Meeting point yang sudah dibuat dapat dipilih saat menambah trip baru. 
+          Ini menghemat waktu dan memastikan data konsisten.
+        </p>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    function loadMeetingPoints() {
+      const meetingPoints = getOperatorMeetingPoints();
+      const tbody = document.getElementById('meeting-points-table');
+      
+      if (meetingPoints.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
+              Belum ada meeting point. <a href="form.html" style="color: #f97316;">Tambah meeting point pertama</a>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = meetingPoints.map(mp => {
+        const mountain = getMountainById(mp.mountain_id);
+        return `
+          <tr data-mountain="${mp.mountain_id}">
+            <td>
+              <strong>${mp.name}</strong><br>
+              <span style="font-size: 12px; color: #64748b;">${mp.address || '-'}</span>
+            </td>
+            <td>${mountain?.name || '-'}</td>
+            <td>
+              ${mp.price_addition > 0 ? `<span style="color: #f97316; font-weight: 600;">+${formatCurrency(mp.price_addition)}</span>` : '<span style="color: #94a3b8;">Termasuk</span>'}
+            </td>
+            <td>
+              <span style="font-size: 12px; color: #64748b;">
+                ${mp.location?.lat?.toFixed(4) || '-'}, ${mp.location?.lng?.toFixed(4) || '-'}
+              </span>
+            </td>
+            <td>
+              <a href="form.html?id=${mp.id}" class="btn btn-sm btn-secondary">✏️ Edit</a>
+              <button class="btn btn-sm btn-secondary" onclick="deleteMeetingPoint('${mp.id}')">🗑️ Hapus</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    function loadMountainFilter() {
+      const select = document.getElementById('filter-mountain');
+      const mountains = getMountains();
+      
+      mountains.forEach(m => {
+        const option = document.createElement('option');
+        option.value = m.id;
+        option.textContent = m.name;
+        select.appendChild(option);
+      });
+    }
+    
+    function filterMeetingPoints() {
+      const search = document.getElementById('search-meeting-point').value.toLowerCase();
+      const mountainId = document.getElementById('filter-mountain').value;
+      const rows = document.querySelectorAll('#meeting-points-table tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        let show = text.includes(search);
+        
+        if (mountainId && show) {
+          show = row.dataset.mountain === mountainId;
+        }
+        
+        row.style.display = show ? '' : 'none';
+      });
+    }
+    
+    function deleteMeetingPoint(id) {
+      if (!confirm('Apakah Anda yakin ingin menghapus meeting point ini? Meeting point yang sedang digunakan di trip tidak dapat dihapus.')) {
+        return;
+      }
+      
+      // Check if meeting point is used in any trip
+      const usedInTrips = TRIPS.filter(trip => trip.meeting_points?.includes(id));
+      if (usedInTrips.length > 0) {
+        alert('❌ Meeting point ini sedang digunakan di ' + usedInTrips.length + ' trip. Hapus dari trip terlebih dahulu.');
+        return;
+      }
+      
+      // Remove from MEETING_POINTS array
+      const index = MEETING_POINTS.findIndex(mp => mp.id === id);
+      if (index > -1) {
+        MEETING_POINTS.splice(index, 1);
+        loadMeetingPoints();
+        alert('✅ Meeting point berhasil dihapus');
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadMountainFilter();
+      loadMeetingPoints();
+    });
+  </script>
+</body>
+</html>

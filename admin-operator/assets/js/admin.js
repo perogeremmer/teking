@@ -47,6 +47,7 @@ function renderSidebar() {
   const menuItems = [
     { href: basePath + 'index.html', icon: '📊', label: 'Dashboard' },
     { href: basePath + 'trips/index.html', icon: '🏔️', label: 'Manajemen Trip' },
+    { href: basePath + 'meeting-points/index.html', icon: '📍', label: 'Meeting Point' },
     { href: basePath + 'bookings/index.html', icon: '📝', label: 'Manajemen Booking' },
     { href: basePath + 'reports/revenue.html', icon: '💰', label: 'Laporan' },
     { href: basePath + 'profile/index.html', icon: '⚙️', label: 'Pengaturan' },
@@ -87,6 +88,11 @@ function setupMobileMenu() {
 // Get operator trips
 function getOperatorTrips() {
   return TRIPS.filter(trip => trip.operator_id === CURRENT_OPERATOR_ID);
+}
+
+// Get operator meeting points
+function getOperatorMeetingPoints() {
+  return getMeetingPointsByOperator(CURRENT_OPERATOR_ID);
 }
 
 // Get operator bookings

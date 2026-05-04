@@ -286,8 +286,8 @@
         document.getElementById('operator-verified').classList.remove('hidden');
       }
       
-      // Meeting point
-      document.getElementById('meeting-point').textContent = currentTrip.meeting_point;
+      // Meeting points
+      document.getElementById('meeting-point').textContent = getMeetingPointsText(currentTrip);
       
       // Meeting map
       if (currentTrip.meeting_map) {
@@ -422,6 +422,24 @@
         total += addon.price * participants;
       });
       return total;
+    }
+
+    function getMeetingPointsText(trip) {
+      // Backward compatibility
+      if (trip.meeting_point) return trip.meeting_point;
+
+      if (!trip.meeting_points || trip.meeting_points.length === 0) return '-';
+
+      // New format - array of IDs
+      if (typeof trip.meeting_points[0] === 'string') {
+        const names = trip.meeting_points.map(id => {
+          const mp = getMeetingPointById(id);
+          return mp ? mp.name : id;
+        });
+        return names.join(', ');
+      }
+
+      return '-';
     }
 
     // Initialize

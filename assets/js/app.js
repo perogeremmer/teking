@@ -237,6 +237,183 @@ const OPERATORS = [
 ];
 
 // ============================================
+// DUMMY DATA - MEETING POINTS (Tabel Master Meeting Point per Operator)
+// ============================================
+
+const MEETING_POINTS = [
+  // --- Tiga Dewa Adventure ---
+  {
+    id: 'mp-ciremai-apuy',
+    name: 'Basecamp Ciremai via Apuy',
+    mountain_id: 'ciremai',
+    location: { lat: -6.8921, lng: 108.4003 },
+    address: 'Desa Apuy, Kecamatan Argapura, Majalengka, Jawa Barat',
+    operator_id: 'tigadewa',
+    price_addition: 0
+  },
+  {
+    id: 'mp-ciremai-linggarjati',
+    name: 'Basecamp Ciremai via Linggarjati',
+    mountain_id: 'ciremai',
+    location: { lat: -6.8500, lng: 108.4200 },
+    address: 'Desa Linggarjati, Kecamatan Cilimus, Kuningan, Jawa Barat',
+    operator_id: 'tigadewa',
+    price_addition: 0
+  },
+  {
+    id: 'mp-cawang-uki',
+    name: 'Cawang UKI',
+    mountain_id: 'ciremai',
+    location: { lat: -6.123, lng: 106.456 },
+    address: 'Jl. Cawang Raya, Cawang, Jakarta Timur',
+    operator_id: 'tigadewa',
+    price_addition: 25000
+  },
+  {
+    id: 'mp-pool-cikarang',
+    name: 'Pool Cikarang',
+    mountain_id: 'ciremai',
+    location: { lat: -6.789, lng: 107.123 },
+    address: 'Cikarang, Bekasi, Jawa Barat',
+    operator_id: 'tigadewa',
+    price_addition: 20000
+  },
+  {
+    id: 'mp-terminal-kuningan',
+    name: 'Terminal Kuningan',
+    mountain_id: 'ciremai',
+    location: { lat: -7.010, lng: 108.570 },
+    address: 'Terminal Bus Kuningan, Kuningan, Jawa Barat',
+    operator_id: 'tigadewa',
+    price_addition: 15000
+  },
+  {
+    id: 'mp-papandayan-basecamp',
+    name: 'Basecamp Papandayan',
+    mountain_id: 'papandayan',
+    location: { lat: -7.3203, lng: 107.7303 },
+    address: 'Desa Caringin, Kecamatan Caringin, Garut, Jawa Barat',
+    operator_id: 'tigadewa',
+    price_addition: 0
+  },
+  {
+    id: 'mp-papandayan-garut',
+    name: 'Pool Garut',
+    mountain_id: 'papandayan',
+    location: { lat: -7.384, lng: 107.902 },
+    address: 'Garut Kota, Garut, Jawa Barat',
+    operator_id: 'tigadewa',
+    price_addition: 20000
+  },
+  {
+    id: 'mp-merapi-basecamp',
+    name: 'Basecamp Merapi via Selo',
+    mountain_id: 'merapi',
+    location: { lat: -7.5407, lng: 110.4469 },
+    address: 'Desa Selo, Kecamatan Selo, Boyolali, Jawa Tengah',
+    operator_id: 'tigadewa',
+    price_addition: 0
+  },
+  {
+    id: 'mp-merapi-solo',
+    name: 'Pool Solo',
+    mountain_id: 'merapi',
+    location: { lat: -7.566, lng: 110.823 },
+    address: 'Solo, Jawa Tengah',
+    operator_id: 'tigadewa',
+    price_addition: 25000
+  },
+  // --- Tebet Adventure ---
+  {
+    id: 'mp-tebet-cirebon',
+    name: 'Stasiun KA Cirebon',
+    mountain_id: 'ciremai',
+    location: { lat: -6.7058, lng: 108.5573 },
+    address: 'Stasiun Cirebon, Cirebon, Jawa Barat',
+    operator_id: 'tebet',
+    price_addition: 0
+  },
+  {
+    id: 'mp-tebet-bandung',
+    name: 'Pool Bandung',
+    mountain_id: 'papandayan',
+    location: { lat: -6.9147, lng: 107.6098 },
+    address: 'Bandung, Jawa Barat',
+    operator_id: 'tebet',
+    price_addition: 30000
+  }
+];
+
+// Helper functions for meeting points
+function getMeetingPoints() {
+  return MEETING_POINTS;
+}
+
+function getMeetingPointById(id) {
+  return MEETING_POINTS.find(mp => mp.id === id);
+}
+
+function getMeetingPointsByMountain(mountainId) {
+  return MEETING_POINTS.filter(mp => mp.mountain_id === mountainId);
+}
+
+function getMeetingPointsByOperator(operatorId) {
+  return MEETING_POINTS.filter(mp => mp.operator_id === operatorId);
+}
+
+// Backward compatibility - keep old function names as aliases
+function getBasecamps() { return getMeetingPoints(); }
+function getBasecampById(id) { return getMeetingPointById(id); }
+function getBasecampsByMountain(mountainId) { return getMeetingPointsByMountain(mountainId); }
+
+// ============================================
+// DUMMY DATA - PACKAGES (Paket per Operator)
+// ============================================
+
+const PACKAGES = [
+  {
+    id: 'paket-standard',
+    operator_id: 'tigadewa',
+    name: 'Paket Standard',
+    description: 'Paket dasar dengan fasilitas lengkap',
+    includes: ['Transportasi PP', 'Makan selama trip (5x)', 'Tenda & cooking set', 'Guide berpengalaman', 'P3K & asuransi', 'Dokumentasi']
+  },
+  {
+    id: 'paket-premium',
+    operator_id: 'tigadewa',
+    name: 'Paket Premium',
+    description: 'Paket lengkap dengan dokumentasi drone',
+    includes: ['Transportasi PP', 'Makan selama trip (5x)', 'Tenda & cooking set premium', 'Guide berpengalaman', 'P3K & asuransi', 'Dokumentasi drone', 'Snack & mineral water']
+  },
+  {
+    id: 'paket-ekonomis',
+    operator_id: 'tigadewa',
+    name: 'Paket Ekonomis',
+    description: 'Paket hemat untuk pendaki budget',
+    includes: ['Transportasi PP', 'Makan selama trip (3x)', 'Tenda', 'Guide', 'P3K']
+  },
+  {
+    id: 'paket-tebet-standard',
+    operator_id: 'tebet',
+    name: 'Paket Standard',
+    description: 'Paket dasar Tebet Adventure',
+    includes: ['Transportasi PP', 'Makan selama trip', 'Tenda', 'Guide', 'Dokumentasi']
+  }
+];
+
+function getPackages() {
+  return PACKAGES;
+}
+
+function getPackageById(id) {
+  return PACKAGES.find(p => p.id === id);
+}
+
+function getPackagesByOperator(operatorId) {
+  return PACKAGES.filter(p => p.operator_id === operatorId);
+}
+
+// ============================================
 // DUMMY DATA - TRIPS (Dibuat Operator untuk Gunung)
 // ============================================
 
@@ -250,9 +427,8 @@ const TRIPS = [
     route: 'Apuy',
     duration: '3 hari 2 malam',
     price: 850000,
-    meeting_point: 'Stasiun KA Cirebon, 06.00 WIB',
-    meeting_map: { lat: -6.7058, lng: 108.5573 },
-    includes: ['Transportasi PP dari Cirebon', 'Makan selama trip (5x)', 'Tenda & cooking set', 'Guide berpengalaman', 'P3K & asuransi', 'Dokumentasi'],
+    package_id: 'paket-standard',
+    meeting_points: ['mp-cawang-uki', 'mp-pool-cikarang', 'mp-ciremai-apuy'],
     addons: [
       { id: 'pole', name: 'Tracking Pole', price: 25000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' },
@@ -296,9 +472,8 @@ const TRIPS = [
     route: 'Linggarjati',
     duration: '3 hari 2 malam',
     price: 850000,
-    meeting_point: 'Terminal Kuningan, 05.30 WIB',
-    meeting_map: { lat: -7.0149, lng: 108.4833 },
-    includes: ['Transportasi PP dari Kuningan', 'Makan selama trip (5x)', 'Tenda & cooking set', 'Guide berpengalaman', 'P3K & asuransi', 'Dokumentasi'],
+    package_id: 'paket-premium',
+    meeting_points: ['mp-cawang-uki', 'mp-terminal-kuningan', 'mp-ciremai-linggarjati'],
     addons: [
       { id: 'pole', name: 'Tracking Pole', price: 25000, icon: '🥾' },
       { id: 'carrier', name: 'Carrier 60L', price: 50000, icon: '🎒' },
@@ -332,9 +507,9 @@ const TRIPS = [
     route: 'Apuy',
     duration: '3 hari 2 malam',
     price: 800000,
+    package_id: 'paket-ekonomis',
     meeting_point: 'Stasiun KA Cirebon, 06.00 WIB',
     meeting_map: { lat: -6.7058, lng: 108.5573 },
-    includes: ['Transportasi PP dari Cirebon', 'Makan selama trip (5x)', 'Tenda berkualitas', 'Guide ramah', 'Snack & mineral water', 'Dokumentasi drone'],
     addons: [
       { id: 'pole', name: 'Tracking Pole', price: 20000, icon: '🥾' },
       { id: 'tent', name: 'Tenda Single', price: 60000, icon: '⛺' },

@@ -285,13 +285,18 @@
           
           <div>
             <p><strong style="color: #64748b;">Harga:</strong></p>
-            <p style="font-weight: 600; font-size: 18px; color: #f97316; margin-bottom: 12px;">${formatCurrency(currentTrip.price)}</p>
+            <p style="font-weight: 600; font-size: 18px; color: #f97316; margin-bottom: 4px;">${formatCurrency(currentTrip.price)}</p>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
+              *Harga base + harga meeting point yang dipilih
+            </p>
             
-            <p><strong style="color: #64748b;">Meeting Point:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.meeting_point}</p>
+            <p><strong style="color: #64748b;">Meeting Points:</strong></p>
+            <div style="margin-bottom: 12px;">
+              ${getMeetingPointsDisplay(currentTrip)}
+            </div>
             
-            <p><strong style="color: #64748b;">Fasilitas:</strong></p>
-            <p style="margin-bottom: 12px;">${currentTrip.includes.join(', ')}</p>
+            <p><strong style="color: #64748b;">Paket:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${getPackageDisplay(currentTrip)}</p>
             
             <p><strong style="color: #64748b;">Jumlah Jadwal:</strong></p>
             <p style="font-weight: 600;">${currentTrip.schedules.length} jadwal</p>
@@ -485,6 +490,51 @@
         alert('🗑️ Jadwal dihapus (Demo)');
         // In real app, delete from data and re-render
       }
+    }
+
+    function getMeetingPointsDisplay(trip) {
+      if (!trip.meeting_points || trip.meeting_points.length === 0) {
+        return '<p style="font-weight: 600;">-</p>';
+      }
+      
+      const pointsHtml = trip.meeting_points.map(mpId => {
+        const mp = getMeetingPointById(mpId);
+        if (!mp) return '';
+        const priceAddition = mp.price_addition || 0;
+        return `
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span>📍</span>
+            <span style="font-weight: 600;">${mp.name}</span>
+            <span style="font-size: 12px; color: #64748b;">(${mp.address || 'Tidak ada alamat'})</span>
+            ${priceAddition > 0 ? `<span style="font-size: 12px; color: #f97316; font-weight: 600;">+${formatCurrency(priceAddition)}</span>` : ''}
+          </div>
+        `;
+      }).join('');
+      
+      return pointsHtml;
+    }
+
+    function getPackageDisplay(trip) {
+      if (trip.package_id) {
+        const pkg = getPackageById(trip.package_id);
+        if (pkg) {
+          return `
+            <div style="font-weight: 600;">${pkg.name}</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">${pkg.description}</div>
+            <div style="margin-top: 8px;">
+              ${pkg.includes.map(f => `<span style="display: inline-block; font-size: 11px; padding: 2px 8px; background: #f0fdf4; border-radius: 4px; color: #15803d; margin: 2px;">${f}</span>
+              `).join('')}
+            </div>
+          `;
+        }
+      }
+      
+      // Backward compatibility
+      if (trip.includes) {
+        return trip.includes.join(', ');
+      }
+      
+      return '-';
     }
 
     document.addEventListener('DOMContentLoaded', () => {

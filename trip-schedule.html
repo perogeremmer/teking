@@ -519,7 +519,7 @@
           </div>
           <div class="flex justify-between text-sm">
             <span class="text-slate-500">Meeting Point</span>
-            <span class="font-medium text-slate-800 text-right max-w-[60%]">${currentTrip.meeting_point}</span>
+            <span class="font-medium text-slate-800 text-right max-w-[60%]">${getMeetingPointsText(currentTrip)}</span>
           </div>
         </div>
         
@@ -591,6 +591,24 @@
           </div>
         `;
       }).join('');
+    }
+
+    function getMeetingPointsText(trip) {
+      // Backward compatibility
+      if (trip.meeting_point) return trip.meeting_point;
+      
+      if (!trip.meeting_points || trip.meeting_points.length === 0) return '-';
+      
+      // New format - array of IDs
+      if (typeof trip.meeting_points[0] === 'string') {
+        const names = trip.meeting_points.map(id => {
+          const mp = getMeetingPointById(id);
+          return mp ? mp.name : id;
+        });
+        return names.join(', ');
+      }
+      
+      return '-';
     }
 
     // Initialize
