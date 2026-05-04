@@ -7,8 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/id.js"></script>
-  <!-- FullCalendar -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+  <script>dayjs.locale('id');</script>
   <script>
     tailwind.config = {
       theme: {
@@ -22,101 +21,118 @@
     }
   </script>
   <style>
-    /* FullCalendar Customization */
-    .fc {
-      font-family: inherit !important;
+    .calendar-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e2e8f0;
+      gap: 1px;
+      display: flex;
+      flex-direction: column;
     }
-    .fc .fc-toolbar.fc-header-toolbar {
-      margin-bottom: 12px !important;
-      padding: 0 4px;
+    .week-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #e2e8f0;
+      min-height: 120px;
+      position: relative;
     }
-    .fc .fc-toolbar-title {
-      font-size: 16px !important;
-      font-weight: 700 !important;
-      color: #1e293b;
+    .day-cell {
+      background: white;
+      padding: 4px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
     }
-    .fc .fc-button {
-      background: #f1f5f9 !important;
-      border: none !important;
-      color: #475569 !important;
-      padding: 6px 12px !important;
-      font-size: 13px !important;
-      border-radius: 8px !important;
-      box-shadow: none !important;
+    .day-cell.other-month {
+      background: #f8fafc;
+      color: #cbd5e1;
     }
-    .fc .fc-button:hover {
-      background: #e2e8f0 !important;
+    .day-cell.today {
+      background: #fff7ed;
     }
-    .fc .fc-button:active {
-      background: #cbd5e1 !important;
+    .day-number {
+      font-weight: 600;
+      color: #374151;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 12px;
+      margin-bottom: 2px;
     }
-    .fc .fc-col-header-cell {
-      padding: 8px 0 !important;
-      background: #f8fafc !important;
+    .day-cell.today .day-number {
+      background-color: #f97316;
+      color: white;
     }
-    .fc .fc-col-header-cell-cushion {
-      font-size: 12px !important;
-      font-weight: 600 !important;
-      color: #64748b !important;
-      text-transform: uppercase;
+    .day-cell.other-month .day-number {
+      color: #cbd5e1;
     }
-    .fc .fc-daygrid-day {
-      min-height: 80px !important;
-    }
-    .fc .fc-daygrid-day-number {
-      font-size: 13px !important;
-      font-weight: 600 !important;
-      color: #374151 !important;
-      padding: 6px !important;
-    }
-    .fc .fc-daygrid-day.fc-day-today {
-      background-color: #fff7ed !important;
-    }
-    .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-      background-color: #f97316 !important;
-      color: white !important;
-      border-radius: 50% !important;
-      width: 28px !important;
-      height: 28px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      padding: 0 !important;
-      margin: 4px !important;
-    }
-    /* Event Styling */
-    .fc-event {
-      border: none !important;
-      border-radius: 4px !important;
-      padding: 2px 4px !important;
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      cursor: pointer !important;
-      margin: 1px 2px !important;
-    }
-    .fc-event:hover {
-      opacity: 0.85 !important;
-    }
-    .fc-h-event .fc-event-main {
-      padding: 2px 4px !important;
-    }
-    /* Multiple event colors */
-    .fc-event.event-color-1 { background-color: #f97316 !important; }
-    .fc-event.event-color-2 { background-color: #ea580c !important; }
-    .fc-event.event-color-3 { background-color: #d97706 !important; }
-    .fc-event.event-color-4 { background-color: #ca8a04 !important; }
-    .fc-event.event-color-5 { background-color: #dc2626 !important; }
     
-    .fc .fc-daygrid-more-link {
-      font-size: 11px !important;
-      color: #f97316 !important;
-      font-weight: 600 !important;
+    /* Event bars that span across days */
+    .event-bar {
+      position: absolute;
+      height: 20px;
+      font-size: 9px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      cursor: pointer;
+      z-index: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      top: 32px;
     }
-    .fc .fc-daygrid-dot-event {
-      display: none !important;
+    .event-bar:hover {
+      opacity: 0.85;
     }
-    .fc .fc-daygrid-event-harness {
-      margin-top: 1px !important;
+    .event-bar.row-0 { top: 32px; }
+    .event-bar.row-1 { top: 54px; }
+    .event-bar.row-2 { top: 76px; }
+    .event-bar.row-3 { top: 98px; }
+    
+    .event-bar-start {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    .event-bar-end {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .event-bar-mid {
+      border-radius: 0;
+    }
+    .event-bar-single {
+      border-radius: 4px;
+    }
+    
+    .event-color-1 { background-color: #f97316; }
+    .event-color-2 { background-color: #ea580c; }
+    .event-color-3 { background-color: #d97706; }
+    .event-color-4 { background-color: #ca8a04; }
+    .event-color-5 { background-color: #dc2626; }
+    
+    .calendar-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      margin-bottom: 1px;
+    }
+    .calendar-header-day {
+      text-align: center;
+      padding: 8px 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      background: #f8fafc;
     }
   </style>
 </head>
@@ -153,9 +169,35 @@
       </div>
     </div>
 
-    <!-- FullCalendar Container -->
+    <!-- Calendar Navigation -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-3 mb-4">
-      <div id="calendar"></div>
+      <div class="flex items-center justify-between mb-3">
+        <button onclick="changeMonth(-1)" class="p-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <h3 id="calendar-month-year" class="font-bold text-slate-800"></h3>
+        <button onclick="changeMonth(1)" class="p-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Calendar Header -->
+      <div class="calendar-header">
+        <div class="calendar-header-day">Sen</div>
+        <div class="calendar-header-day">Sel</div>
+        <div class="calendar-header-day">Rab</div>
+        <div class="calendar-header-day">Kam</div>
+        <div class="calendar-header-day">Jum</div>
+        <div class="calendar-header-day">Sab</div>
+        <div class="calendar-header-day">Min</div>
+      </div>
+      
+      <!-- Calendar Grid -->
+      <div id="calendar-grid" class="calendar-grid"></div>
     </div>
 
     <!-- Legend -->
@@ -196,7 +238,6 @@
   <script src="assets/js/app.js"></script>
   <script>
     let currentTrip = null;
-    let calendar = null;
     let currentDate = new Date();
     const scheduleColors = [
       'event-color-1',
@@ -226,58 +267,190 @@
       document.getElementById('trip-mountain').textContent = mountain?.name || '';
       document.getElementById('trip-price').textContent = formatPrice(currentTrip.price);
       
-      initCalendar();
+      renderCalendar();
       renderScheduleList();
     }
 
-    // Initialize FullCalendar
-    function initCalendar() {
-      const calendarEl = document.getElementById('calendar');
+    // Change Month
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+      renderScheduleList();
+    }
+
+    // Render Custom Calendar with Spanning Events
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
       
-      // Convert schedules to FullCalendar events
-      const events = currentTrip.schedules.map((sched, idx) => ({
-        id: sched.id,
-        title: `${dayjs(sched.date_start).format('D')} - ${dayjs(sched.date_end).format('D MMM')}`,
-        start: sched.date_start,
-        end: dayjs(sched.date_end).add(1, 'day').format('YYYY-MM-DD'), // FullCalendar end is exclusive
-        className: scheduleColors[idx % scheduleColors.length],
-        extendedProps: {
-          schedule: sched,
-          trip: currentTrip
-        }
-      }));
+      // Update header
+      const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
       
-      calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'id',
-        firstDay: 1, // Monday
-        headerToolbar: {
-          left: 'prev',
-          center: 'title',
-          right: 'next'
-        },
-        height: 'auto',
-        events: events,
-        eventDisplay: 'block',
-        displayEventTime: false,
-        dayMaxEvents: 3,
-        moreLinkContent: (args) => `+${args.num} lainnya`,
-        eventClick: (info) => {
-          info.jsEvent.preventDefault();
-          selectSchedule(info.event.id);
-        },
-        dateClick: (info) => {
-          const schedules = getAllSchedulesOnDate(currentTrip.id, info.dateStr);
-          if (schedules.length > 0) {
-            showDateSchedules(info.dateStr);
+      const firstDay = new Date(year, month, 1);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - ((firstDay.getDay() + 6) % 7)); // Start from Monday
+      
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      grid.className = 'calendar-wrapper';
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Process week by week
+      for (let week = 0; week < 6; week++) {
+        const weekStart = new Date(startDate);
+        weekStart.setDate(startDate.getDate() + (week * 7));
+        
+        // Create week container
+        const weekEl = document.createElement('div');
+        weekEl.className = 'week-row';
+        
+        // Store day cells for this week
+        const dayCells = [];
+        
+        // Generate 7 day cells
+        for (let day = 0; day < 7; day++) {
+          const cellDate = new Date(weekStart);
+          cellDate.setDate(weekStart.getDate() + day);
+          
+          const dayEl = document.createElement('div');
+          dayEl.className = 'day-cell';
+          
+          if (cellDate.getMonth() !== month) {
+            dayEl.classList.add('other-month');
           }
-        },
-        buttonText: {
-          today: 'Hari Ini'
+          
+          const cellDateStr = dayjs(cellDate).format('YYYY-MM-DD');
+          const todayStr = dayjs(today).format('YYYY-MM-DD');
+          
+          if (cellDateStr === todayStr) {
+            dayEl.classList.add('today');
+          }
+          
+          // Day number
+          const dayNumber = document.createElement('div');
+          dayNumber.className = 'day-number';
+          dayNumber.textContent = cellDate.getDate();
+          dayEl.appendChild(dayNumber);
+          
+          // Store cell info
+          dayCells.push({
+            element: dayEl,
+            date: cellDate,
+            dateStr: cellDateStr
+          });
+          
+          weekEl.appendChild(dayEl);
         }
-      });
-      
-      calendar.render();
+        
+        // Find all events that overlap with this week
+        const weekEvents = [];
+        const weekStartStr = dayjs(dayCells[0].date).format('YYYY-MM-DD');
+        const weekEndStr = dayjs(dayCells[6].date).format('YYYY-MM-DD');
+        
+        currentTrip.schedules.forEach((sched, schedIdx) => {
+          const schedStart = dayjs(sched.date_start);
+          const schedEnd = dayjs(sched.date_end);
+          
+          // Check if schedule overlaps with this week
+          if (schedStart.isAfter(weekEndStr) || schedEnd.isBefore(weekStartStr)) {
+            return;
+          }
+          
+          // Find visible start and end within this week
+          let visibleStart = schedStart.isBefore(weekStartStr) ? dayjs(weekStartStr) : schedStart;
+          let visibleEnd = schedEnd.isAfter(weekEndStr) ? dayjs(weekEndStr) : schedEnd;
+          
+          // Calculate grid positions (0-6 for Monday-Sunday)
+          const startDayIndex = visibleStart.day() === 0 ? 6 : visibleStart.day() - 1;
+          const endDayIndex = visibleEnd.day() === 0 ? 6 : visibleEnd.day() - 1;
+          
+          weekEvents.push({
+            schedule: sched,
+            colorClass: scheduleColors[schedIdx % scheduleColors.length],
+            startIndex: startDayIndex,
+            endIndex: endDayIndex,
+            isStart: schedStart.format('YYYY-MM-DD') === visibleStart.format('YYYY-MM-DD'),
+            isEnd: schedEnd.format('YYYY-MM-DD') === visibleEnd.format('YYYY-MM-DD'),
+            startMonth: schedStart.format('MMM'),
+            endMonth: schedEnd.format('MMM')
+          });
+        });
+        
+        // Sort events by start index, then by duration (longer first)
+        weekEvents.sort((a, b) => {
+          if (a.startIndex !== b.startIndex) return a.startIndex - b.startIndex;
+          return (b.endIndex - b.startIndex) - (a.endIndex - a.startIndex);
+        });
+        
+        // Assign rows to events (stack overlapping events)
+        const rowAssignments = [];
+        weekEvents.forEach(event => {
+          let row = 0;
+          while (rowAssignments[row] && rowAssignments[row].some(assigned => 
+            !(event.endIndex < assigned.startIndex || event.startIndex > assigned.endIndex)
+          )) {
+            row++;
+          }
+          if (!rowAssignments[row]) rowAssignments[row] = [];
+          rowAssignments[row].push(event);
+          event.row = row;
+        });
+        
+        // Render event bars
+        weekEvents.forEach(event => {
+          const barEl = document.createElement('div');
+          barEl.className = `event-bar ${event.colorClass} row-${event.row}`;
+          
+          // Calculate position
+          const dayWidth = 100 / 7;
+          const left = event.startIndex * dayWidth;
+          const width = (event.endIndex - event.startIndex + 1) * dayWidth;
+          
+          barEl.style.left = `${left}%`;
+          barEl.style.width = `${width}%`;
+          
+          // Border radius based on position
+          if (event.isStart && event.isEnd) {
+            barEl.classList.add('event-bar-single');
+          } else if (event.isStart) {
+            barEl.classList.add('event-bar-start');
+          } else if (event.isEnd) {
+            barEl.classList.add('event-bar-end');
+          } else {
+            barEl.classList.add('event-bar-mid');
+          }
+          
+          // Title - only show text if it's the start of the event or a single day
+          if (event.isStart || (event.isStart && event.isEnd)) {
+            const title = event.startMonth === event.endMonth 
+              ? `${dayjs(event.schedule.date_start).format('D')}-${dayjs(event.schedule.date_end).format('D')} ${event.startMonth}`
+              : `${dayjs(event.schedule.date_start).format('D MMM')}-${dayjs(event.schedule.date_end).format('D MMM')}`;
+            barEl.textContent = title;
+          }
+          
+          barEl.onclick = (e) => {
+            e.stopPropagation();
+            selectSchedule(event.schedule.id);
+          };
+          
+          weekEl.appendChild(barEl);
+        });
+        
+        // Add click handler for days
+        dayCells.forEach(cell => {
+          const schedules = getAllSchedulesOnDate(currentTrip.id, cell.dateStr);
+          if (schedules.length > 0) {
+            cell.element.style.cursor = 'pointer';
+            cell.element.onclick = () => showDateSchedules(cell.dateStr);
+          }
+        });
+        
+        grid.appendChild(weekEl);
+      }
     }
 
     // Show All Schedules on Date
