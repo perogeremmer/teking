@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Trip - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <style>
+    /* Custom Calendar Styles (reuse dari trip-schedule.html) */
+    .calendar-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e2e8f0;
+      gap: 1px;
+      display: flex;
+      flex-direction: column;
+    }
+    .week-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #e2e8f0;
+      min-height: 120px;
+      position: relative;
+    }
+    .day-cell {
+      background: white;
+      padding: 4px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+    .day-cell.other-month {
+      background: #f8fafc;
+      color: #cbd5e1;
+    }
+    .day-cell.today {
+      background: #fff7ed;
+    }
+    .day-number {
+      font-weight: 600;
+      color: #374151;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+    .day-cell.today .day-number {
+      background-color: #f97316;
+      color: white;
+    }
+    .day-cell.other-month .day-number {
+      color: #cbd5e1;
+    }
+    
+    /* Event bars that span across days */
+    .event-bar {
+      position: absolute;
+      height: 20px;
+      font-size: 9px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      cursor: pointer;
+      z-index: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      top: 32px;
+    }
+    .event-bar:hover {
+      opacity: 0.85;
+    }
+    .event-bar.row-0 { top: 32px; }
+    .event-bar.row-1 { top: 54px; }
+    .event-bar.row-2 { top: 76px; }
+    .event-bar.row-3 { top: 98px; }
+    
+    .event-bar-start {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    .event-bar-end {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .event-bar-mid {
+      border-radius: 0;
+    }
+    .event-bar-single {
+      border-radius: 4px;
+    }
+    
+    .event-color-1 { background-color: #f97316; }
+    .event-color-2 { background-color: #ea580c; }
+    .event-color-3 { background-color: #d97706; }
+    .event-color-4 { background-color: #ca8a04; }
+    .event-color-5 { background-color: #dc2626; }
+    
+    .calendar-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      margin-bottom: 1px;
+    }
+    .calendar-header-day {
+      text-align: center;
+      padding: 8px 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Detail Trip</h1>
+      </div>
+      <div class="header-right">
+        <a href="index.html" class="btn btn-secondary">← Kembali ke List</a>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <!-- Info Trip Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📋 Informasi Trip</span>
+          <a href="form.html" id="edit-trip-btn" class="btn btn-primary">✏️ Edit Trip</a>
+        </div>
+        <div class="card-body" id="trip-info">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+      
+      <!-- Jadwal Trip Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📅 Jadwal Trip - Mei 2026</span>
+          <a href="schedule-form.html" id="add-schedule-btn" class="btn btn-primary">➕ Tambah Jadwal</a>
+        </div>
+        <div class="card-body">
+          
+          <!-- Calendar Header -->
+          <div class="calendar-header">
+            <div class="calendar-header-day">Sen</div>
+            <div class="calendar-header-day">Sel</div>
+            <div class="calendar-header-day">Rab</div>
+            <div class="calendar-header-day">Kam</div>
+            <div class="calendar-header-day">Jum</div>
+            <div class="calendar-header-day">Sab</div>
+            <div class="calendar-header-day">Min</div>
+          </div>
+          
+          <!-- Calendar Grid -->
+          <div id="calendar-grid" class="calendar-wrapper"></div>
+          
+        </div>
+      </div>
+      
+      <!-- List Jadwal Card -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📋 Daftar Jadwal</span>
+        </div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Kuota Total</th>
+                <th>Sisa Kuota</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="schedules-table">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    let currentTrip = null;
+    let currentDate = new Date(2026, 4, 1); // Mei 2026
+    const scheduleColors = [
+      'event-color-1',
+      'event-color-2', 
+      'event-color-3',
+      'event-color-4',
+      'event-color-5'
+    ];
+
+    function loadTripDetail() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tripId = urlParams.get('id');
+      
+      if (!tripId) {
+        alert('Trip ID tidak ditemukan');
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      currentTrip = getTripById(tripId);
+      if (!currentTrip) {
+        alert('Trip tidak ditemukan');
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Update page title
+      document.title = `${currentTrip.name} - Admin Operator`;
+      
+      // Update buttons
+      document.getElementById('edit-trip-btn').href = `form.html?id=${tripId}`;
+      document.getElementById('add-schedule-btn').href = `schedule-form.html?trip=${tripId}`;
+      
+      // Render info
+      renderTripInfo();
+      renderCalendar();
+      renderSchedulesTable();
+    }
+
+    function renderTripInfo() {
+      const mountain = getMountainByTrip(currentTrip.id);
+      const container = document.getElementById('trip-info');
+      
+      container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+          <div>
+            <p><strong style="color: #64748b;">Nama Trip:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.name}</p>
+            
+            <p><strong style="color: #64748b;">Gunung:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${mountain?.name || '-'}</p>
+            
+            <p><strong style="color: #64748b;">Route/Jalur:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.route}</p>
+            
+            <p><strong style="color: #64748b;">Durasi:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.duration}</p>
+          </div>
+          
+          <div>
+            <p><strong style="color: #64748b;">Harga:</strong></p>
+            <p style="font-weight: 600; font-size: 18px; color: #f97316; margin-bottom: 12px;">${formatCurrency(currentTrip.price)}</p>
+            
+            <p><strong style="color: #64748b;">Meeting Point:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.meeting_point}</p>
+            
+            <p><strong style="color: #64748b;">Fasilitas:</strong></p>
+            <p style="margin-bottom: 12px;">${currentTrip.includes.join(', ')}</p>
+            
+            <p><strong style="color: #64748b;">Jumlah Jadwal:</strong></p>
+            <p style="font-weight: 600;">${currentTrip.schedules.length} jadwal</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      const firstDay = new Date(year, month, 1);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - ((firstDay.getDay() + 6) % 7)); // Start from Monday
+      
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      grid.className = 'calendar-wrapper';
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Process week by week
+      for (let week = 0; week < 6; week++) {
+        const weekStart = new Date(startDate);
+        weekStart.setDate(startDate.getDate() + (week * 7));
+        
+        const weekEl = document.createElement('div');
+        weekEl.className = 'week-row';
+        
+        const dayCells = [];
+        
+        // Generate 7 day cells
+        for (let day = 0; day < 7; day++) {
+          const cellDate = new Date(weekStart);
+          cellDate.setDate(weekStart.getDate() + day);
+          
+          const dayEl = document.createElement('div');
+          dayEl.className = 'day-cell';
+          
+          if (cellDate.getMonth() !== month) {
+            dayEl.classList.add('other-month');
+          }
+          
+          const cellDateStr = dayjs(cellDate).format('YYYY-MM-DD');
+          const todayStr = dayjs(today).format('YYYY-MM-DD');
+          
+          if (cellDateStr === todayStr) {
+            dayEl.classList.add('today');
+          }
+          
+          const dayNumber = document.createElement('div');
+          dayNumber.className = 'day-number';
+          dayNumber.textContent = cellDate.getDate();
+          dayEl.appendChild(dayNumber);
+          
+          dayCells.push({
+            element: dayEl,
+            date: cellDate,
+            dateStr: cellDateStr
+          });
+          
+          weekEl.appendChild(dayEl);
+        }
+        
+        // Find all events that overlap with this week
+        const weekEvents = [];
+        const weekStartStr = dayjs(dayCells[0].date).format('YYYY-MM-DD');
+        const weekEndStr = dayjs(dayCells[6].date).format('YYYY-MM-DD');
+        
+        currentTrip.schedules.forEach((sched, schedIdx) => {
+          const schedStart = dayjs(sched.date_start);
+          const schedEnd = dayjs(sched.date_end);
+          
+          if (schedStart.isAfter(weekEndStr) || schedEnd.isBefore(weekStartStr)) {
+            return;
+          }
+          
+          let visibleStart = schedStart.isBefore(weekStartStr) ? dayjs(weekStartStr) : schedStart;
+          let visibleEnd = schedEnd.isAfter(weekEndStr) ? dayjs(weekEndStr) : schedEnd;
+          
+          const startDayIndex = visibleStart.day() === 0 ? 6 : visibleStart.day() - 1;
+          const endDayIndex = visibleEnd.day() === 0 ? 6 : visibleEnd.day() - 1;
+          
+          weekEvents.push({
+            schedule: sched,
+            colorClass: scheduleColors[schedIdx % scheduleColors.length],
+            startIndex: startDayIndex,
+            endIndex: endDayIndex,
+            isStart: schedStart.format('YYYY-MM-DD') === visibleStart.format('YYYY-MM-DD'),
+            isEnd: schedEnd.format('YYYY-MM-DD') === visibleEnd.format('YYYY-MM-DD'),
+            startMonth: schedStart.format('MMM'),
+            endMonth: schedEnd.format('MMM')
+          });
+        });
+        
+        // Sort events by start index, then by duration (longer first)
+        weekEvents.sort((a, b) => {
+          if (a.startIndex !== b.startIndex) return a.startIndex - b.startIndex;
+          return (b.endIndex - b.startIndex) - (a.endIndex - a.startIndex);
+        });
+        
+        // Assign rows to events (stack overlapping events)
+        const rowAssignments = [];
+        weekEvents.forEach(event => {
+          let row = 0;
+          while (rowAssignments[row] && rowAssignments[row].some(assigned => 
+            !(event.endIndex < assigned.startIndex || event.startIndex > assigned.endIndex)
+          )) {
+            row++;
+          }
+          if (!rowAssignments[row]) rowAssignments[row] = [];
+          rowAssignments[row].push(event);
+          event.row = row;
+        });
+        
+        // Render event bars
+        weekEvents.forEach(event => {
+          const barEl = document.createElement('div');
+          barEl.className = `event-bar ${event.colorClass} row-${event.row}`;
+          
+          const dayWidth = 100 / 7;
+          const left = event.startIndex * dayWidth;
+          const width = (event.endIndex - event.startIndex + 1) * dayWidth;
+          
+          barEl.style.left = `${left}%`;
+          barEl.style.width = `${width}%`;
+          
+          if (event.isStart && event.isEnd) {
+            barEl.classList.add('event-bar-single');
+          } else if (event.isStart) {
+            barEl.classList.add('event-bar-start');
+          } else if (event.isEnd) {
+            barEl.classList.add('event-bar-end');
+          } else {
+            barEl.classList.add('event-bar-mid');
+          }
+          
+          if (event.isStart || (event.isStart && event.isEnd)) {
+            const title = event.startMonth === event.endMonth 
+              ? `${dayjs(event.schedule.date_start).format('D')}-${dayjs(event.schedule.date_end).format('D')} ${event.startMonth}`
+              : `${dayjs(event.schedule.date_start).format('D MMM')}-${dayjs(event.schedule.date_end).format('D MMM')}`;
+            barEl.textContent = title;
+          }
+          
+          barEl.onclick = (e) => {
+            e.stopPropagation();
+            editSchedule(event.schedule.id);
+          };
+          
+          weekEl.appendChild(barEl);
+        });
+        
+        grid.appendChild(weekEl);
+      }
+    }
+
+    function renderSchedulesTable() {
+      const tbody = document.getElementById('schedules-table');
+      
+      tbody.innerHTML = currentTrip.schedules.map((sched, idx) => {
+        const isFull = sched.quota_remaining === 0;
+        const isLow = sched.quota_remaining < 5 && !isFull;
+        
+        return `
+          <tr>
+            <td>${formatDate(sched.date_start)} - ${formatDate(sched.date_end)}</td>
+            <td>${sched.quota_total}</td>
+            <td>${sched.quota_remaining}</td>
+            <td>
+              ${isFull ? '<span class="badge badge-cancelled">Penuh</span>' : 
+                isLow ? '<span class="badge badge-pending">Hampir Penuh</span>' : 
+                '<span class="badge badge-confirmed">Tersedia</span>'}
+            </td>
+            <td>
+              <button class="btn btn-sm btn-secondary" onclick="editSchedule('${sched.id}')">✏️ Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="deleteSchedule('${sched.id}')">🗑️ Hapus</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function editSchedule(scheduleId) {
+      window.location.href = `schedule-form.html?trip=${currentTrip.id}&schedule=${scheduleId}`;
+    }
+
+    function deleteSchedule(scheduleId) {
+      if (confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
+        alert('🗑️ Jadwal dihapus (Demo)');
+        // In real app, delete from data and re-render
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadTripDetail();
+    });
+  </script>
+</body>
+</html>

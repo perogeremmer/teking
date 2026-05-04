@@ -47,7 +47,6 @@ function renderSidebar() {
   const menuItems = [
     { href: basePath + 'index.html', icon: '📊', label: 'Dashboard' },
     { href: basePath + 'trips/index.html', icon: '🏔️', label: 'Manajemen Trip' },
-    { href: basePath + 'schedules/index.html', icon: '📅', label: 'Jadwal Trip' },
     { href: basePath + 'bookings/index.html', icon: '📝', label: 'Manajemen Booking' },
     { href: basePath + 'reports/revenue.html', icon: '💰', label: 'Laporan' },
     { href: basePath + 'profile/index.html', icon: '⚙️', label: 'Pengaturan' },

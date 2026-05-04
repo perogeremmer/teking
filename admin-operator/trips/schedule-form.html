@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Jadwal - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Tambah/Edit Jadwal</h1>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="card">
+        <div class="card-body">
+          
+          <form id="schedule-form" onsubmit="saveSchedule(event)">
+            
+            <div class="form-group">
+              <label class="form-label">Trip *</label>
+              <select class="form-select" id="schedule-trip" required>
+                <option value="">Pilih Trip</option>
+              </select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+              <div class="form-group">
+                <label class="form-label">Tanggal Mulai *</label>
+                <input type="date" class="form-input" id="schedule-start" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Tanggal Selesai *</label>
+                <input type="date" class="form-input" id="schedule-end" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Kuota Total *</label>
+                <input type="number" class="form-input" id="schedule-quota" min="1" placeholder="15" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Sisa Kuota *</label>
+                <input type="number" class="form-input" id="schedule-remaining" min="0" placeholder="15" required>
+                <span style="font-size: 12px; color: #64748b; margin-top: 4px; display: block;">Bisa diatur manual atau otomatis = kuota total</span>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+              <button type="submit" class="btn btn-primary">💾 Simpan Jadwal</button>
+              <a href="" id="cancel-btn" class="btn btn-secondary">❌ Batal</a>
+            </div>
+            
+          </form>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    let editingSchedule = null;
+    let currentTripId = null;
+
+    function loadTripOptions() {
+      const select = document.getElementById('schedule-trip');
+      const trips = getOperatorTrips();
+      
+      trips.forEach(trip => {
+        const option = document.createElement('option');
+        option.value = trip.id;
+        option.textContent = trip.name;
+        select.appendChild(option);
+      });
+      
+      // Check URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const tripId = urlParams.get('trip');
+      const scheduleId = urlParams.get('schedule');
+      
+      if (tripId) {
+        select.value = tripId;
+        currentTripId = tripId;
+        document.getElementById('cancel-btn').href = `detail.html?id=${tripId}`;
+        
+        if (scheduleId) {
+          // Edit mode
+          const trip = getTripById(tripId);
+          const schedule = trip?.schedules.find(s => s.id === scheduleId);
+          if (schedule) {
+            editingSchedule = schedule;
+            document.getElementById('schedule-start').value = schedule.date_start;
+            document.getElementById('schedule-end').value = schedule.date_end;
+            document.getElementById('schedule-quota').value = schedule.quota_total;
+            document.getElementById('schedule-remaining').value = schedule.quota_remaining;
+            document.title = 'Edit Jadwal - Admin Operator';
+          }
+        }
+      } else {
+        document.getElementById('cancel-btn').href = 'index.html';
+      }
+    }
+
+    function saveSchedule(e) {
+      e.preventDefault();
+      
+      const tripId = document.getElementById('schedule-trip').value;
+      const dateStart = document.getElementById('schedule-start').value;
+      const dateEnd = document.getElementById('schedule-end').value;
+      const quotaTotal = parseInt(document.getElementById('schedule-quota').value);
+      const quotaRemaining = parseInt(document.getElementById('schedule-remaining').value);
+      
+      if (!tripId || !dateStart || !dateEnd) {
+        alert('⚠️ Semua field wajib diisi!');
+        return;
+      }
+      
+      if (quotaRemaining > quotaTotal) {
+        alert('⚠️ Sisa kuota tidak boleh lebih besar dari kuota total!');
+        return;
+      }
+      
+      const trip = getTripById(tripId);
+      
+      if (editingSchedule) {
+        // Update existing
+        editingSchedule.date_start = dateStart;
+        editingSchedule.date_end = dateEnd;
+        editingSchedule.quota_total = quotaTotal;
+        editingSchedule.quota_remaining = quotaRemaining;
+        alert('✅ Jadwal berhasil diupdate!');
+      } else {
+        // Create new
+        const newSchedule = {
+          id: `sched-${tripId}-${Date.now()}`,
+          date_start: dateStart,
+          date_end: dateEnd,
+          quota_total: quotaTotal,
+          quota_remaining: quotaRemaining
+        };
+        trip.schedules.push(newSchedule);
+        alert('✅ Jadwal baru berhasil ditambahkan!');
+      }
+      
+      // Redirect back to detail
+      window.location.href = `detail.html?id=${tripId}`;
+    }
+
+    // Auto set remaining = total when total changes (optional convenience)
+    document.getElementById('schedule-quota').addEventListener('change', function() {
+      if (!editingSchedule) {
+        document.getElementById('schedule-remaining').value = this.value;
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadTripOptions();
+    });
+  </script>
+</body>
+</html>
