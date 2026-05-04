@@ -235,12 +235,26 @@
       currentOperator = getOperatorByTrip(tripId);
       currentMountain = getMountainByTrip(tripId);
       
-      // Get schedule (from URL param or first schedule)
+      // Get schedule (from URL param, sessionStorage, or first schedule)
       let schedule = currentTrip.schedules[0];
+      
+      // Check sessionStorage first (from calendar booking)
+      const storedSelection = sessionStorage.getItem('selectedSchedule');
+      if (storedSelection) {
+        const parsed = JSON.parse(storedSelection);
+        if (parsed.tripId === tripId && parsed.scheduleId) {
+          const foundSchedule = getScheduleById(tripId, parsed.scheduleId);
+          if (foundSchedule) schedule = foundSchedule;
+        }
+        sessionStorage.removeItem('selectedSchedule');
+      }
+      
+      // Then check URL param
       if (scheduleId) {
         const foundSchedule = getScheduleById(tripId, scheduleId);
         if (foundSchedule) schedule = foundSchedule;
       }
+      
       selectedSchedule = schedule;
       
       // Update UI with selected schedule
@@ -380,8 +394,8 @@
         return;
       }
       
-      if (participants > currentTrip.quota_remaining) {
-        showToast(`Kuota tidak mencukupi. Sisa hanya ${currentTrip.quota_remaining} slot`, 'error');
+      if (participants > selectedSchedule.quota_remaining) {
+        showToast(`Kuota tidak mencukupi. Sisa hanya ${selectedSchedule.quota_remaining} slot`, 'error');
         return;
       }
       

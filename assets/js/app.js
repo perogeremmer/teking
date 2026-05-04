@@ -260,15 +260,15 @@ const TRIPS = [
     ],
     schedules: [
       { id: 'sched-c1-1', date_start: '2024-05-14', date_end: '2024-05-16', quota_total: 15, quota_remaining: 9 },
-      { id: 'sched-c1-2', date_start: '2024-05-21', date_end: '2024-05-23', quota_total: 15, quota_remaining: 11 },
-      { id: 'sched-c1-3', date_start: '2024-05-28', date_end: '2024-05-30', quota_total: 15, quota_remaining: 15 },
-      { id: 'sched-c1-4', date_start: '2024-06-04', date_end: '2024-06-06', quota_total: 15, quota_remaining: 12 },
-      { id: 'sched-c1-5', date_start: '2024-06-11', date_end: '2024-06-13', quota_total: 15, quota_remaining: 8 },
-      { id: 'sched-c1-6', date_start: '2024-06-18', date_end: '2024-06-20', quota_total: 15, quota_remaining: 14 },
-      { id: 'sched-c1-7', date_start: '2024-06-25', date_end: '2024-06-27', quota_total: 15, quota_remaining: 10 },
-      { id: 'sched-c1-8', date_start: '2024-07-02', date_end: '2024-07-04', quota_total: 15, quota_remaining: 15 },
-      { id: 'sched-c1-9', date_start: '2024-07-09', date_end: '2024-07-11', quota_total: 15, quota_remaining: 7 },
-      { id: 'sched-c1-10', date_start: '2024-07-16', date_end: '2024-07-18', quota_total: 15, quota_remaining: 13 }
+      { id: 'sched-c1-2', date_start: '2024-05-15', date_end: '2024-05-17', quota_total: 15, quota_remaining: 11 },
+      { id: 'sched-c1-3', date_start: '2024-05-21', date_end: '2024-05-23', quota_total: 15, quota_remaining: 11 },
+      { id: 'sched-c1-4', date_start: '2024-05-28', date_end: '2024-05-30', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-c1-5', date_start: '2024-06-04', date_end: '2024-06-06', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-c1-6', date_start: '2024-06-11', date_end: '2024-06-13', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-c1-7', date_start: '2024-06-18', date_end: '2024-06-20', quota_total: 15, quota_remaining: 14 },
+      { id: 'sched-c1-8', date_start: '2024-06-25', date_end: '2024-06-27', quota_total: 15, quota_remaining: 10 },
+      { id: 'sched-c1-9', date_start: '2024-07-02', date_end: '2024-07-04', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-c1-10', date_start: '2024-07-09', date_end: '2024-07-11', quota_total: 15, quota_remaining: 7 }
     ]
   },
   // --- CIREMAI - Linggarjati (Tiga Dewa) ---
@@ -802,6 +802,30 @@ function getScheduleByDate(tripId, dateStr) {
 function getScheduleDates(tripId) {
   const schedules = getTripSchedules(tripId);
   return schedules.map(s => s.date_start);
+}
+
+function getAllSchedulesOnDate(tripId, dateStr) {
+  const schedules = getTripSchedules(tripId);
+  const checkDate = new Date(dateStr + 'T00:00:00');
+  
+  return schedules.filter(s => {
+    const start = new Date(s.date_start + 'T00:00:00');
+    const end = new Date(s.date_end + 'T00:00:00');
+    return checkDate >= start && checkDate <= end;
+  }).map(s => {
+    const start = new Date(s.date_start + 'T00:00:00');
+    const end = new Date(s.date_end + 'T00:00:00');
+    let type = 'mid';
+    if (start.getTime() === end.getTime()) type = 'single';
+    else if (checkDate.getTime() === start.getTime()) type = 'start';
+    else if (checkDate.getTime() === end.getTime()) type = 'end';
+    
+    return { ...s, position_type: type };
+  });
+}
+
+function getScheduleCountOnDate(tripId, dateStr) {
+  return getAllSchedulesOnDate(tripId, dateStr).length;
 }
 
 // ============================================
