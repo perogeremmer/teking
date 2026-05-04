@@ -259,16 +259,32 @@ const TRIPS = [
       { id: 'sleeping_bag', name: 'Sleeping Bag', price: 35000, icon: '🛏️' }
     ],
     schedules: [
-      { id: 'sched-c1-1', date_start: '2026-05-14', date_end: '2026-05-16', quota_total: 15, quota_remaining: 9 },
-      { id: 'sched-c1-2', date_start: '2026-05-15', date_end: '2026-05-17', quota_total: 15, quota_remaining: 11 },
-      { id: 'sched-c1-3', date_start: '2026-05-21', date_end: '2026-05-23', quota_total: 15, quota_remaining: 11 },
-      { id: 'sched-c1-4', date_start: '2026-05-28', date_end: '2026-05-30', quota_total: 15, quota_remaining: 15 },
-      { id: 'sched-c1-5', date_start: '2026-06-04', date_end: '2026-06-06', quota_total: 15, quota_remaining: 12 },
-      { id: 'sched-c1-6', date_start: '2026-06-11', date_end: '2026-06-13', quota_total: 15, quota_remaining: 8 },
-      { id: 'sched-c1-7', date_start: '2026-06-18', date_end: '2026-06-20', quota_total: 15, quota_remaining: 14 },
-      { id: 'sched-c1-8', date_start: '2026-06-25', date_end: '2026-06-27', quota_total: 15, quota_remaining: 10 },
-      { id: 'sched-c1-9', date_start: '2026-07-02', date_end: '2026-07-04', quota_total: 15, quota_remaining: 15 },
-      { id: 'sched-c1-10', date_start: '2026-07-09', date_end: '2026-07-11', quota_total: 15, quota_remaining: 7 }
+      // MEI 2026 - Banyak overlapping untuk demo
+      { id: 'sched-c1-m1', date_start: '2026-05-01', date_end: '2026-05-03', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-c1-m2', date_start: '2026-05-02', date_end: '2026-05-04', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-c1-m3', date_start: '2026-05-05', date_end: '2026-05-07', quota_total: 15, quota_remaining: 5 },
+      { id: 'sched-c1-m4', date_start: '2026-05-06', date_end: '2026-05-08', quota_total: 15, quota_remaining: 14 },
+      { id: 'sched-c1-m5', date_start: '2026-05-09', date_end: '2026-05-11', quota_total: 15, quota_remaining: 10 },
+      { id: 'sched-c1-m6', date_start: '2026-05-10', date_end: '2026-05-12', quota_total: 15, quota_remaining: 7 },
+      // Triple overlap di minggu ke-3!
+      { id: 'sched-c1-m7', date_start: '2026-05-13', date_end: '2026-05-15', quota_total: 15, quota_remaining: 9 },
+      { id: 'sched-c1-m8', date_start: '2026-05-14', date_end: '2026-05-16', quota_total: 15, quota_remaining: 6 },
+      { id: 'sched-c1-m9', date_start: '2026-05-15', date_end: '2026-05-17', quota_total: 15, quota_remaining: 11 },
+      { id: 'sched-c1-m10', date_start: '2026-05-18', date_end: '2026-05-20', quota_total: 15, quota_remaining: 13 },
+      { id: 'sched-c1-m11', date_start: '2026-05-19', date_end: '2026-05-21', quota_total: 15, quota_remaining: 4 },
+      { id: 'sched-c1-m12', date_start: '2026-05-22', date_end: '2026-05-24', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-c1-m13', date_start: '2026-05-23', date_end: '2026-05-25', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-c1-m14', date_start: '2026-05-26', date_end: '2026-05-28', quota_total: 15, quota_remaining: 10 },
+      { id: 'sched-c1-m15', date_start: '2026-05-27', date_end: '2026-05-29', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-c1-m16', date_start: '2026-05-29', date_end: '2026-05-31', quota_total: 15, quota_remaining: 7 },
+      // JUNI 2026
+      { id: 'sched-c1-j1', date_start: '2026-06-04', date_end: '2026-06-06', quota_total: 15, quota_remaining: 12 },
+      { id: 'sched-c1-j2', date_start: '2026-06-11', date_end: '2026-06-13', quota_total: 15, quota_remaining: 8 },
+      { id: 'sched-c1-j3', date_start: '2026-06-18', date_end: '2026-06-20', quota_total: 15, quota_remaining: 14 },
+      { id: 'sched-c1-j4', date_start: '2026-06-25', date_end: '2026-06-27', quota_total: 15, quota_remaining: 10 },
+      // JULI 2026
+      { id: 'sched-c1-ju1', date_start: '2026-07-02', date_end: '2026-07-04', quota_total: 15, quota_remaining: 15 },
+      { id: 'sched-c1-ju2', date_start: '2026-07-09', date_end: '2026-07-11', quota_total: 15, quota_remaining: 7 }
     ]
   },
   // --- CIREMAI - Linggarjati (Tiga Dewa) ---
