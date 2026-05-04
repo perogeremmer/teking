@@ -387,8 +387,12 @@
       document.getElementById('tag-input').value = '';
       // Re-show suggestions with remaining options
       showSuggestions('');
-      // Keep focus on input
-      document.getElementById('tag-input').focus();
+      // Trick to keep dropdown open: blur then refocus
+      const input = document.getElementById('tag-input');
+      input.blur();
+      setTimeout(() => {
+        input.focus();
+      }, 10);
     }
     
     function hideSuggestions() {
