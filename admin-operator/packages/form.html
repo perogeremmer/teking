@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Paket - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <style>
+    .facility-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .facility-checkbox:hover {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    
+    .facility-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #059669;
+      cursor: pointer;
+    }
+    
+    .facility-checkbox.checked {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    
+    .facilities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .custom-facility {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title" id="page-title">Tambah Paket</h1>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="card">
+        <div class="card-body">
+          <form id="package-form" onsubmit="savePackage(event)">
+            
+            <div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+              <div class="form-group">
+                <label class="form-label">Nama Paket *</label>
+                <input type="text" class="form-input" id="pkg-name" placeholder="Contoh: Paket Standard" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Harga (Rp) *</label>
+                <input type="number" class="form-input" id="pkg-price" placeholder="850000" required>
+              </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 16px;">
+              <label class="form-label">Deskripsi</label>
+              <textarea class="form-input" id="pkg-description" rows="2" placeholder="Deskripsi singkat paket..."></textarea>
+            </div>
+            
+            <!-- Fasilitas Section -->
+            <div class="card" style="margin-top: 24px;">
+              <div class="card-header">
+                <span class="card-title">🎒 Fasilitas Include</span>
+              </div>
+              <div class="card-body">
+                <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">
+                  Pilih fasilitas yang termasuk dalam paket ini. Centang fasilitas yang tersedia.
+                </p>
+                
+                <div class="facilities-grid" id="facilities-grid">
+                  <!-- Rendered by JS -->
+                </div>
+                
+                <div class="custom-facility">
+                  <input type="text" class="form-input" id="custom-facility-input" placeholder="Tambah fasilitas lain..." style="flex: 1;">
+                  <button type="button" class="btn btn-secondary" onclick="addCustomFacility()">Tambah</button>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+              <button type="submit" class="btn btn-primary">💾 Simpan Paket</button>
+              <a href="index.html" class="btn btn-secondary">❌ Batal</a>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    let editingId = null;
+    let selectedFacilities = [];
+    
+    // Common facilities list
+    const COMMON_FACILITIES = [
+      'Transportasi PP',
+      'Transportasi dari kota',
+      'Makan selama trip',
+      'Makan (3x)',
+      'Makan (5x)',
+      'Makan (10x)',
+      'Tenda',
+      'Tenda & cooking set',
+      'Tenda premium',
+      'Carrier 60L',
+      'Sleeping bag',
+      'Guide berpengalaman',
+      'Guide lokal',
+      'Guide bersertifikat',
+      'P3K',
+      'P3K lengkap',
+      'Asuransi',
+      'Asuransi jiwa',
+      'Dokumentasi',
+      'Dokumentasi drone',
+      'Drone & GoPro',
+      'Porter',
+      'Porter profesional',
+      'Snack & mineral water',
+      'Jeep 4WD',
+      'Parkir',
+      'Izin pendakian',
+      'Api unggun',
+      'Kegiatan edukasi',
+      'Games & fun'
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      renderFacilities();
+      loadPackageData();
+    });
+
+    function renderFacilities() {
+      const container = document.getElementById('facilities-grid');
+      
+      container.innerHTML = COMMON_FACILITIES.map(f => `
+        <label class="facility-checkbox ${selectedFacilities.includes(f) ? 'checked' : ''}">
+          <input type="checkbox" value="${f}" 
+            ${selectedFacilities.includes(f) ? 'checked' : ''} 
+            onchange="toggleFacility(this)">
+          <span>${f}</span>
+        </label>
+      `).join('');
+    }
+
+    function toggleFacility(checkbox) {
+      const value = checkbox.value;
+      const label = checkbox.closest('.facility-checkbox');
+      
+      if (checkbox.checked) {
+        if (!selectedFacilities.includes(value)) {
+          selectedFacilities.push(value);
+        }
+        label.classList.add('checked');
+      } else {
+        selectedFacilities = selectedFacilities.filter(f => f !== value);
+        label.classList.remove('checked');
+      }
+    }
+
+    function addCustomFacility() {
+      const input = document.getElementById('custom-facility-input');
+      const value = input.value.trim();
+      
+      if (value && !selectedFacilities.includes(value) && !COMMON_FACILITIES.includes(value)) {
+        selectedFacilities.push(value);
+        input.value = '';
+        renderFacilities();
+      }
+    }
+
+    function savePackage(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('pkg-name').value.trim();
+      const price = parseInt(document.getElementById('pkg-price').value);
+      
+      if (!name || isNaN(price)) {
+        alert('Harap isi nama dan harga');
+        return;
+      }
+      
+      if (selectedFacilities.length === 0) {
+        alert('Pilih minimal 1 fasilitas');
+        return;
+      }
+      
+      const packageData = {
+        id: editingId || 'pkg-' + Date.now(),
+        name,
+        price,
+        description: document.getElementById('pkg-description').value.trim(),
+        includes: [...selectedFacilities],
+        operator_id: CURRENT_OPERATOR_ID
+      };
+      
+      if (editingId) {
+        const index = PACKAGES.findIndex(pkg => pkg.id === editingId);
+        if (index > -1) {
+          PACKAGES[index] = packageData;
+        }
+      } else {
+        PACKAGES.push(packageData);
+      }
+      
+      alert('✅ Paket berhasil disimpan!');
+      window.location.href = 'index.html';
+    }
+
+    function loadPackageData() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const packageId = urlParams.get('id');
+      
+      if (packageId) {
+        const pkg = getPackageById(packageId);
+        if (pkg) {
+          editingId = packageId;
+          document.getElementById('page-title').textContent = 'Edit Paket';
+          
+          document.getElementById('pkg-name').value = pkg.name;
+          document.getElementById('pkg-price').value = pkg.price;
+          document.getElementById('pkg-description').value = pkg.description || '';
+          
+          if (pkg.includes) {
+            selectedFacilities = [...pkg.includes];
+            renderFacilities();
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

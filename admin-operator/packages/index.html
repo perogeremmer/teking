@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paket - Admin Operator</title>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+  
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <img src="" alt="" class="operator-logo">
+      <div>
+        <h2 class="operator-name"></h2>
+        <span>Operator Open Trip</span>
+      </div>
+    </div>
+    <nav class="sidebar-menu"></nav>
+  </aside>
+  
+  <div class="sidebar-overlay"></div>
+  
+  <div class="admin-main">
+    
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <h1 class="header-title">Paket</h1>
+      </div>
+      <div class="header-right">
+        <button class="notification-btn">🔔</button>
+        <div class="user-profile" onclick="logout()">
+          <img src="" alt="" class="operator-logo">
+          <span class="operator-name"></span>
+        </div>
+      </div>
+    </header>
+    
+    <div class="admin-content">
+      
+      <div class="search-bar">
+        <input type="text" class="search-input" id="search-package" placeholder="🔍 Cari paket..." onkeyup="filterPackages()">
+        <a href="form.html" class="btn btn-primary">➕ Tambah Paket</a>
+      </div>
+      
+      <div class="card">
+        <div class="card-body">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nama Paket</th>
+                <th>Harga</th>
+                <th>Fasilitas</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="packages-table">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div style="margin-top: 16px; padding: 16px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #059669;">
+        <p style="margin: 0; font-size: 14px; color: #065f46;">
+          <strong>💡 Tips:</strong> Paket yang sudah dibuat dapat dipilih saat menambah trip baru. 
+          Harga dan fasilitas akan otomatis terisi.
+        </p>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="../../assets/js/app.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    function loadPackages() {
+      const packages = getPackagesByOperator(CURRENT_OPERATOR_ID);
+      const tbody = document.getElementById('packages-table');
+      
+      if (packages.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">
+              Belum ada paket. <a href="form.html" style="color: #f97316;">Tambah paket pertama</a>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = packages.map(pkg => {
+        return `
+          <tr>
+            <td>
+              <strong>${pkg.name}</strong><br>
+              <span style="font-size: 12px; color: #64748b;">${pkg.description || '-'}</span>
+            </td>
+            <td style="font-weight: 700; color: #f97316;">${formatCurrency(pkg.price)}</td>
+            <td>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                ${pkg.includes.slice(0, 4).map(f => `
+                  <span style="font-size: 11px; padding: 2px 8px; background: #f1f5f9; border-radius: 4px; color: #475569;">${f}</span>
+                `).join('')}
+                ${pkg.includes.length > 4 ? `<span style="font-size: 11px; padding: 2px 8px; background: #f1f5f9; border-radius: 4px; color: #475569;">+${pkg.includes.length - 4}</span>` : ''}
+              </div>
+            </td>
+            <td>
+              <a href="form.html?id=${pkg.id}" class="btn btn-sm btn-secondary">✏️ Edit</a>
+              <button class="btn btn-sm btn-secondary" onclick="deletePackage('${pkg.id}')">🗑️ Hapus</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+    
+    function filterPackages() {
+      const search = document.getElementById('search-package').value.toLowerCase();
+      const rows = document.querySelectorAll('#packages-table tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(search) ? '' : 'none';
+      });
+    }
+    
+    function deletePackage(id) {
+      if (!confirm('Apakah Anda yakin ingin menghapus paket ini? Paket yang sedang digunakan di trip tidak dapat dihapus.')) {
+        return;
+      }
+      
+      // Check if package is used in any trip
+      const usedInTrips = TRIPS.filter(trip => trip.package_id === id);
+      if (usedInTrips.length > 0) {
+        alert('❌ Paket ini sedang digunakan di ' + usedInTrips.length + ' trip. Hapus dari trip terlebih dahulu.');
+        return;
+      }
+      
+      // Remove from PACKAGES array
+      const index = PACKAGES.findIndex(pkg => pkg.id === id);
+      if (index > -1) {
+        PACKAGES.splice(index, 1);
+        loadPackages();
+        alert('✅ Paket berhasil dihapus');
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initAdmin();
+      loadPackages();
+    });
+  </script>
+</body>
+</html>

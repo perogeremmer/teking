@@ -47,6 +47,7 @@ function renderSidebar() {
   const menuItems = [
     { href: basePath + 'index.html', icon: '📊', label: 'Dashboard' },
     { href: basePath + 'trips/index.html', icon: '🏔️', label: 'Manajemen Trip' },
+    { href: basePath + 'packages/index.html', icon: '📦', label: 'Paket' },
     { href: basePath + 'meeting-points/index.html', icon: '📍', label: 'Meeting Point' },
     { href: basePath + 'bookings/index.html', icon: '📝', label: 'Manajemen Booking' },
     { href: basePath + 'reports/revenue.html', icon: '💰', label: 'Laporan' },

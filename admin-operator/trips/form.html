@@ -404,16 +404,16 @@
               </div>
               
               <div class="form-group">
-                <label class="form-label">Harga Base (Rp) *</label>
-                <input type="number" class="form-input" id="trip-price" placeholder="850000" required>
-              </div>
-              
-              <div class="form-group">
                 <label class="form-label">Paket *</label>
                 <select class="form-input" id="trip-package" required onchange="onPackageChange()">
                   <option value="">Pilih paket...</option>
                 </select>
-                <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Fasilitas include akan otomatis mengikuti paket yang dipilih</p>
+                <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Harga dan fasilitas akan otomatis terisi</p>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Harga Paket (Rp)</label>
+                <input type="text" class="form-input" id="trip-price" readonly style="background: #f8fafc; color: #64748b;">
               </div>
             </div>
             
@@ -462,14 +462,16 @@
               </div>
             </div>
             
-            <!-- Harga Info -->
-            <div style="margin-top: 24px; padding: 16px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
-              <p style="margin: 0; font-size: 14px; color: #0369a1;">
-                <strong>💰 Info Harga:</strong> Harga yang dibayarkan customer = Harga Base ditambah harga masing-masing meeting point yang dipilih.
-              </p>
-              <p style="margin: 8px 0 0 0; font-size: 13px; color: #64748b;">
-                Contoh: Harga Base Rp 850.000 + Meeting Point 1 Rp 25.000 + Meeting Point 2 Rp 20.000 = Total Rp 895.000
-              </p>
+            <!-- Total Harga -->
+            <div id="price-summary" style="margin-top: 24px; padding: 20px; background: #fff7ed; border-radius: 8px; border: 2px solid #f97316; display: none;">
+              <h3 style="margin: 0 0 12px 0; font-size: 16px; color: #1e293b;">💰 Rincian Harga</h3>
+              <div id="price-breakdown" style="font-size: 14px; color: #64748b;">
+                <!-- Rendered by JS -->
+              </div>
+              <div style="margin-top: 12px; padding-top: 12px; border-top: 2px dashed #fed7aa; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 16px; font-weight: 600; color: #1e293b;">Total Harga</span>
+                <span id="total-price" style="font-size: 24px; font-weight: 700; color: #f97316;">Rp 0</span>
+              </div>
             </div>
             
             <div style="display: flex; gap: 12px; margin-top: 24px;">
@@ -648,20 +650,70 @@
     function onPackageChange() {
       const packageId = document.getElementById('trip-package').value;
       const container = document.getElementById('package-facilities');
+      const priceInput = document.getElementById('trip-price');
       
       if (!packageId) {
         container.innerHTML = '<span style="color: #94a3b8; font-size: 14px;">Pilih paket terlebih dahulu</span>';
+        priceInput.value = '';
+        updatePriceSummary();
         return;
       }
       
       const pkg = getPackageById(packageId);
       if (!pkg) return;
       
+      // Update price
+      priceInput.value = formatCurrency(pkg.price);
+      
+      // Update facilities
       container.innerHTML = pkg.includes.map(facility => `
         <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 20px; font-size: 14px; color: #15803d; font-weight: 600;">
           ✅ ${facility}
         </span>
       `).join('');
+      
+      updatePriceSummary();
+    }
+    
+    function updatePriceSummary() {
+      const packageId = document.getElementById('trip-package').value;
+      const summaryDiv = document.getElementById('price-summary');
+      const breakdownDiv = document.getElementById('price-breakdown');
+      const totalSpan = document.getElementById('total-price');
+      
+      if (!packageId) {
+        summaryDiv.style.display = 'none';
+        return;
+      }
+      
+      const pkg = getPackageById(packageId);
+      if (!pkg) return;
+      
+      let total = pkg.price;
+      let html = `
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span>${pkg.name}</span>
+          <span style="font-weight: 600;">${formatCurrency(pkg.price)}</span>
+        </div>
+      `;
+      
+      // Add meeting points
+      currentMeetingPoints.forEach(mpId => {
+        const mp = getMeetingPointById(mpId);
+        if (mp && mp.price_addition > 0) {
+          total += mp.price_addition;
+          html += `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #64748b;">📍 ${mp.name}</span>
+              <span style="font-weight: 600; color: #f97316;">+${formatCurrency(mp.price_addition)}</span>
+            </div>
+          `;
+        }
+      });
+      
+      breakdownDiv.innerHTML = html;
+      totalSpan.textContent = formatCurrency(total);
+      summaryDiv.style.display = 'block';
     }
 
     function renderSelectedMeetingPoints() {
@@ -669,6 +721,7 @@
       
       if (currentMeetingPoints.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 20px;">Belum ada meeting point yang dipilih.</p>';
+        updatePriceSummary();
         return;
       }
 
@@ -693,6 +746,8 @@
           </div>
         `;
       }).join('');
+      
+      updatePriceSummary();
     }
 
     // Meeting Point Modal Functions
@@ -1044,18 +1099,26 @@
     function saveTrip(e) {
       e.preventDefault();
       
+      const packageId = document.getElementById('trip-package').value;
+      const pkg = getPackageById(packageId);
+      
+      if (!packageId || !pkg) {
+        alert('Pilih paket terlebih dahulu');
+        return;
+      }
+      
       const tripData = {
         name: document.getElementById('trip-name').value,
         mountain_id: document.getElementById('trip-mountain').value,
         route: document.getElementById('trip-route').value,
         duration: document.getElementById('trip-duration').value,
-        price: parseInt(document.getElementById('trip-price').value),
-        package_id: document.getElementById('trip-package').value,
+        package_id: packageId,
         meeting_points: currentMeetingPoints
+        // Harga dihitung dari pkg.price + meeting_points saat ditampilkan
       };
       
       console.log('Saving trip:', tripData);
-      alert('✅ Trip berhasil disimpan! (Demo)\n\nMeeting Points: ' + currentMeetingPoints.length + ' titik');
+      alert('✅ Trip berhasil disimpan! (Demo)\n\nPaket: ' + pkg.name + '\nMeeting Points: ' + currentMeetingPoints.length + ' titik');
       window.location.href = 'index.html';
     }
 
@@ -1070,7 +1133,6 @@
           document.getElementById('trip-name').value = trip.name;
           document.getElementById('trip-mountain').value = trip.mountain_id || '';
           document.getElementById('trip-route').value = trip.route;
-          document.getElementById('trip-price').value = trip.price;
           
           // Load package
           if (trip.package_id) {

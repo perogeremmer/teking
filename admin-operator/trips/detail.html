@@ -284,19 +284,15 @@
           </div>
           
           <div>
-            <p><strong style="color: #64748b;">Harga:</strong></p>
-            <p style="font-weight: 600; font-size: 18px; color: #f97316; margin-bottom: 4px;">${formatCurrency(currentTrip.price)}</p>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-              *Harga base + harga meeting point yang dipilih
-            </p>
+            ${getPriceDisplay(currentTrip)}
+            
+            <p><strong style="color: #64748b;">Paket:</strong></p>
+            <p style="font-weight: 600; margin-bottom: 12px;">${getPackageDisplay(currentTrip)}</p>
             
             <p><strong style="color: #64748b;">Meeting Points:</strong></p>
             <div style="margin-bottom: 12px;">
               ${getMeetingPointsDisplay(currentTrip)}
             </div>
-            
-            <p><strong style="color: #64748b;">Paket:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${getPackageDisplay(currentTrip)}</p>
             
             <p><strong style="color: #64748b;">Jumlah Jadwal:</strong></p>
             <p style="font-weight: 600;">${currentTrip.schedules.length} jadwal</p>
@@ -535,6 +531,53 @@
       }
       
       return '-';
+    }
+
+    function getPriceDisplay(trip) {
+      let basePrice = 0;
+      let packageName = '-';
+      
+      // Get package price
+      if (trip.package_id) {
+        const pkg = getPackageById(trip.package_id);
+        if (pkg) {
+          basePrice = pkg.price;
+          packageName = pkg.name;
+        }
+      } else if (trip.price) {
+        // Backward compatibility
+        basePrice = trip.price;
+      }
+      
+      // Calculate meeting points total
+      let mpTotal = 0;
+      if (trip.meeting_points) {
+        trip.meeting_points.forEach(mpId => {
+          const mp = getMeetingPointById(mpId);
+          if (mp && mp.price_addition) {
+            mpTotal += mp.price_addition;
+          }
+        });
+      }
+      
+      const total = basePrice + mpTotal;
+      
+      return `
+        <div style="margin-bottom: 16px;">
+          <p style="margin: 0; color: #64748b; font-size: 14px;">Harga Paket (${packageName}):</p>
+          <p style="font-weight: 600; font-size: 18px; color: #f97316; margin: 4px 0;">${formatCurrency(basePrice)}</p>
+          
+          ${mpTotal > 0 ? `
+            <p style="margin: 8px 0 0 0; color: #64748b; font-size: 13px;">Tambahan Meeting Point:</p>
+            <p style="font-weight: 600; color: #f97316; margin: 4px 0;">+${formatCurrency(mpTotal)}</p>
+          ` : ''}
+          
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 2px dashed #fed7aa;">
+            <p style="margin: 0; font-size: 14px; color: #64748b;">Total Harga:</p>
+            <p style="font-weight: 700; font-size: 24px; color: #f97316; margin: 4px 0 0 0;">${formatCurrency(total)}</p>
+          </div>
+        </div>
+      `;
     }
 
     document.addEventListener('DOMContentLoaded', () => {

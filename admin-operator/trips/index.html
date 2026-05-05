@@ -75,6 +75,30 @@
   <script src="../../assets/js/app.js"></script>
   <script src="../assets/js/admin.js"></script>
   <script>
+    function getTripPrice(trip) {
+      let price = 0;
+      
+      // Get package price
+      if (trip.package_id) {
+        const pkg = getPackageById(trip.package_id);
+        if (pkg) price = pkg.price;
+      } else if (trip.price) {
+        price = trip.price;
+      }
+      
+      // Add meeting points
+      if (trip.meeting_points) {
+        trip.meeting_points.forEach(mpId => {
+          const mp = getMeetingPointById(mpId);
+          if (mp && mp.price_addition) {
+            price += mp.price_addition;
+          }
+        });
+      }
+      
+      return price;
+    }
+
     function loadTrips() {
       const trips = getOperatorTrips();
       const tbody = document.getElementById('trips-table');
@@ -83,6 +107,7 @@
         const mountain = getMountainByTrip(trip.id);
         const activeSchedules = trip.schedules.filter(s => s.quota_remaining > 0).length;
         const totalBookings = getOperatorBookings().filter(b => b.trip_id === trip.id).length;
+        const tripPrice = getTripPrice(trip);
         
         return `
           <tr>
@@ -91,7 +116,7 @@
               <span style="font-size: 12px; color: #64748b;">${trip.route} • ${trip.duration}</span>
             </td>
             <td>${mountain?.name || '-'}</td>
-            <td>${formatCurrency(trip.price)}</td>
+            <td>${formatCurrency(tripPrice)}</td>
             <td>${activeSchedules} jadwal</td>
             <td>${totalBookings} booking</td>
             <td>
