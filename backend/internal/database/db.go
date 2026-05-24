@@ -142,6 +142,16 @@ func migrate() error {
 		created_at DATETIME NOT NULL DEFAULT (datetime('now'))
 	);
 
+	CREATE TABLE IF NOT EXISTS customers (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		phone TEXT NOT NULL,
+		nik TEXT NOT NULL DEFAULT '',
+		email TEXT NOT NULL DEFAULT '',
+		password_hash TEXT NOT NULL DEFAULT '',
+		created_at DATETIME NOT NULL DEFAULT (datetime('now'))
+	);
+
 	CREATE TABLE IF NOT EXISTS bookings (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		trip_id INTEGER NOT NULL REFERENCES trips(id),
@@ -151,6 +161,10 @@ func migrate() error {
 		lead_email TEXT NOT NULL DEFAULT '',
 		total INTEGER NOT NULL DEFAULT 0,
 		status TEXT NOT NULL DEFAULT 'pending',
+		payment_status TEXT NOT NULL DEFAULT 'unpaid',
+		customer_id INTEGER REFERENCES customers(id),
+		meeting_point_id INTEGER REFERENCES meeting_points(id),
+		package_id INTEGER REFERENCES packages(id),
 		created_at DATETIME NOT NULL DEFAULT (datetime('now'))
 	);
 
@@ -166,6 +180,15 @@ func migrate() error {
 		booking_id INTEGER NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
 		name TEXT NOT NULL,
 		price INTEGER NOT NULL DEFAULT 0
+	);
+
+	CREATE TABLE IF NOT EXISTS payments (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		booking_id INTEGER NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+		amount INTEGER NOT NULL DEFAULT 0,
+		notes TEXT NOT NULL DEFAULT '',
+		proof_file TEXT NOT NULL DEFAULT '',
+		created_at DATETIME NOT NULL DEFAULT (datetime('now'))
 	);
 
 	CREATE TABLE IF NOT EXISTS addon_templates (

@@ -39,16 +39,25 @@ func New(assets embed.FS, dev bool) *Server {
 
 func (s *Server) templateFuncs() template.FuncMap {
 	return template.FuncMap{
-		"formatCurrency": func(n int64) string {
-			if n == 0 {
+		"formatCurrency": func(n interface{}) string {
+			var val int64
+			switch v := n.(type) {
+			case int64:
+				val = v
+			case int:
+				val = int64(v)
+			default:
+				return "Rp 0"
+			}
+			if val == 0 {
 				return "Gratis"
 			}
 			sign := ""
-			if n < 0 {
+			if val < 0 {
 				sign = "-"
-				n = -n
+				val = -val
 			}
-			ns := fmt.Sprintf("%d", n)
+			ns := fmt.Sprintf("%d", val)
 			var parts []string
 			for i := len(ns); i > 0; i -= 3 {
 				start := i - 3
@@ -113,7 +122,7 @@ func (s *Server) templateFuncs() template.FuncMap {
 			}
 			return s
 		},
-		"sub": func(a, b int) int {
+		"sub": func(a, b int64) int64 {
 			return a - b
 		},
 		"add": func(a, b int) int {
@@ -331,6 +340,10 @@ func (s *Server) setupRoutes() {
 
 	mux.HandleFunc("GET /profile", h.Profile)
 	mux.HandleFunc("PUT /profile", h.ProfileUpdate)
+
+	mux.HandleFunc("POST /trips/{tripID}/bookings/manual", h.BookingManualCreate)
+	mux.HandleFunc("POST /bookings/{id}/payments", h.PaymentCreate)
+	mux.HandleFunc("GET /proofs/{file}", h.PaymentProof)
 
 	mux.HandleFunc("GET /users", h.UserList)
 	mux.HandleFunc("GET /users/new", h.UserForm)
