@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Paket - Admin Operator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body class="admin-body">
@@ -25,14 +28,18 @@
     
     <header class="admin-header">
       <div class="header-left">
-        <button class="menu-toggle">☰</button>
-        <h1 class="header-title">Paket</h1>
+        <button class="menu-toggle"><i class='bx bx-menu'></i></button>
+        <div class="header-welcome">
+          <h1>Paket</h1>
+          <p>Kelola paket dan fasilitas trip</p>
+        </div>
       </div>
       <div class="header-right">
-        <button class="notification-btn">🔔</button>
+        <button class="notification-btn"><i class='bx bx-bell'></i></button>
         <div class="user-profile" onclick="logout()">
           <img src="" alt="" class="operator-logo">
           <span class="operator-name"></span>
+          <span style="color: var(--text-muted); font-size: 12px;"><i class='bx bx-chevron-down'></i></span>
         </div>
       </div>
     </header>
@@ -40,8 +47,8 @@
     <div class="admin-content">
       
       <div class="search-bar">
-        <input type="text" class="search-input" id="search-package" placeholder="🔍 Cari paket..." onkeyup="filterPackages()">
-        <a href="form.html" class="btn btn-primary">➕ Tambah Paket</a>
+        <input type="text" class="search-input" id="search-package" placeholder="Cari paket..." onkeyup="filterPackages()">
+        <a href="form.html" class="btn btn-primary">+ Tambah Paket</a>
       </div>
       
       <div class="card">
@@ -52,7 +59,7 @@
                 <th>Nama Paket</th>
                 <th>Harga</th>
                 <th>Fasilitas</th>
-                <th>Aksi</th>
+                <th style="text-align: right;">Aksi</th>
               </tr>
             </thead>
             <tbody id="packages-table">
@@ -62,11 +69,8 @@
         </div>
       </div>
       
-      <div style="margin-top: 16px; padding: 16px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #059669;">
-        <p style="margin: 0; font-size: 14px; color: #065f46;">
-          <strong>💡 Tips:</strong> Paket yang sudah dibuat dapat dipilih saat menambah trip baru. 
-          Harga dan fasilitas akan otomatis terisi.
-        </p>
+      <div class="alert alert-success" style="margin-top: 16px;">
+        <strong>Tips:</strong> Paket yang sudah dibuat dapat dipilih saat menambah trip baru. Harga dan fasilitas akan otomatis terisi.
       </div>
       
     </div>
@@ -82,8 +86,10 @@
       if (packages.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">
-              Belum ada paket. <a href="form.html" style="color: #f97316;">Tambah paket pertama</a>
+            <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <div style="font-size: 32px; margin-bottom: 8px;"><i class='bx bx-package'></i></div>
+              <div>Belum ada paket</div>
+              <div style="font-size: 13px; margin-top: 4px;"><a href="form.html" style="color: var(--primary); font-weight: 600;">Tambah paket pertama</a></div>
             </td>
           </tr>
         `;
@@ -94,21 +100,21 @@
         return `
           <tr>
             <td>
-              <strong>${pkg.name}</strong><br>
-              <span style="font-size: 12px; color: #64748b;">${pkg.description || '-'}</span>
+              <strong>${pkg.name}</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${pkg.description || '-'}</div>
             </td>
-            <td style="font-weight: 700; color: #f97316;">${formatCurrency(pkg.price)}</td>
+            <td><strong style="color: var(--primary);">${formatCurrency(pkg.price)}</strong></td>
             <td>
               <div style="display: flex; flex-wrap: wrap; gap: 4px;">
                 ${pkg.includes.slice(0, 4).map(f => `
-                  <span style="font-size: 11px; padding: 2px 8px; background: #f1f5f9; border-radius: 4px; color: #475569;">${f}</span>
+                  <span style="font-size: 11px; padding: 4px 10px; background: var(--bg-body); border-radius: 4px; color: var(--text-secondary); font-weight: 500;">${f}</span>
                 `).join('')}
-                ${pkg.includes.length > 4 ? `<span style="font-size: 11px; padding: 2px 8px; background: #f1f5f9; border-radius: 4px; color: #475569;">+${pkg.includes.length - 4}</span>` : ''}
+                ${pkg.includes.length > 4 ? `<span style="font-size: 11px; padding: 4px 10px; background: var(--bg-body); border-radius: 4px; color: var(--text-muted);">+${pkg.includes.length - 4}</span>` : ''}
               </div>
             </td>
-            <td>
-              <a href="form.html?id=${pkg.id}" class="btn btn-sm btn-secondary">✏️ Edit</a>
-              <button class="btn btn-sm btn-secondary" onclick="deletePackage('${pkg.id}')">🗑️ Hapus</button>
+            <td style="text-align: right;">
+              <a href="form.html?id=${pkg.id}" class="btn btn-sm btn-secondary">Edit</a>
+              <button class="btn btn-sm btn-secondary" onclick="deletePackage('${pkg.id}')">Hapus</button>
             </td>
           </tr>
         `;
@@ -130,19 +136,17 @@
         return;
       }
       
-      // Check if package is used in any trip
       const usedInTrips = TRIPS.filter(trip => trip.package_id === id);
       if (usedInTrips.length > 0) {
-        alert('❌ Paket ini sedang digunakan di ' + usedInTrips.length + ' trip. Hapus dari trip terlebih dahulu.');
+        alert('Paket ini sedang digunakan di ' + usedInTrips.length + ' trip. Hapus dari trip terlebih dahulu.');
         return;
       }
       
-      // Remove from PACKAGES array
       const index = PACKAGES.findIndex(pkg => pkg.id === id);
       if (index > -1) {
         PACKAGES.splice(index, 1);
         loadPackages();
-        alert('✅ Paket berhasil dihapus');
+        alert('Paket berhasil dihapus');
       }
     }
     

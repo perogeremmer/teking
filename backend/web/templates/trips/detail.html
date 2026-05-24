@@ -1,0 +1,147 @@
+{{define "content"}}
+<div class="mb-8">
+    <a href="/trips" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1 mb-2"><i class="bx bx-arrow-back"></i> Kembali</a>
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">{{.Trip.Name}}</h1>
+        <div class="flex gap-2">
+            <a href="/trips/{{.Trip.ID}}/edit" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition"><i class="bx bx-edit-alt"></i> Edit</a>
+            <button hx-delete="/trips/{{.Trip.ID}}" hx-confirm="Yakin hapus trip ini?" class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-xs font-medium hover:bg-red-100 transition"><i class="bx bx-trash"></i> Hapus</button>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Informasi Trip</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div><p class="text-sm text-gray-500">Gunung</p><p class="font-medium text-gray-900">{{.Trip.Mountain}}</p></div>
+            <div><p class="text-sm text-gray-500">Rute</p><p class="font-medium text-gray-900">{{if .Trip.Route}}{{.Trip.Route}}{{else}}-{{end}}</p></div>
+            <div><p class="text-sm text-gray-500">Durasi</p><p class="font-medium text-gray-900">{{if .Trip.Duration}}{{.Trip.Duration}}{{else}}-{{end}}</p></div>
+            <div><p class="text-sm text-gray-500">Jadwal</p><p class="font-medium text-gray-900">{{len .Trip.Schedules}}</p></div>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Rute & Harga</h2>
+        {{if .Trip.MeetingPoints}}
+        <div class="space-y-2">
+            {{range .Trip.MeetingPoints}}
+            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center justify-center w-7 h-7 bg-teal-100 text-teal-700 rounded-full text-xs font-bold shrink-0">{{.OrderIndex}}</div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">{{.Name}}</p>
+                    <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full mt-1 {{if eq .MPType "basecamp"}}bg-green-100 text-green-700{{else}}bg-blue-100 text-blue-700{{end}}">
+                        {{if eq .MPType "basecamp"}}Basecamp{{else}}Titik Jemput{{end}}
+                    </span>
+                    {{if .EstimatedDeparture}}<p class="text-xs text-teal-600 mt-1"><i class="bx bx-time"></i> {{.EstimatedDeparture}}</p>{{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <p class="text-gray-500 text-sm">-</p>
+        {{end}}
+    </div>
+</div>
+
+{{if .Trip.Packages}}
+<div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Harga per Paket</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left px-4 py-3 font-medium text-gray-500">Titik Jemput</th>
+                    {{range .Trip.Packages}}
+                    <th class="text-right px-4 py-3 font-medium text-gray-500">{{.Name}}</th>
+                    {{end}}
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {{range .Trip.MeetingPoints}}
+                {{$mp := .}}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <p class="font-medium text-gray-900">{{$mp.Name}}</p>
+                        {{if $mp.EstimatedDeparture}}<p class="text-xs text-gray-500"><i class="bx bx-time"></i> {{$mp.EstimatedDeparture}}</p>{{end}}
+                    </td>
+                    {{range $.Trip.Packages}}
+                    {{$pkgID := printf "%d" .ID}}
+                    <td class="px-4 py-3 text-right font-medium text-gray-900 whitespace-nowrap">
+                        {{$price := index $mp.Prices $pkgID}}
+                        {{if $price}}{{formatCurrency $price}}{{else}}-{{end}}
+                    </td>
+                    {{end}}
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+    <div class="lg:col-span-3">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Kalender Jadwal</h2>
+            <div class="calendar-nav flex items-center gap-4 mb-4">
+                <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 rounded-lg"><i class="bx bx-chevron-left text-xl"></i></button>
+                <span id="calendarMonth" class="text-base font-semibold text-gray-900"></span>
+                <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 rounded-lg"><i class="bx bx-chevron-right text-xl"></i></button>
+            </div>
+            <div>
+                <div class="grid grid-cols-7">
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Sen</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Sel</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Rab</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Kam</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Jum</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Sab</div>
+                    <div class="text-center text-xs font-semibold text-gray-500 py-2">Min</div>
+                </div>
+                <div id="calendarGrid" class="calendar-wrapper border-l border-t border-gray-200"></div>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-gray-500 mt-3">
+                <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-orange-500 inline-block"></span> Jadwal</div>
+                <div class="flex items-center gap-1"><span class="w-5 h-5 rounded-full bg-teal-600 text-white flex items-center justify-center text-[9px] font-bold">15</span> Hari ini</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Daftar Jadwal</h2>
+                <a href="/trips/{{.Trip.ID}}/schedules/new" class="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium hover:bg-teal-100 transition"><i class="bx bx-plus"></i> Tambah</a>
+            </div>
+            <div id="scheduleInfo" class="text-xs text-gray-500 mb-3">Menampilkan semua jadwal</div>
+            <div id="scheduleList" class="space-y-2">
+                {{if .Trip.Schedules}}
+                {{range .Trip.Schedules}}
+                <div class="sched-item p-3 bg-gray-50 rounded-lg border border-gray-200" data-start="{{.DateStart}}" data-end="{{.DateEnd}}">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-gray-900">{{formatDate .DateStart}} - {{formatDate .DateEnd}}</p>
+                            <p class="text-xs {{if lt .QuotaRemaining 5}}text-red-500{{else}}text-green-600{{end}}">
+                                <i class="bx bxs-user"></i> Sisa {{.QuotaRemaining}} / {{.QuotaTotal}} slot
+                            </p>
+                        </div>
+                        <div class="flex gap-1 shrink-0">
+                            <a href="/schedules/{{.ID}}/edit" class="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-medium hover:bg-blue-100 transition"><i class="bx bx-edit-alt"></i></a>
+                            <button hx-delete="/schedules/{{.ID}}" hx-confirm="Yakin hapus?" class="inline-flex items-center gap-1 px-2 py-1 bg-red-50 text-red-700 rounded text-xs font-medium hover:bg-red-100 transition"><i class="bx bx-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+                {{else}}
+                <p class="text-xs text-gray-400 text-center py-8" id="noSchedules">Belum ada jadwal</p>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.tripSchedules = {{.SchedulesJSON}};
+</script>
+<script src="/static/js/calendar.js"></script>
+{{end}}

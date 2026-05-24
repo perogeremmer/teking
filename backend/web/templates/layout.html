@@ -1,0 +1,188 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayomendaki Admin</title>
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/id.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar { width: 280px; }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -280px; z-index: 50; transition: left 0.3s; height: 100vh; }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay { display: none; }
+            .sidebar.open ~ .sidebar-overlay { display: block; }
+        }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 49; display: none; }
+        .htmx-indicator { opacity: 0; transition: opacity 0.2s; }
+        .htmx-request .htmx-indicator { opacity: 1; }
+        .htmx-request.htmx-indicator { opacity: 1; }
+        .calendar-wrapper { display: flex; flex-direction: column; }
+        .calendar-header-day { padding: 8px; text-align: center; font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; }
+        .day-cell { min-height: 100px; padding: 4px; background: white; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; position: relative; }
+        .day-cell.other-month { background: #f8fafc; }
+        .day-cell.other-month .day-number { color: #94a3b8; }
+        .day-cell.today .day-number { background: #0d9488; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+        .day-number { font-size: 0.75rem; font-weight: 500; color: #334155; padding: 2px; }
+        .week-row { position: relative; min-height: 120px; }
+        .event-bar { position: absolute; height: 20px; border-radius: 4px; font-size: 0.65rem; color: white; padding: 0 4px; display: flex; align-items: center; cursor: pointer; z-index: 10; overflow: hidden; white-space: nowrap; }
+        .event-bar-start { border-radius: 4px 0 0 4px; }
+        .event-bar-end { border-radius: 0 4px 4px 0; }
+        .event-bar-mid { border-radius: 0; }
+        .event-bar-single { border-radius: 4px; }
+        .row-0 { top: 32px; }
+        .row-1 { top: 54px; }
+        .row-2 { top: 76px; }
+        .row-3 { top: 98px; }
+        .event-color-1 { background: #0d9488; }
+        .event-color-2 { background: #0f766e; }
+        .event-color-3 { background: #115e59; }
+        .event-color-4 { background: #134e4a; }
+        .event-color-5 { background: #042f2e; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" hx-boost="false">
+    <div class="flex">
+        <aside class="sidebar bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto" id="sidebar">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                        <i class="bx bxs-mountain text-xl text-teal-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-900">Ayomendaki</h1>
+                        <p class="text-xs text-gray-500">Admin Panel</p>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <input type="text" placeholder="Cari menu..." id="sidebarSearch"
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+                </div>
+                <nav class="space-y-1" id="sidebarNav">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu Utama</p>
+                    <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-dashboard text-lg"></i> Dashboard
+                    </a>
+                    <a href="/trips" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-plane-alt text-lg"></i> Trip
+                    </a>
+                    <a href="/bookings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-book-content text-lg"></i> Booking
+                    </a>
+                    <a href="/reports/revenue" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-chart text-lg"></i> Laporan
+                    </a>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mt-6 mb-2">Master Data</p>
+                    <a href="/packages" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-package text-lg"></i> Paket
+                    </a>
+                    <a href="/meeting-points" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-map text-lg"></i> Meeting Point
+                    </a>
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mt-6 mb-2">Sistem</p>
+                    <a href="/users" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-user-account text-lg"></i> Users
+                    </a>
+                    <a href="/profile" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-teal-50 hover:text-teal-700 transition sidebar-link">
+                        <i class="bx bxs-cog text-lg"></i> Pengaturan
+                    </a>
+                    <a href="/logout" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition sidebar-link"
+                        onclick="return confirm('Yakin ingin logout?')">
+                        <i class="bx bxs-log-out text-lg"></i> Logout
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <main class="flex-1 min-w-0">
+            <div class="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 sticky top-0 z-30">
+                <button onclick="toggleSidebar()" class="text-gray-600 text-2xl">
+                    <i class="bx bx-menu"></i>
+                </button>
+                <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                    <i class="bx bxs-mountain text-sm text-teal-600"></i>
+                </div>
+                <span class="font-semibold text-gray-900">Ayomendaki</span>
+            </div>
+
+            <div id="toast" class="fixed top-4 right-4 z-[999]"></div>
+
+            <div class="p-4 md:p-8" id="main-content">
+                {{block "content" .}}{{end}}
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/admin.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        (function() {
+            // Flash messages from URL params
+            var params = new URLSearchParams(window.location.search);
+            var flash = params.get('flash');
+            if (flash) {
+                var flashType = params.get('flash_type') || 'success';
+                var div = document.createElement('div');
+                div.className = 'mb-4 px-4 py-3 rounded-lg border text-sm flex items-center justify-between ' +
+                    (flashType === 'error' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-green-50 border-green-200 text-green-700');
+                div.innerHTML = '<span>' + flash.replace(/</g,'&lt;') + '</span><button onclick="this.parentElement.remove()" class="text-current opacity-60 hover:opacity-100 font-bold text-lg leading-none">&times;</button>';
+                var mc = document.querySelector('#main-content');
+                if (mc) mc.insertBefore(div, mc.firstChild);
+                setTimeout(function() { if (div.parentElement) div.remove(); }, 5000);
+                var url = new URL(window.location);
+                url.searchParams.delete('flash');
+                url.searchParams.delete('flash_type');
+                window.history.replaceState({}, '', url);
+            }
+
+            // HTMX toast handler
+            var toastEl = document.getElementById('toast');
+            if (toastEl && toastEl.children.length > 0) {
+                setTimeout(function() {
+                    toastEl.style.transition = 'opacity 0.5s';
+                    toastEl.style.opacity = '0';
+                    setTimeout(function() { toastEl.innerHTML = ''; toastEl.style.opacity = '1'; }, 500);
+                }, 3000);
+            }
+        })();
+
+        document.querySelectorAll('.sidebar-link').forEach(function(el) {
+            if (el.href === window.location.href || (window.location.pathname === '/' && el.pathname === '/')) {
+                el.classList.add('bg-teal-50', 'text-teal-700');
+            } else if (el.href !== window.location.href && window.location.pathname.startsWith(el.pathname) && el.pathname !== '/') {
+                el.classList.add('bg-teal-50', 'text-teal-700');
+            }
+        });
+
+        document.getElementById('sidebarSearch')?.addEventListener('input', function() {
+            var q = this.value.toLowerCase();
+            document.querySelectorAll('#sidebarNav a').forEach(function(a) {
+                a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+
+        document.body.addEventListener('showToast', function(e) {
+            var msg = typeof e.detail === 'string' ? e.detail : (e.detail.value || '');
+            var el = document.getElementById('toast');
+            if (!el) return;
+            el.innerHTML = '<div class="bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg text-sm">' + msg.replace(/</g,'&lt;') + '</div>';
+            setTimeout(function() {
+                el.style.transition = 'opacity 0.5s';
+                el.style.opacity = '0';
+                setTimeout(function() { el.innerHTML = ''; el.style.opacity = '1'; }, 500);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>{{end}}

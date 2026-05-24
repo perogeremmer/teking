@@ -1,0 +1,338 @@
+{{define "content"}}
+<div class="mb-8">
+    <a href="/trips" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1 mb-2"><i class="bx bx-arrow-back"></i> Kembali</a>
+    <h1 class="text-2xl font-bold text-gray-900">{{if .EditMode}}Edit Trip{{else}}Tambah Trip Baru{{end}}</h1>
+</div>
+
+{{if .Error}}
+<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">{{.Error}}</div>
+{{end}}
+
+<form method="POST" action="{{if .EditMode}}/trips/{{.Trip.ID}}{{else}}/trips{{end}}" class="space-y-6" onsubmit="buildTripJSON()">
+    {{if .EditMode}}<input type="hidden" name="_method" value="PUT">{{end}}
+    <input type="hidden" name="trip_json" id="trip_json" value="">
+
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Informasi Trip</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Trip *</label>
+                <input type="text" name="name" required value="{{if .Trip}}{{.Trip.Name}}{{end}}"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Gunung *</label>
+                <select name="mountain_id" required
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+                    <option value="">Pilih gunung</option>
+                    {{range .Mountains}}
+                    <option value="{{.ID}}" {{if and $.Trip (eq $.Trip.MountainID .ID)}}selected{{end}}>{{.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rute</label>
+                <input type="text" name="route" value="{{if .Trip}}{{.Trip.Route}}{{end}}"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Durasi</label>
+                <div class="flex items-center gap-2">
+                    <input type="number" name="duration_hari" min="0"
+                        class="w-20 px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-center"
+                        oninput="updateDuration()">
+                    <span class="text-sm text-gray-500">Hari</span>
+                    <input type="number" name="duration_malam" min="0"
+                        class="w-20 px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-center"
+                        oninput="updateDuration()">
+                    <span class="text-sm text-gray-500">Malam</span>
+                </div>
+                <p id="duration-label" class="text-xs text-gray-500 mt-1"></p>
+                <input type="hidden" name="duration" id="duration" value="{{if .Trip}}{{.Trip.Duration}}{{end}}">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Paket yang Tersedia</h2>
+        <p class="text-sm text-gray-500 mb-4">Pilih paket yang ditawarkan di trip ini, lalu atur harga per meeting point.</p>
+        {{if .Packages}}
+        <div class="flex flex-wrap gap-3" id="packages-container">
+            {{range $i, $pkg := .Packages}}
+            <label class="pkg-item inline-flex items-center gap-2 px-4 py-2.5 border-2 rounded-lg cursor-pointer transition"
+                data-id="{{$pkg.ID}}" data-name="{{$pkg.Name}}">
+                <input type="checkbox" class="pkg-cb text-teal-600 focus:ring-teal-500">
+                <span class="text-sm font-medium">{{$pkg.Name}}</span>
+            </label>
+            {{end}}
+        </div>
+        {{else}}
+        <p class="text-gray-500 text-sm">Belum ada paket. <a href="/packages/new" class="text-teal-600 hover:underline">Buat dulu</a></p>
+        {{end}}
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Estimasi Keberangkatan & Harga</h2>
+        <p class="text-sm text-gray-500 mb-4">Tentukan rute jemputan. Setiap titik bisa diatur harga untuk tiap paket.</p>
+
+        {{if .MeetingPoints}}
+        <div class="flex items-end gap-2 mb-4">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tambah titik jemput</label>
+                <select id="mp-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    <option value="">Pilih meeting point</option>
+                    <optgroup label="Titik Jemput">
+                    {{range .MeetingPoints}}{{if eq .MPType "titik_jemput"}}
+                    <option value="{{.ID}}" data-type="{{.MPType}}">{{.Name}}</option>
+                    {{end}}{{end}}
+                    </optgroup>
+                    <optgroup label="Basecamp">
+                    {{range .MeetingPoints}}{{if eq .MPType "basecamp"}}
+                    <option value="{{.ID}}" data-type="{{.MPType}}">{{.Name}}</option>
+                    {{end}}{{end}}
+                    </optgroup>
+                </select>
+            </div>
+            <button type="button" onclick="addMeetingPoint()" class="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-semibold hover:bg-teal-700 transition whitespace-nowrap">+ Tambah</button>
+        </div>
+
+        <div id="mp-list" class="space-y-3">
+            {{if .TripMeetingPoints}}
+            {{range .TripMeetingPoints}}
+            <div class="mp-item flex items-start gap-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <div class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-700 rounded-full text-sm font-bold shrink-0">{{.OrderIndex}}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{.Name}}</p>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full {{if eq .MPType "basecamp"}}bg-green-100 text-green-700{{else}}bg-blue-100 text-blue-700{{end}}">{{if eq .MPType "basecamp"}}Basecamp{{else}}Titik Jemput{{end}}</span>
+                        </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" onclick="moveMP(this, -1)" class="btn-up text-gray-400 hover:text-gray-700 text-lg leading-none" title="Naik">&uarr;</button>
+                        <button type="button" onclick="moveMP(this, 1)" class="btn-down text-gray-400 hover:text-gray-700 text-lg leading-none" title="Turun">&darr;</button>
+                        <button type="button" onclick="removeMP(this)" class="text-gray-400 hover:text-red-600 text-lg leading-none" title="Hapus">&times;</button>
+                    </div>
+                    </div>
+                    <input type="hidden" class="mp-id" value="{{.ID}}">
+                    <div class="mt-2">
+                        <label class="text-xs text-gray-500">Estimasi Keberangkatan</label>
+                        <input type="text" class="mp-est w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-teal-500 outline-none" value="{{.EstimatedDeparture}}" placeholder="19:00 WIB">
+                    </div>
+                    <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2" id="mp-prices-{{.ID}}"></div>
+                </div>
+            </div>
+            {{end}}
+            {{end}}
+            <p id="mp-empty" class="text-xs text-gray-400 text-center py-4 {{if .TripMeetingPoints}}hidden{{end}}">Belum ada titik jemput</p>
+        </div>
+        {{else}}
+        <p class="text-gray-500 text-sm">Belum ada meeting point. <a href="/meeting-points/new" class="text-teal-600 hover:underline">Buat dulu</a></p>
+        {{end}}
+    </div>
+
+    <div class="flex gap-3">
+        <button type="submit" class="bg-teal-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-teal-700 transition">
+            {{if .EditMode}}Simpan Perubahan{{else}}Simpan Trip{{end}}
+        </button>
+        <a href="/trips" class="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-200 transition">Batal</a>
+    </div>
+</form>
+
+<script>
+var editPackageIDs = {{.SelectedPackageIDsJSON}};
+var editMPPrices = {{.MPPricesJSON}};
+
+// ── Duration ──
+function updateDuration() {
+    var h = parseInt(document.querySelector('[name="duration_hari"]').value) || 0;
+    var m = parseInt(document.querySelector('[name="duration_malam"]').value) || 0;
+    var d = '';
+    if (h > 0 && m > 0) d = h + ' Hari ' + m + ' Malam';
+    else if (h > 0) d = h + ' Hari';
+    else if (m > 0) d = m + ' Malam';
+    document.getElementById('duration').value = d;
+    document.getElementById('duration-label').textContent = d ? '(' + d + ')' : '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Pre-check packages for edit mode
+    if (editPackageIDs && editPackageIDs.length) {
+        editPackageIDs.forEach(function(id) {
+            var item = document.querySelector('.pkg-item[data-id="' + id + '"]');
+            if (!item) return;
+            var cb = item.querySelector('.pkg-cb');
+            if (cb) cb.checked = true;
+            item.classList.add('border-teal-500', 'bg-teal-50');
+            item.classList.remove('border-gray-200', 'bg-white');
+        });
+    }
+
+    var durStr = document.getElementById('duration').value;
+    if (durStr) {
+        var h = durStr.match(/(\d+)\s*Hari/);
+        var m = durStr.match(/(\d+)\s*Malam/);
+        if (h) document.querySelector('[name="duration_hari"]').value = h[1];
+        if (m) document.querySelector('[name="duration_malam"]').value = m[1];
+    }
+    updateDuration();
+    updateMoveButtons();
+    renderPriceInputs();
+
+    // Pre-fill harga dari data yang disimpan
+    if (editMPPrices) {
+        Object.keys(editMPPrices).forEach(function(mpID) {
+            Object.keys(editMPPrices[mpID]).forEach(function(pkgID) {
+                var container = document.getElementById('mp-prices-' + mpID);
+                if (!container) return;
+                var input = container.querySelector('.mp-price-' + pkgID);
+                if (input) input.value = editMPPrices[mpID][pkgID];
+            });
+        });
+    }
+});
+
+// ── Package selection styling ──
+document.querySelectorAll('.pkg-item').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+        if (e.target.tagName !== 'INPUT') {
+            var cb = el.querySelector('.pkg-cb');
+            cb.checked = !cb.checked;
+        }
+        el.classList.toggle('border-teal-500', el.querySelector('.pkg-cb').checked);
+        el.classList.toggle('bg-teal-50', el.querySelector('.pkg-cb').checked);
+        el.classList.toggle('border-gray-200', !el.querySelector('.pkg-cb').checked);
+        el.classList.toggle('bg-white', !el.querySelector('.pkg-cb').checked);
+        renderPriceInputs();
+    });
+    // Init state for edit mode
+    setTimeout(function() {
+        var cb = el.querySelector('.pkg-cb');
+        el.classList.toggle('border-teal-500', cb.checked);
+        el.classList.toggle('bg-teal-50', cb.checked);
+        el.classList.toggle('border-gray-200', !cb.checked);
+        el.classList.toggle('bg-white', !cb.checked);
+        renderPriceInputs();
+    }, 100);
+});
+
+// ── Meeting Points ──
+function addMeetingPoint() {
+    var sel = document.getElementById('mp-select');
+    var opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) return;
+    var id = opt.value;
+    var name = opt.text;
+    var mpType = opt.dataset.type || 'titik_jemput';
+
+    if (document.querySelector('.mp-id[value="' + id + '"]')) {
+        alert('Meeting point sudah ditambahkan');
+        return;
+    }
+
+    var list = document.getElementById('mp-list');
+    var empty = document.getElementById('mp-empty');
+    if (empty) empty.classList.add('hidden');
+
+    var idx = list.querySelectorAll('.mp-item').length + 1;
+    var div = document.createElement('div');
+    div.className = 'mp-item flex items-start gap-3 p-4 border border-gray-200 rounded-lg bg-gray-50';
+    div.innerHTML =
+        '<div class="flex items-center justify-center w-8 h-8 bg-teal-100 text-teal-700 rounded-full text-sm font-bold shrink-0">' + idx + '</div>' +
+        '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-start justify-between gap-2">' +
+                '<div><p class="text-sm font-medium text-gray-900">' + name + '</p>' +
+                '<span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full ' + (mpType === 'basecamp' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700') + '">' + (mpType === 'basecamp' ? 'Basecamp' : 'Titik Jemput') + '</span></div>' +
+                '<div class="flex items-center gap-1 shrink-0">' +
+                    '<button type="button" onclick="moveMP(this, -1)" class="btn-up text-gray-400 hover:text-gray-700 text-lg leading-none" title="Naik">&uarr;</button>' +
+                    '<button type="button" onclick="moveMP(this, 1)" class="btn-down text-gray-400 hover:text-gray-700 text-lg leading-none" title="Turun">&darr;</button>' +
+                    '<button type="button" onclick="removeMP(this)" class="text-gray-400 hover:text-red-600 text-lg leading-none" title="Hapus">&times;</button>' +
+                '</div>' +
+            '</div>' +
+            '<input type="hidden" class="mp-id" value="' + id + '">' +
+            '<div class="mt-2"><label class="text-xs text-gray-500">Estimasi Keberangkatan</label><input type="text" class="mp-est w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-teal-500 outline-none" placeholder="19:00 WIB"></div>' +
+            '<div class="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2" id="mp-prices-' + id + '"></div>' +
+        '</div>';
+    list.appendChild(div);
+    sel.selectedIndex = 0;
+    updateIndices();
+    updateMoveButtons();
+    renderPriceInputs();
+}
+
+function updateMoveButtons() {
+    var items = document.querySelectorAll('#mp-list .mp-item');
+    items.forEach(function(item, i) {
+        var up = item.querySelector('.btn-up');
+        var down = item.querySelector('.btn-down');
+        if (up) up.classList.toggle('invisible', i === 0);
+        if (down) down.classList.toggle('invisible', i === items.length - 1);
+    });
+}
+
+function updateIndices() {
+    document.querySelectorAll('.mp-item').forEach(function(item, i) {
+        item.querySelector('.shrink-0').textContent = i + 1;
+    });
+}
+
+// ── Render price inputs per package per MP ──
+function renderPriceInputs() {
+    var selected = {};
+    document.querySelectorAll('.pkg-item .pkg-cb:checked').forEach(function(cb) {
+        var item = cb.closest('.pkg-item');
+        selected[item.dataset.id] = item.dataset.name;
+    });
+
+    document.querySelectorAll('.mp-item').forEach(function(mpItem) {
+        var mpID = mpItem.querySelector('.mp-id').value;
+        var container = document.getElementById('mp-prices-' + mpID);
+        if (!container) return;
+        container.innerHTML = '';
+
+        Object.keys(selected).forEach(function(pkgID) {
+            var pkgName = selected[pkgID];
+            var existing = mpItem.querySelector('.mp-price-' + pkgID);
+            var val = existing ? existing.value : '';
+            var div = document.createElement('div');
+            div.innerHTML =
+                '<label class="text-xs text-gray-500 block">' + pkgName + '</label>' +
+                '<div class="flex items-center gap-1"><span class="text-xs text-gray-400">Rp</span>' +
+                '<input type="number" class="mp-price mp-price-' + pkgID + ' w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-teal-500 outline-none" value="' + val + '" placeholder="0"></div>';
+            container.appendChild(div);
+        });
+    });
+}
+
+// ── Build trip_json on submit ──
+function buildTripJSON() {
+    var packages = [];
+    document.querySelectorAll('.pkg-item .pkg-cb:checked').forEach(function(cb) {
+        packages.push(parseInt(cb.closest('.pkg-item').dataset.id));
+    });
+
+    var meetingPoints = [];
+    document.querySelectorAll('.mp-item').forEach(function(item) {
+        var mpID = parseInt(item.querySelector('.mp-id').value);
+        var est = item.querySelector('.mp-est').value || '';
+        var prices = {};
+        item.querySelectorAll('.mp-price').forEach(function(input) {
+            var cls = input.className;
+            var m = cls.match(/mp-price-(\d+)/);
+            if (m) {
+                prices[m[1]] = parseInt(input.value) || 0;
+            }
+        });
+        meetingPoints.push({
+            id: mpID,
+            estimated_departure: est,
+            prices: prices
+        });
+    });
+
+    document.getElementById('trip_json').value = JSON.stringify({
+        packages: packages,
+        meetingPoints: meetingPoints
+    });
+}
+</script>
+{{end}}

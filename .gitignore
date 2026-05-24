@@ -27,3 +27,10 @@ build/
 # Temporary files
 *.tmp
 .cache/
+
+# Ayomendaki Admin
+backend/ayomendaki-admin
+backend/data/
+backend/tmp/
+backend/node_modules/
+backend/package-lock.json

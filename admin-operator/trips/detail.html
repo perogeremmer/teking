@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Trip - Admin Operator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="../assets/css/admin.css">
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <style>
-    /* Custom Calendar Styles (reuse dari trip-schedule.html) */
     .calendar-wrapper {
-      border-radius: 12px;
+      border-radius: var(--radius);
       overflow: hidden;
-      background: #e2e8f0;
+      background: var(--border-color);
       gap: 1px;
       display: flex;
       flex-direction: column;
@@ -20,7 +22,7 @@
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 1px;
-      background: #e2e8f0;
+      background: var(--border-color);
       min-height: 120px;
       position: relative;
     }
@@ -34,15 +36,15 @@
       z-index: 1;
     }
     .day-cell.other-month {
-      background: #f8fafc;
-      color: #cbd5e1;
+      background: var(--bg-body);
+      color: var(--text-muted);
     }
     .day-cell.today {
-      background: #fff7ed;
+      background: var(--primary-light);
     }
     .day-number {
       font-weight: 600;
-      color: #374151;
+      color: var(--text-primary);
       width: 24px;
       height: 24px;
       display: flex;
@@ -53,14 +55,13 @@
       margin-bottom: 2px;
     }
     .day-cell.today .day-number {
-      background-color: #f97316;
+      background-color: var(--primary);
       color: white;
     }
     .day-cell.other-month .day-number {
-      color: #cbd5e1;
+      color: var(--text-muted);
     }
     
-    /* Event bars that span across days */
     .event-bar {
       position: absolute;
       height: 20px;
@@ -77,34 +78,22 @@
       text-overflow: ellipsis;
       top: 32px;
     }
-    .event-bar:hover {
-      opacity: 0.85;
-    }
+    .event-bar:hover { opacity: 0.85; }
     .event-bar.row-0 { top: 32px; }
     .event-bar.row-1 { top: 54px; }
     .event-bar.row-2 { top: 76px; }
     .event-bar.row-3 { top: 98px; }
     
-    .event-bar-start {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-    }
-    .event-bar-end {
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-    }
-    .event-bar-mid {
-      border-radius: 0;
-    }
-    .event-bar-single {
-      border-radius: 4px;
-    }
+    .event-bar-start { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+    .event-bar-end { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+    .event-bar-mid { border-radius: 0; }
+    .event-bar-single { border-radius: 4px; }
     
-    .event-color-1 { background-color: #f97316; }
-    .event-color-2 { background-color: #ea580c; }
-    .event-color-3 { background-color: #d97706; }
-    .event-color-4 { background-color: #ca8a04; }
-    .event-color-5 { background-color: #dc2626; }
+    .event-color-1 { background-color: var(--primary); }
+    .event-color-2 { background-color: var(--primary-dark); }
+    .event-color-3 { background-color: #0f766e; }
+    .event-color-4 { background-color: #115e59; }
+    .event-color-5 { background-color: var(--info); }
     
     .calendar-header {
       display: grid;
@@ -117,9 +106,9 @@
       padding: 8px 0;
       font-size: 11px;
       font-weight: 600;
-      color: #64748b;
+      color: var(--text-secondary);
       text-transform: uppercase;
-      background: #f8fafc;
+      background: var(--bg-body);
     }
   </style>
 </head>
@@ -142,11 +131,14 @@
     
     <header class="admin-header">
       <div class="header-left">
-        <button class="menu-toggle">☰</button>
-        <h1 class="header-title">Detail Trip</h1>
+        <button class="menu-toggle"><i class='bx bx-menu'></i></button>
+        <div class="header-welcome">
+          <h1>Detail Trip</h1>
+          <p>Informasi lengkap trip dan jadwalnya</p>
+        </div>
       </div>
       <div class="header-right">
-        <a href="index.html" class="btn btn-secondary">← Kembali ke List</a>
+        <a href="index.html" class="btn btn-secondary">← Kembali</a>
       </div>
     </header>
     
@@ -155,8 +147,8 @@
       <!-- Info Trip Card -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">📋 Informasi Trip</span>
-          <a href="form.html" id="edit-trip-btn" class="btn btn-primary">✏️ Edit Trip</a>
+          <span class="card-title">Informasi Trip</span>
+          <a href="form.html" id="edit-trip-btn" class="btn btn-primary">Edit Trip</a>
         </div>
         <div class="card-body" id="trip-info">
           <!-- Rendered by JS -->
@@ -166,12 +158,10 @@
       <!-- Jadwal Trip Card -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">📅 Jadwal Trip - Mei 2026</span>
-          <a href="schedule-form.html" id="add-schedule-btn" class="btn btn-primary">➕ Tambah Jadwal</a>
+          <span class="card-title">Jadwal Trip - Mei 2026</span>
+          <a href="schedule-form.html" id="add-schedule-btn" class="btn btn-primary">+ Tambah Jadwal</a>
         </div>
         <div class="card-body">
-          
-          <!-- Calendar Header -->
           <div class="calendar-header">
             <div class="calendar-header-day">Sen</div>
             <div class="calendar-header-day">Sel</div>
@@ -181,17 +171,14 @@
             <div class="calendar-header-day">Sab</div>
             <div class="calendar-header-day">Min</div>
           </div>
-          
-          <!-- Calendar Grid -->
           <div id="calendar-grid" class="calendar-wrapper"></div>
-          
         </div>
       </div>
       
       <!-- List Jadwal Card -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">📋 Daftar Jadwal</span>
+          <span class="card-title">Daftar Jadwal</span>
         </div>
         <div class="card-body">
           <table class="data-table">
@@ -201,7 +188,7 @@
                 <th>Kuota Total</th>
                 <th>Sisa Kuota</th>
                 <th>Status</th>
-                <th>Aksi</th>
+                <th style="text-align: right;">Aksi</th>
               </tr>
             </thead>
             <tbody id="schedules-table">
@@ -218,21 +205,12 @@
   <script src="../assets/js/admin.js"></script>
   <script>
     let currentTrip = null;
-    let currentDate = new Date(2026, 4, 1); // Mei 2026
-    const scheduleColors = [
-      'event-color-1',
-      'event-color-2', 
-      'event-color-3',
-      'event-color-4',
-      'event-color-5'
-    ];
+    let currentDate = new Date(2026, 4, 1);
+    const scheduleColors = ['event-color-1', 'event-color-2', 'event-color-3', 'event-color-4', 'event-color-5'];
 
     function loadTripDetail() {
-      console.log('Loading trip detail...');
       const urlParams = new URLSearchParams(window.location.search);
       const tripId = urlParams.get('id');
-      
-      console.log('Trip ID:', tripId);
       
       if (!tripId) {
         alert('Trip ID tidak ditemukan');
@@ -241,8 +219,6 @@
       }
       
       currentTrip = getTripById(tripId);
-      console.log('Current trip:', currentTrip);
-      console.log('Trip schedules:', currentTrip?.schedules);
       
       if (!currentTrip) {
         alert('Trip tidak ditemukan');
@@ -250,14 +226,10 @@
         return;
       }
       
-      // Update page title
       document.title = `${currentTrip.name} - Admin Operator`;
-      
-      // Update buttons
       document.getElementById('edit-trip-btn').href = `form.html?id=${tripId}`;
       document.getElementById('add-schedule-btn').href = `schedule-form.html?trip=${tripId}`;
       
-      // Render info
       renderTripInfo();
       renderCalendar();
       renderSchedulesTable();
@@ -268,34 +240,43 @@
       const container = document.getElementById('trip-info');
       
       container.innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
           <div>
-            <p><strong style="color: #64748b;">Nama Trip:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.name}</p>
-            
-            <p><strong style="color: #64748b;">Gunung:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${mountain?.name || '-'}</p>
-            
-            <p><strong style="color: #64748b;">Route/Jalur:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.route}</p>
-            
-            <p><strong style="color: #64748b;">Durasi:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${currentTrip.duration}</p>
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Nama Trip</label>
+              <p style="font-weight: 600; margin: 4px 0 0 0; color: var(--text-primary);">${currentTrip.name}</p>
+            </div>
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Gunung</label>
+              <p style="font-weight: 600; margin: 4px 0 0 0;">${mountain?.name || '-'}</p>
+            </div>
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Route/Jalur</label>
+              <p style="font-weight: 600; margin: 4px 0 0 0;">${currentTrip.route}</p>
+            </div>
+            <div style="margin-bottom: 0;">
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Durasi</label>
+              <p style="font-weight: 600; margin: 4px 0 0 0;">${currentTrip.duration}</p>
+            </div>
           </div>
           
           <div>
             ${getPriceDisplay(currentTrip)}
             
-            <p><strong style="color: #64748b;">Paket:</strong></p>
-            <p style="font-weight: 600; margin-bottom: 12px;">${getPackageDisplay(currentTrip)}</p>
-            
-            <p><strong style="color: #64748b;">Meeting Points:</strong></p>
-            <div style="margin-bottom: 12px;">
-              ${getMeetingPointsDisplay(currentTrip)}
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Paket</label>
+              <div style="margin: 4px 0 0 0;">${getPackageDisplay(currentTrip)}</div>
             </div>
             
-            <p><strong style="color: #64748b;">Jumlah Jadwal:</strong></p>
-            <p style="font-weight: 600;">${currentTrip.schedules.length} jadwal</p>
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Meeting Points</label>
+              <div style="margin: 4px 0 0 0;">${getMeetingPointsDisplay(currentTrip)}</div>
+            </div>
+            
+            <div>
+              <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Jumlah Jadwal</label>
+              <p style="font-weight: 600; margin: 4px 0 0 0;">${currentTrip.schedules.length} jadwal</p>
+            </div>
           </div>
         </div>
       `;
@@ -307,16 +288,14 @@
       
       const firstDay = new Date(year, month, 1);
       const startDate = new Date(firstDay);
-      startDate.setDate(startDate.getDate() - ((firstDay.getDay() + 6) % 7)); // Start from Monday
+      startDate.setDate(startDate.getDate() - ((firstDay.getDay() + 6) % 7));
       
       const grid = document.getElementById('calendar-grid');
       grid.innerHTML = '';
-      grid.className = 'calendar-wrapper';
       
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      // Process week by week
       for (let week = 0; week < 6; week++) {
         const weekStart = new Date(startDate);
         weekStart.setDate(startDate.getDate() + (week * 7));
@@ -326,7 +305,6 @@
         
         const dayCells = [];
         
-        // Generate 7 day cells
         for (let day = 0; day < 7; day++) {
           const cellDate = new Date(weekStart);
           cellDate.setDate(weekStart.getDate() + day);
@@ -334,32 +312,22 @@
           const dayEl = document.createElement('div');
           dayEl.className = 'day-cell';
           
-          if (cellDate.getMonth() !== month) {
-            dayEl.classList.add('other-month');
-          }
+          if (cellDate.getMonth() !== month) dayEl.classList.add('other-month');
           
           const cellDateStr = dayjs(cellDate).format('YYYY-MM-DD');
           const todayStr = dayjs(today).format('YYYY-MM-DD');
           
-          if (cellDateStr === todayStr) {
-            dayEl.classList.add('today');
-          }
+          if (cellDateStr === todayStr) dayEl.classList.add('today');
           
           const dayNumber = document.createElement('div');
           dayNumber.className = 'day-number';
           dayNumber.textContent = cellDate.getDate();
           dayEl.appendChild(dayNumber);
           
-          dayCells.push({
-            element: dayEl,
-            date: cellDate,
-            dateStr: cellDateStr
-          });
-          
+          dayCells.push({ element: dayEl, date: cellDate, dateStr: cellDateStr });
           weekEl.appendChild(dayEl);
         }
         
-        // Find all events that overlap with this week
         const weekEvents = [];
         const weekStartStr = dayjs(dayCells[0].date).format('YYYY-MM-DD');
         const weekEndStr = dayjs(dayCells[6].date).format('YYYY-MM-DD');
@@ -368,9 +336,7 @@
           const schedStart = dayjs(sched.date_start);
           const schedEnd = dayjs(sched.date_end);
           
-          if (schedStart.isAfter(weekEndStr) || schedEnd.isBefore(weekStartStr)) {
-            return;
-          }
+          if (schedStart.isAfter(weekEndStr) || schedEnd.isBefore(weekStartStr)) return;
           
           let visibleStart = schedStart.isBefore(weekStartStr) ? dayjs(weekStartStr) : schedStart;
           let visibleEnd = schedEnd.isAfter(weekEndStr) ? dayjs(weekEndStr) : schedEnd;
@@ -390,27 +356,22 @@
           });
         });
         
-        // Sort events by start index, then by duration (longer first)
         weekEvents.sort((a, b) => {
           if (a.startIndex !== b.startIndex) return a.startIndex - b.startIndex;
           return (b.endIndex - b.startIndex) - (a.endIndex - a.startIndex);
         });
         
-        // Assign rows to events (stack overlapping events)
         const rowAssignments = [];
         weekEvents.forEach(event => {
           let row = 0;
           while (rowAssignments[row] && rowAssignments[row].some(assigned => 
             !(event.endIndex < assigned.startIndex || event.startIndex > assigned.endIndex)
-          )) {
-            row++;
-          }
+          )) row++;
           if (!rowAssignments[row]) rowAssignments[row] = [];
           rowAssignments[row].push(event);
           event.row = row;
         });
         
-        // Render event bars
         weekEvents.forEach(event => {
           const barEl = document.createElement('div');
           barEl.className = `event-bar ${event.colorClass} row-${event.row}`;
@@ -462,19 +423,27 @@
           <tr>
             <td>${formatDate(sched.date_start)} - ${formatDate(sched.date_end)}</td>
             <td>${sched.quota_total}</td>
-            <td>${sched.quota_remaining}</td>
+            <td><strong>${sched.quota_remaining}</strong></td>
             <td>
               ${isFull ? '<span class="badge badge-cancelled">Penuh</span>' : 
                 isLow ? '<span class="badge badge-pending">Hampir Penuh</span>' : 
                 '<span class="badge badge-confirmed">Tersedia</span>'}
             </td>
-            <td>
-              <button class="btn btn-sm btn-secondary" onclick="editSchedule('${sched.id}')">✏️ Edit</button>
-              <button class="btn btn-sm btn-secondary" onclick="deleteSchedule('${sched.id}')">🗑️ Hapus</button>
+            <td style="text-align: right;">
+              <button class="btn btn-sm btn-secondary" onclick="editSchedule('${sched.id}')">Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="deleteSchedule('${sched.id}')">Hapus</button>
             </td>
           </tr>
         `;
-      }).join('');
+      }).join('') || `
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div style="font-size: 32px; margin-bottom: 8px;"><i class='bx bx-calendar'></i></div>
+            <div>Belum ada jadwal</div>
+            <div style="font-size: 13px; margin-top: 4px;">Klik "Tambah Jadwal" untuk membuat jadwal baru</div>
+          </td>
+        </tr>
+      `;
     }
 
     function editSchedule(scheduleId) {
@@ -483,8 +452,7 @@
 
     function deleteSchedule(scheduleId) {
       if (confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
-        alert('🗑️ Jadwal dihapus (Demo)');
-        // In real app, delete from data and re-render
+        alert('Jadwal dihapus (Demo)');
       }
     }
 
@@ -493,21 +461,19 @@
         return '<p style="font-weight: 600;">-</p>';
       }
       
-      const pointsHtml = trip.meeting_points.map(mpId => {
+      return trip.meeting_points.map(mpId => {
         const mp = getMeetingPointById(mpId);
         if (!mp) return '';
         const priceAddition = mp.price_addition || 0;
         return `
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span>📍</span>
+            <span><i class='bx bx-map-pin'></i></span>
             <span style="font-weight: 600;">${mp.name}</span>
-            <span style="font-size: 12px; color: #64748b;">(${mp.address || 'Tidak ada alamat'})</span>
-            ${priceAddition > 0 ? `<span style="font-size: 12px; color: #f97316; font-weight: 600;">+${formatCurrency(priceAddition)}</span>` : ''}
+            <span style="font-size: 12px; color: var(--text-secondary);">(${mp.address || 'Tidak ada alamat'})</span>
+            ${priceAddition > 0 ? `<span style="font-size: 12px; color: var(--primary); font-weight: 600;">+${formatCurrency(priceAddition)}</span>` : ''}
           </div>
         `;
       }).join('');
-      
-      return pointsHtml;
     }
 
     function getPackageDisplay(trip) {
@@ -516,20 +482,16 @@
         if (pkg) {
           return `
             <div style="font-weight: 600;">${pkg.name}</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">${pkg.description}</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${pkg.description}</div>
             <div style="margin-top: 8px;">
-              ${pkg.includes.map(f => `<span style="display: inline-block; font-size: 11px; padding: 2px 8px; background: #f0fdf4; border-radius: 4px; color: #15803d; margin: 2px;">${f}</span>
+              ${pkg.includes.map(f => `<span style="display: inline-block; font-size: 11px; padding: 4px 10px; background: var(--success-light); border-radius: 4px; color: #047857; margin: 2px; font-weight: 600;">${f}</span>
               `).join('')}
             </div>
           `;
         }
       }
       
-      // Backward compatibility
-      if (trip.includes) {
-        return trip.includes.join(', ');
-      }
-      
+      if (trip.includes) return trip.includes.join(', ');
       return '-';
     }
 
@@ -537,7 +499,6 @@
       let basePrice = 0;
       let packageName = '-';
       
-      // Get package price
       if (trip.package_id) {
         const pkg = getPackageById(trip.package_id);
         if (pkg) {
@@ -545,18 +506,14 @@
           packageName = pkg.name;
         }
       } else if (trip.price) {
-        // Backward compatibility
         basePrice = trip.price;
       }
       
-      // Calculate meeting points total
       let mpTotal = 0;
       if (trip.meeting_points) {
         trip.meeting_points.forEach(mpId => {
           const mp = getMeetingPointById(mpId);
-          if (mp && mp.price_addition) {
-            mpTotal += mp.price_addition;
-          }
+          if (mp && mp.price_addition) mpTotal += mp.price_addition;
         });
       }
       
@@ -564,17 +521,17 @@
       
       return `
         <div style="margin-bottom: 16px;">
-          <p style="margin: 0; color: #64748b; font-size: 14px;">Harga Paket (${packageName}):</p>
-          <p style="font-weight: 600; font-size: 18px; color: #f97316; margin: 4px 0;">${formatCurrency(basePrice)}</p>
+          <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Harga Paket (${packageName})</label>
+          <p style="font-weight: 600; font-size: 18px; color: var(--primary); margin: 4px 0;">${formatCurrency(basePrice)}</p>
           
           ${mpTotal > 0 ? `
-            <p style="margin: 8px 0 0 0; color: #64748b; font-size: 13px;">Tambahan Meeting Point:</p>
-            <p style="font-weight: 600; color: #f97316; margin: 4px 0;">+${formatCurrency(mpTotal)}</p>
+            <p style="margin: 8px 0 0 0; font-size: 13px; color: var(--text-secondary);">Tambahan Meeting Point:</p>
+            <p style="font-weight: 600; color: var(--primary); margin: 4px 0;">+${formatCurrency(mpTotal)}</p>
           ` : ''}
           
-          <div style="margin-top: 12px; padding-top: 12px; border-top: 2px dashed #fed7aa;">
-            <p style="margin: 0; font-size: 14px; color: #64748b;">Total Harga:</p>
-            <p style="font-weight: 700; font-size: 24px; color: #f97316; margin: 4px 0 0 0;">${formatCurrency(total)}</p>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 2px dashed var(--primary);">
+            <label style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Total Harga</label>
+            <p style="font-weight: 700; font-size: 24px; color: var(--primary); margin: 4px 0 0 0;">${formatCurrency(total)}</p>
           </div>
         </div>
       `;

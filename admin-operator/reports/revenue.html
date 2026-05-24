@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laporan Pendapatan - Admin Operator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
@@ -26,8 +29,11 @@
     
     <header class="admin-header">
       <div class="header-left">
-        <button class="menu-toggle">☰</button>
-        <h1 class="header-title">Laporan Pendapatan</h1>
+        <button class="menu-toggle"><i class='bx bx-menu'></i></button>
+        <div class="header-welcome">
+          <h1>Laporan Pendapatan</h1>
+          <p>Pantau performa bisnis trip Anda</p>
+        </div>
       </div>
     </header>
     
@@ -36,40 +42,48 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-card-header">
-            <span class="stat-card-label">Total Pendapatan (2026)</span>
-            <span class="stat-card-icon">💰</span>
+            <div>
+              <div class="stat-card-label">Total Pendapatan (2026)</div>
+              <div class="stat-card-value" id="total-revenue">Rp 0</div>
+            </div>
+            <span class="stat-card-icon teal"><i class='bx bx-wallet'></i></span>
           </div>
-          <div class="stat-card-value" id="total-revenue">Rp 0</div>
         </div>
         
         <div class="stat-card">
           <div class="stat-card-header">
-            <span class="stat-card-label">Total Booking</span>
-            <span class="stat-card-icon">📝</span>
+            <div>
+              <div class="stat-card-label">Total Booking</div>
+              <div class="stat-card-value" id="total-bookings">0</div>
+            </div>
+            <span class="stat-card-icon blue"><i class='bx bx-file'></i></span>
           </div>
-          <div class="stat-card-value" id="total-bookings">0</div>
         </div>
         
         <div class="stat-card">
           <div class="stat-card-header">
-            <span class="stat-card-label">Rata-rata per Booking</span>
-            <span class="stat-card-icon">📊</span>
+            <div>
+              <div class="stat-card-label">Rata-rata per Booking</div>
+              <div class="stat-card-value" id="avg-booking">Rp 0</div>
+            </div>
+            <span class="stat-card-icon teal"><i class='bx bx-bar-chart-alt-2'></i></span>
           </div>
-          <div class="stat-card-value" id="avg-booking">Rp 0</div>
         </div>
         
         <div class="stat-card">
           <div class="stat-card-header">
-            <span class="stat-card-label">Trip Terlaris</span>
-            <span class="stat-card-icon">🏆</span>
+            <div>
+              <div class="stat-card-label">Trip Terlaris</div>
+              <div class="stat-card-value" id="top-trip">-</div>
+            </div>
+            <span class="stat-card-icon orange"><i class='bx bx-trophy'></i></span>
           </div>
-          <div class="stat-card-value" id="top-trip">-</div>
         </div>
       </div>
       
       <div class="card">
         <div class="card-header">
-          <span class="card-title">📈 Pendapatan per Bulan</span>
+          <span class="card-title">Pendapatan per Bulan</span>
         </div>
         <div class="card-body">
           <div class="chart-container">
@@ -80,7 +94,7 @@
       
       <div class="card">
         <div class="card-header">
-          <span class="card-title">📋 Rincian per Trip</span>
+          <span class="card-title">Rincian per Trip</span>
         </div>
         <div class="card-body">
           <table class="data-table">
@@ -108,7 +122,6 @@
       const trips = getOperatorTrips();
       const bookings = getOperatorBookings().filter(b => b.status !== 'cancelled');
       
-      // Calculate totals
       const totalRevenue = calculateRevenue(bookings);
       const totalBookings = bookings.length;
       const avgBooking = totalBookings > 0 ? totalRevenue / totalBookings : 0;
@@ -117,7 +130,6 @@
       document.getElementById('total-bookings').textContent = totalBookings;
       document.getElementById('avg-booking').textContent = formatCurrency(avgBooking);
       
-      // Find top trip
       const tripStats = {};
       bookings.forEach(b => {
         if (!tripStats[b.trip_id]) {
@@ -140,10 +152,8 @@
       const topTrip = getTripById(topTripId);
       document.getElementById('top-trip').textContent = topTrip ? topTrip.name.split(' ').slice(0, 3).join(' ') : '-';
       
-      // Render chart
       renderRevenueChart();
       
-      // Render table
       const tbody = document.getElementById('trip-revenue-table');
       tbody.innerHTML = trips.map(trip => {
         const tripBookings = bookings.filter(b => b.trip_id === trip.id);
@@ -152,13 +162,20 @@
         
         return `
           <tr>
-            <td>${trip.name}</td>
+            <td><strong>${trip.name}</strong></td>
             <td>${tripBookings.length}</td>
             <td>${totalParticipants} orang</td>
-            <td>${formatCurrency(tripRevenue)}</td>
+            <td><strong style="color: var(--primary);">${formatCurrency(tripRevenue)}</strong></td>
           </tr>
         `;
-      }).join('');
+      }).join('') || `
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div style="font-size: 32px; margin-bottom: 8px;"><i class='bx bx-bar-chart-alt-2'></i></div>
+            <div>Belum ada data pendapatan</div>
+          </td>
+        </tr>
+      `;
     }
     
     function renderRevenueChart() {
@@ -170,22 +187,27 @@
           datasets: [{
             label: 'Pendapatan (juta)',
             data: [15, 22, 18, 28, 35, 30, 25, 32, 28, 38, 42, 45],
-            backgroundColor: '#f97316',
-            borderRadius: 4
+            backgroundColor: '#0d9488',
+            borderRadius: 6,
+            barThickness: 24
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: {
-              display: false
-            }
+            legend: { display: false }
           },
           scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Inter' } }
+            },
             y: {
               beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.05)' },
               ticks: {
+                font: { family: 'Inter' },
                 callback: function(value) {
                   return 'Rp ' + value + 'jt';
                 }

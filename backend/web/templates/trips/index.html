@@ -1,0 +1,60 @@
+{{define "content"}}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Daftar Trip</h1>
+        <p class="text-gray-500 mt-1">Kelola perjalanan open trip kamu</p>
+    </div>
+    <a href="/trips/new" class="bg-teal-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-700 transition flex items-center gap-2">
+        <i class="bx bx-plus"></i> Tambah Trip
+    </a>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="p-4 border-b border-gray-200">
+        <div class="flex gap-2">
+            <input type="text" placeholder="Cari trip..." class="w-full max-w-xs px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+        </div>
+    </div>
+    <div class="overflow-x-auto">
+        {{if .Trips}}
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">Nama Trip</th>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">Gunung</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Jadwal Aktif</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Booking</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {{range .Trips}}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">{{.Name}}</td>
+                    <td class="px-6 py-4 text-gray-600">{{.Mountain}}</td>
+                    <td class="px-6 py-4 text-center">{{.Schedules}}</td>
+                    <td class="px-6 py-4 text-center">{{.Bookings}}</td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="/trips/{{.ID}}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium hover:bg-teal-100 transition">
+                                <i class="bx bx-show"></i> Detail
+                            </a>
+                            <a href="/trips/{{.ID}}/edit" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition">
+                                <i class="bx bx-edit-alt"></i> Edit
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="text-center py-16">
+            <i class="bx bxs-plane-alt text-5xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 mb-2">Belum ada trip</p>
+            <a href="/trips/new" class="text-teal-600 font-medium hover:underline">Buat trip pertama</a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

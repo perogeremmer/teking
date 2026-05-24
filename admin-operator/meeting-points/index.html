@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meeting Point - Admin Operator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body class="admin-body">
@@ -25,14 +28,18 @@
     
     <header class="admin-header">
       <div class="header-left">
-        <button class="menu-toggle">☰</button>
-        <h1 class="header-title">Meeting Point</h1>
+        <button class="menu-toggle"><i class='bx bx-menu'></i></button>
+        <div class="header-welcome">
+          <h1>Meeting Point</h1>
+          <p>Kelola lokasi meeting point untuk trip</p>
+        </div>
       </div>
       <div class="header-right">
-        <button class="notification-btn">🔔</button>
+        <button class="notification-btn"><i class='bx bx-bell'></i></button>
         <div class="user-profile" onclick="logout()">
           <img src="" alt="" class="operator-logo">
           <span class="operator-name"></span>
+          <span style="color: var(--text-muted); font-size: 12px;"><i class='bx bx-chevron-down'></i></span>
         </div>
       </div>
     </header>
@@ -40,11 +47,11 @@
     <div class="admin-content">
       
       <div class="search-bar">
-        <input type="text" class="search-input" id="search-meeting-point" placeholder="🔍 Cari meeting point..." onkeyup="filterMeetingPoints()">
+        <input type="text" class="search-input" id="search-meeting-point" placeholder="Cari meeting point..." onkeyup="filterMeetingPoints()">
         <select class="form-select" id="filter-mountain" onchange="filterMeetingPoints()" style="width: 180px;">
           <option value="">Semua Gunung</option>
         </select>
-        <a href="form.html" class="btn btn-primary">➕ Tambah Meeting Point</a>
+        <a href="form.html" class="btn btn-primary">+ Tambah Meeting Point</a>
       </div>
       
       <div class="card">
@@ -56,7 +63,7 @@
                 <th>Gunung</th>
                 <th>Tambahan Harga</th>
                 <th>Koordinat</th>
-                <th>Aksi</th>
+                <th style="text-align: right;">Aksi</th>
               </tr>
             </thead>
             <tbody id="meeting-points-table">
@@ -66,11 +73,8 @@
         </div>
       </div>
       
-      <div style="margin-top: 16px; padding: 16px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #059669;">
-        <p style="margin: 0; font-size: 14px; color: #065f46;">
-          <strong>💡 Tips:</strong> Meeting point yang sudah dibuat dapat dipilih saat menambah trip baru. 
-          Ini menghemat waktu dan memastikan data konsisten.
-        </p>
+      <div class="alert alert-success" style="margin-top: 16px;">
+        <strong>Tips:</strong> Meeting point yang sudah dibuat dapat dipilih saat menambah trip baru. Ini menghemat waktu dan memastikan data konsisten.
       </div>
       
     </div>
@@ -86,8 +90,10 @@
       if (meetingPoints.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
-              Belum ada meeting point. <a href="form.html" style="color: #f97316;">Tambah meeting point pertama</a>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <div style="font-size: 32px; margin-bottom: 8px;"><i class='bx bx-map-pin'></i></div>
+              <div>Belum ada meeting point</div>
+              <div style="font-size: 13px; margin-top: 4px;"><a href="form.html" style="color: var(--primary); font-weight: 600;">Tambah meeting point pertama</a></div>
             </td>
           </tr>
         `;
@@ -99,21 +105,21 @@
         return `
           <tr data-mountain="${mp.mountain_id}">
             <td>
-              <strong>${mp.name}</strong><br>
-              <span style="font-size: 12px; color: #64748b;">${mp.address || '-'}</span>
+              <strong>${mp.name}</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">${mp.address || '-'}</div>
             </td>
             <td>${mountain?.name || '-'}</td>
             <td>
-              ${mp.price_addition > 0 ? `<span style="color: #f97316; font-weight: 600;">+${formatCurrency(mp.price_addition)}</span>` : '<span style="color: #94a3b8;">Termasuk</span>'}
+              ${mp.price_addition > 0 ? `<span style="color: var(--primary); font-weight: 600;">+${formatCurrency(mp.price_addition)}</span>` : '<span style="color: var(--text-muted);">Termasuk</span>'}
             </td>
             <td>
-              <span style="font-size: 12px; color: #64748b;">
+              <span style="font-size: 12px; color: var(--text-secondary);">
                 ${mp.location?.lat?.toFixed(4) || '-'}, ${mp.location?.lng?.toFixed(4) || '-'}
               </span>
             </td>
-            <td>
-              <a href="form.html?id=${mp.id}" class="btn btn-sm btn-secondary">✏️ Edit</a>
-              <button class="btn btn-sm btn-secondary" onclick="deleteMeetingPoint('${mp.id}')">🗑️ Hapus</button>
+            <td style="text-align: right;">
+              <a href="form.html?id=${mp.id}" class="btn btn-sm btn-secondary">Edit</a>
+              <button class="btn btn-sm btn-secondary" onclick="deleteMeetingPoint('${mp.id}')">Hapus</button>
             </td>
           </tr>
         `;
@@ -154,19 +160,17 @@
         return;
       }
       
-      // Check if meeting point is used in any trip
       const usedInTrips = TRIPS.filter(trip => trip.meeting_points?.includes(id));
       if (usedInTrips.length > 0) {
-        alert('❌ Meeting point ini sedang digunakan di ' + usedInTrips.length + ' trip. Hapus dari trip terlebih dahulu.');
+        alert('Meeting point ini sedang digunakan di ' + usedInTrips.length + ' trip. Hapus dari trip terlebih dahulu.');
         return;
       }
       
-      // Remove from MEETING_POINTS array
       const index = MEETING_POINTS.findIndex(mp => mp.id === id);
       if (index > -1) {
         MEETING_POINTS.splice(index, 1);
         loadMeetingPoints();
-        alert('✅ Meeting point berhasil dihapus');
+        alert('Meeting point berhasil dihapus');
       }
     }
     

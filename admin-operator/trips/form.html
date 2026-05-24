@@ -4,332 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Trip - Admin Operator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="../assets/css/admin.css">
-  <style>
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-    }
-
-    .form-group {
-      margin-bottom: 8px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 8px;
-    }
-
-    .tag-input-wrapper {
-      position: relative;
-    }
-    
-    .tag-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 12px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      min-height: 60px;
-      background: white;
-      align-items: center;
-      cursor: text;
-    }
-    
-    .tag-container:empty::before {
-      content: 'Klik di sini dan ketik fasilitas...';
-      color: #94a3b8;
-      font-size: 14px;
-    }
-    
-    .tag-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: #fff7ed;
-      border: 1px solid #f97316;
-      border-radius: 20px;
-      font-size: 14px;
-      color: #c2410c;
-      font-weight: 600;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    
-    .tag-remove {
-      cursor: pointer;
-      font-weight: bold;
-      margin-left: 2px;
-      color: #9a3412;
-      font-size: 18px;
-      line-height: 1;
-      padding: 0 2px;
-    }
-    
-    .tag-remove:hover {
-      color: #dc2626;
-    }
-    
-    .tag-input {
-      border: 1px solid #d1d5db !important;
-      padding: 8px 12px !important;
-      flex: 1;
-      min-width: 150px;
-      background: white;
-      border-radius: 6px;
-      margin-top: 8px;
-    }
-    
-    .tag-input:focus {
-      outline: none;
-      border-color: #f97316 !important;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
-    
-    .tag-suggestions {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 100;
-      max-height: 250px;
-      overflow-y: auto;
-      margin-top: 4px;
-    }
-    
-    .tag-suggestions-header {
-      padding: 8px 16px;
-      background: #f8fafc;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .tag-suggestions-close {
-      cursor: pointer;
-      font-size: 16px;
-      color: #94a3b8;
-    }
-    
-    .tag-suggestions-close:hover {
-      color: #475569;
-    }
-    
-    .tag-suggestion-item {
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 14px;
-      border-bottom: 1px solid #f1f5f9;
-      transition: background 0.2s;
-    }
-    
-    .tag-suggestion-item:hover {
-      background: #fff7ed;
-      color: #c2410c;
-    }
-    
-    .tag-suggestion-item:last-child {
-      border-bottom: none;
-    }
-
-    /* Map Styles */
-    .map-container {
-      height: 400px;
-      border-radius: 8px;
-      border: 2px solid #e2e8f0;
-      margin-bottom: 16px;
-    }
-
-    .meeting-point-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      cursor: grab;
-    }
-
-    .meeting-point-item:active {
-      cursor: grabbing;
-    }
-
-    .meeting-point-item.dragging {
-      opacity: 0.5;
-    }
-
-    .meeting-point-handle {
-      cursor: grab;
-      color: #94a3b8;
-      font-size: 20px;
-    }
-
-    .meeting-point-info {
-      flex: 1;
-    }
-
-    .meeting-point-name {
-      font-weight: 600;
-      color: #1e293b;
-    }
-
-    .meeting-point-details {
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 2px;
-    }
-
-    .meeting-point-price {
-      font-size: 14px;
-      font-weight: 600;
-      color: #f97316;
-    }
-
-    .meeting-point-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .meeting-point-type {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .meeting-point-type.pickup {
-      background: #dbeafe;
-      color: #2563eb;
-    }
-
-    .meeting-point-type.destination {
-      background: #d1fae5;
-      color: #059669;
-    }
-
-    .meeting-point-type.checkpoint {
-      background: #fef3c7;
-      color: #d97706;
-    }
-
-    /* Modal Styles */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #94a3b8;
-    }
-
-    .search-box {
-      position: relative;
-      margin-bottom: 16px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 10px 14px 10px 40px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .search-box input:focus {
-      outline: none;
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-    }
-
-    .search-results {
-      max-height: 200px;
-      overflow-y: auto;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      margin-top: 8px;
-    }
-
-    .search-result-item {
-      padding: 10px 14px;
-      cursor: pointer;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 14px;
-    }
-
-    .search-result-item:hover {
-      background: #fff7ed;
-      color: #c2410c;
-    }
-
-    .search-result-item:last-child {
-      border-bottom: none;
-    }
-  </style>
 </head>
 <body class="admin-body">
   
@@ -350,8 +30,11 @@
     
     <header class="admin-header">
       <div class="header-left">
-        <button class="menu-toggle">☰</button>
-        <h1 class="header-title">Tambah/Edit Trip</h1>
+        <button class="menu-toggle"><i class='bx bx-menu'></i></button>
+        <div class="header-welcome">
+          <h1>Tambah/Edit Trip</h1>
+          <p>Buat atau ubah informasi trip open trip</p>
+        </div>
       </div>
     </header>
     
@@ -379,16 +62,16 @@
               
               <div class="form-group">
                 <label class="form-label">Periode Trip *</label>
-                <input type="text" class="form-input" id="trip-date-range" placeholder="Pilih tanggal mulai - selesai" readonly required style="cursor: pointer; background: white;">
-                <div id="date-picker-popup" style="display: none; position: absolute; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 16px; margin-top: 4px;">
+                <input type="text" class="form-input" id="trip-date-range" placeholder="Pilih tanggal mulai - selesai" readonly required style="cursor: pointer;">
+                <div id="date-picker-popup" style="display: none; position: absolute; z-index: 100; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 16px; margin-top: 4px;">
                   <div style="display: flex; gap: 16px;">
                     <div>
-                      <label style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px; display: block;">Tanggal Mulai</label>
+                      <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Tanggal Mulai</label>
                       <input type="date" class="form-input" id="trip-start-date" style="width: 160px;">
                     </div>
-                    <div style="display: flex; align-items: center; padding-top: 20px; color: #94a3b8;">→</div>
+                    <div style="display: flex; align-items: center; padding-top: 20px; color: var(--text-muted);">→</div>
                     <div>
-                      <label style="font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px; display: block;">Tanggal Selesai</label>
+                      <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Tanggal Selesai</label>
                       <input type="date" class="form-input" id="trip-end-date" style="width: 160px;">
                     </div>
                   </div>
@@ -400,7 +83,7 @@
               
               <div class="form-group">
                 <label class="form-label">Durasi</label>
-                <input type="text" class="form-input" id="trip-duration" placeholder="Otomatis dari tanggal" readonly>
+                <input type="text" class="form-input" id="trip-duration" placeholder="Otomatis dari tanggal" readonly style="background: var(--bg-body); color: var(--text-secondary);">
               </div>
               
               <div class="form-group">
@@ -408,36 +91,35 @@
                 <select class="form-input" id="trip-package" required onchange="onPackageChange()">
                   <option value="">Pilih paket...</option>
                 </select>
-                <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Harga dan fasilitas akan otomatis terisi</p>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Harga dan fasilitas akan otomatis terisi</p>
               </div>
               
               <div class="form-group">
-                <label class="form-label">Harga Paket (Rp)</label>
-                <input type="text" class="form-input" id="trip-price" readonly style="background: #f8fafc; color: #64748b;">
+                <label class="form-label">Harga Paket</label>
+                <input type="text" class="form-input" id="trip-price" readonly style="background: var(--bg-body); color: var(--text-secondary); font-weight: 600;">
               </div>
             </div>
             
             <!-- Fasilitas dari Paket -->
-            <div class="card" style="margin-top: 24px;">
+            <div class="card" style="margin-top: 28px;">
               <div class="card-header">
-                <span class="card-title">🎒 Fasilitas Include (dari Paket)</span>
+                <span class="card-title">Fasilitas Include (dari Paket)</span>
               </div>
               <div class="card-body">
                 <div id="package-facilities" style="display: flex; flex-wrap: wrap; gap: 8px;">
-                  <span style="color: #94a3b8; font-size: 14px;">Pilih paket terlebih dahulu</span>
+                  <span style="color: var(--text-muted); font-size: 14px;">Pilih paket terlebih dahulu</span>
                 </div>
               </div>
             </div>
             
             <!-- Meeting Points Section -->
-            <div class="card" style="margin-top: 24px;">
+            <div class="card" style="margin-top: 28px;">
               <div class="card-header">
-                <span class="card-title">📍 Meeting Points untuk Trip Ini</span>
+                <span class="card-title">Meeting Points untuk Trip Ini</span>
               </div>
               <div class="card-body">
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
-                  Pilih meeting point dari daftar yang sudah ada, atau tambahkan yang baru. 
-                  Meeting point bisa berupa titik pickup (di kota), basecamp (di gunung), atau checkpoint.
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                  Pilih meeting point dari daftar yang sudah ada, atau tambahkan yang baru.
                 </p>
                 
                 <div class="form-group">
@@ -451,32 +133,32 @@
                   <!-- Selected meeting points will be rendered here -->
                 </div>
                 
-                <div style="margin-top: 16px; padding: 12px; background: #fff7ed; border-radius: 8px; border: 1px dashed #f97316;">
-                  <p style="margin: 0; font-size: 13px; color: #c2410c;">
-                    <strong>💡 Tips:</strong> Meeting point baru yang ditambah di sini juga bisa disimpan ke daftar master agar bisa dipakai di trip lain.
+                <div style="margin-top: 16px; padding: 16px; background: var(--primary-light); border-radius: var(--radius); border: 1px dashed var(--primary);">
+                  <p style="margin: 0; font-size: 13px; color: var(--primary-dark);">
+                    <strong>Tips:</strong> Meeting point baru yang ditambah di sini juga bisa disimpan ke daftar master agar bisa dipakai di trip lain.
                   </p>
-                  <button type="button" class="btn btn-secondary" onclick="openNewMeetingPointModal()" style="margin-top: 8px;">
-                    ➕ Tambah Meeting Point Baru
+                  <button type="button" class="btn btn-secondary" onclick="openNewMeetingPointModal()" style="margin-top: 12px;">
+                    + Tambah Meeting Point Baru
                   </button>
                 </div>
               </div>
             </div>
             
             <!-- Total Harga -->
-            <div id="price-summary" style="margin-top: 24px; padding: 20px; background: #fff7ed; border-radius: 8px; border: 2px solid #f97316; display: none;">
-              <h3 style="margin: 0 0 12px 0; font-size: 16px; color: #1e293b;">💰 Rincian Harga</h3>
-              <div id="price-breakdown" style="font-size: 14px; color: #64748b;">
+            <div id="price-summary" style="margin-top: 28px; padding: 24px; background: var(--primary-light); border-radius: var(--radius); border: 2px solid var(--primary); display: none;">
+              <h3 style="margin: 0 0 16px 0; font-size: 16px; color: var(--text-primary);">Rincian Harga</h3>
+              <div id="price-breakdown" style="font-size: 14px; color: var(--text-secondary);">
                 <!-- Rendered by JS -->
               </div>
-              <div style="margin-top: 12px; padding-top: 12px; border-top: 2px dashed #fed7aa; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 16px; font-weight: 600; color: #1e293b;">Total Harga</span>
-                <span id="total-price" style="font-size: 24px; font-weight: 700; color: #f97316;">Rp 0</span>
+              <div style="margin-top: 16px; padding-top: 16px; border-top: 2px dashed var(--primary); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 16px; font-weight: 600; color: var(--text-primary);">Total Harga</span>
+                <span id="total-price" style="font-size: 28px; font-weight: 700; color: var(--primary);">Rp 0</span>
               </div>
             </div>
             
-            <div style="display: flex; gap: 12px; margin-top: 24px;">
-              <button type="submit" class="btn btn-primary">💾 Simpan Trip</button>
-              <a href="index.html" class="btn btn-secondary">❌ Batal</a>
+            <div style="display: flex; gap: 12px; margin-top: 28px;">
+              <button type="submit" class="btn btn-primary">Simpan Trip</button>
+              <a href="index.html" class="btn btn-secondary">Batal</a>
             </div>
             
           </form>
@@ -488,10 +170,10 @@
 
   <!-- Meeting Point Modal -->
   <div class="modal-overlay" id="meeting-point-modal">
-    <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-content" style="max-width: 600px;">
       <div class="modal-header">
         <span class="modal-title">Tambah Meeting Point Baru</span>
-        <button class="modal-close" onclick="closeMeetingPointModal()">✕</button>
+        <button class="modal-close" onclick="closeMeetingPointModal()"><i class='bx bx-x'></i></button>
       </div>
       
       <div class="form-group">
@@ -514,35 +196,34 @@
       <div class="form-group">
         <label class="form-label">Tambahan Harga (Rp)</label>
         <input type="number" class="form-input" id="mp-price-addition" placeholder="0" value="0">
-        <p style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Biaya tambahan untuk meeting point ini (contoh: transportasi, parkir)</p>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Biaya tambahan untuk meeting point ini (contoh: transportasi, parkir)</p>
       </div>
       
       <div class="form-group">
         <label class="form-label">Lokasi di Peta *</label>
         <div class="search-box" style="margin-bottom: 12px;">
-          <span class="search-icon">🔍</span>
           <input type="text" id="mp-map-search" placeholder="Cari lokasi..." autocomplete="off">
           <div id="mp-search-results" class="search-results"></div>
         </div>
-        <div id="mp-map" style="height: 250px; border-radius: 8px; border: 2px solid #e2e8f0;"></div>
+        <div id="mp-map" style="height: 250px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);"></div>
         <div style="display: flex; gap: 16px; margin-top: 8px;">
-          <div style="flex: 1; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px;">
-            <label style="font-size: 11px; color: #94a3b8; font-weight: 600;">LAT</label>
+          <div style="flex: 1; padding: 10px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 13px;">
+            <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">LAT</label>
             <div id="mp-display-lat">-</div>
           </div>
-          <div style="flex: 1; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px;">
-            <label style="font-size: 11px; color: #94a3b8; font-weight: 600;">LNG</label>
+          <div style="flex: 1; padding: 10px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 13px;">
+            <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">LNG</label>
             <div id="mp-display-lng">-</div>
           </div>
         </div>
       </div>
       
-      <div class="form-group" style="margin-top: 16px; padding: 12px; background: #f0fdf4; border-radius: 8px;">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 600; color: #065f46;">
-          <input type="checkbox" id="mp-save-to-master" checked style="width: 18px; height: 18px; accent-color: #059669;">
-          <span>Tambahkan Meeting Point Ini ke Daftar Master</span>
+      <div class="form-group" style="margin-top: 16px; padding: 16px; background: var(--success-light); border-radius: var(--radius);">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 600; color: #047857;">
+          <input type="checkbox" id="mp-save-to-master" checked style="width: 18px; height: 18px; accent-color: var(--success);">
+          <span>Tambahkan ke Daftar Master</span>
         </label>
-        <p style="margin: 4px 0 0 26px; font-size: 12px; color: #059669;">
+        <p style="margin: 4px 0 0 26px; font-size: 12px; color: var(--success);">
           Centang ini agar meeting point bisa dipakai lagi di trip lain.
         </p>
       </div>
@@ -550,9 +231,9 @@
       <input type="hidden" id="mp-lat">
       <input type="hidden" id="mp-lng">
       
-      <div style="display: flex; gap: 12px; margin-top: 20px;">
-        <button type="button" class="btn btn-primary" onclick="saveNewMeetingPoint()">💾 Simpan</button>
-        <button type="button" class="btn btn-secondary" onclick="closeMeetingPointModal()">❌ Batal</button>
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button type="button" class="btn btn-primary" onclick="saveNewMeetingPoint()">Simpan</button>
+        <button type="button" class="btn btn-secondary" onclick="closeMeetingPointModal()">Batal</button>
       </div>
     </div>
   </div>
@@ -562,29 +243,10 @@
   <script src="../../assets/js/app.js"></script>
   <script src="../assets/js/admin.js"></script>
   <script>
-    let map;
-    let markers = [];
     let currentMeetingPoints = [];
-    let currentTags = [];
-    let editingMpIndex = -1;
     let mpModalMap = null;
     let mpModalMarker = null;
 
-    // Predefined facilities
-    const PREDEFINED_FACILITIES = [
-      'Transportasi PP',
-      'Makan selama trip',
-      'Tenda & cooking set',
-      'Guide berpengalaman',
-      'P3K & asuransi',
-      'Dokumentasi',
-      'Snack & mineral water',
-      'Dokumentasi drone',
-      'Porter',
-      'Asuransi jiwa'
-    ];
-
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       initAdmin();
       initDateListeners();
@@ -593,14 +255,10 @@
       loadTripData();
     });
 
-    // Meeting Point Master Functions
     function loadMeetingPointOptions() {
       const select = document.getElementById('mp-select');
       const meetingPoints = getOperatorMeetingPoints();
-      
-      // Keep the first option (placeholder)
       select.innerHTML = '<option value="">Pilih dari daftar...</option>';
-      
       meetingPoints.forEach(mp => {
         const option = document.createElement('option');
         option.value = mp.id;
@@ -612,15 +270,12 @@
     function addMeetingPointFromMaster() {
       const select = document.getElementById('mp-select');
       const mpId = select.value;
-      
       if (!mpId) return;
-      
       if (currentMeetingPoints.includes(mpId)) {
         alert('Meeting point ini sudah dipilih');
         select.value = '';
         return;
       }
-      
       currentMeetingPoints.push(mpId);
       renderSelectedMeetingPoints();
       select.value = '';
@@ -631,14 +286,10 @@
       renderSelectedMeetingPoints();
     }
 
-    // Package Functions
     function loadPackageOptions() {
       const select = document.getElementById('trip-package');
       const packages = getPackagesByOperator(CURRENT_OPERATOR_ID);
-      
-      // Keep the first option (placeholder)
       select.innerHTML = '<option value="">Pilih paket...</option>';
-      
       packages.forEach(pkg => {
         const option = document.createElement('option');
         option.value = pkg.id;
@@ -653,7 +304,7 @@
       const priceInput = document.getElementById('trip-price');
       
       if (!packageId) {
-        container.innerHTML = '<span style="color: #94a3b8; font-size: 14px;">Pilih paket terlebih dahulu</span>';
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 14px;">Pilih paket terlebih dahulu</span>';
         priceInput.value = '';
         updatePriceSummary();
         return;
@@ -662,13 +313,11 @@
       const pkg = getPackageById(packageId);
       if (!pkg) return;
       
-      // Update price
       priceInput.value = formatCurrency(pkg.price);
       
-      // Update facilities
       container.innerHTML = pkg.includes.map(facility => `
-        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 20px; font-size: 14px; color: #15803d; font-weight: 600;">
-          ✅ ${facility}
+        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--success-light); border: 1px solid var(--success); border-radius: 20px; font-size: 14px; color: #047857; font-weight: 600;">
+          ${facility}
         </span>
       `).join('');
       
@@ -697,15 +346,14 @@
         </div>
       `;
       
-      // Add meeting points
       currentMeetingPoints.forEach(mpId => {
         const mp = getMeetingPointById(mpId);
         if (mp && mp.price_addition > 0) {
           total += mp.price_addition;
           html += `
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span style="color: #64748b;">📍 ${mp.name}</span>
-              <span style="font-weight: 600; color: #f97316;">+${formatCurrency(mp.price_addition)}</span>
+              <span style="color: var(--text-secondary);">${mp.name}</span>
+              <span style="font-weight: 600; color: var(--primary);">+${formatCurrency(mp.price_addition)}</span>
             </div>
           `;
         }
@@ -720,7 +368,7 @@
       const container = document.getElementById('selected-meeting-points');
       
       if (currentMeetingPoints.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 20px;">Belum ada meeting point yang dipilih.</p>';
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 20px;">Belum ada meeting point yang dipilih.</p>';
         updatePriceSummary();
         return;
       }
@@ -728,21 +376,20 @@
       container.innerHTML = currentMeetingPoints.map(mpId => {
         const mp = getMeetingPointById(mpId);
         if (!mp) return '';
-        
         const mountain = getMountainById(mp.mountain_id);
         const priceAddition = mp.price_addition || 0;
         
         return `
-          <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px;">
-            <div style="width: 32px; height: 32px; background: #fff7ed; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">📍</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 8px;">
+            <div style="width: 32px; height: 32px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;"><i class='bx bx-map-pin'></i></div>
             <div style="flex: 1;">
-              <div style="font-weight: 600; color: #1e293b;">${mp.name}</div>
-              <div style="font-size: 12px; color: #64748b;">${mountain?.name || '-'} • ${mp.address || '-'}</div>
+              <div style="font-weight: 600; color: var(--text-primary);">${mp.name}</div>
+              <div style="font-size: 12px; color: var(--text-secondary);">${mountain?.name || '-'} • ${mp.address || '-'}</div>
             </div>
             <div style="text-align: right;">
-              ${priceAddition > 0 ? `<div style="font-weight: 700; color: #f97316; font-size: 14px;">+${formatCurrency(priceAddition)}</div>` : '<div style="font-size: 12px; color: #94a3b8;">Termasuk</div>'}
+              ${priceAddition > 0 ? `<div style="font-weight: 700; color: var(--primary); font-size: 14px;">+${formatCurrency(priceAddition)}</div>` : '<div style="font-size: 12px; color: var(--text-muted);">Termasuk</div>'}
             </div>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="removeMeetingPoint('${mpId}')">🗑️</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="removeMeetingPoint('${mpId}')">Hapus</button>
           </div>
         `;
       }).join('');
@@ -750,9 +397,7 @@
       updatePriceSummary();
     }
 
-    // Meeting Point Modal Functions
     function openNewMeetingPointModal() {
-      editingMpIndex = -1;
       document.getElementById('mp-name').value = '';
       document.getElementById('mp-address').value = '';
       document.getElementById('mp-lat').value = '';
@@ -761,7 +406,6 @@
       document.getElementById('mp-display-lng').textContent = '-';
       document.getElementById('mp-save-to-master').checked = true;
       
-      // Load mountain options in modal
       const mountainSelect = document.getElementById('mp-mountain');
       mountainSelect.innerHTML = '<option value="">Pilih gunung...</option>';
       getMountains().forEach(m => {
@@ -771,22 +415,15 @@
         mountainSelect.appendChild(option);
       });
       
-      // Set current trip's mountain if selected
       const tripMountain = document.getElementById('trip-mountain').value;
-      if (tripMountain) {
-        mountainSelect.value = tripMountain;
-      }
+      if (tripMountain) mountainSelect.value = tripMountain;
       
       document.getElementById('meeting-point-modal').classList.add('active');
-      
-      // Initialize modal map after a short delay to ensure container is visible
       setTimeout(initModalMap, 100);
     }
 
     function initModalMap() {
-      if (mpModalMap) {
-        mpModalMap.remove();
-      }
+      if (mpModalMap) mpModalMap.remove();
       
       mpModalMap = L.map('mp-map').setView([-6.9147, 107.6098], 7);
       
@@ -794,12 +431,10 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(mpModalMap);
 
-      // Map click to set location
       mpModalMap.on('click', (e) => {
         setModalMarker(e.latlng.lat, e.latlng.lng);
       });
 
-      // Search functionality
       const searchInput = document.getElementById('mp-map-search');
       const searchResults = document.getElementById('mp-search-results');
       let searchTimeout;
@@ -807,18 +442,15 @@
       searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         const query = e.target.value;
-        
         if (query.length < 3) {
           searchResults.style.display = 'none';
           return;
         }
-
         searchTimeout = setTimeout(() => {
           searchModalLocation(query);
         }, 500);
       });
 
-      // Hide search results when clicking outside
       document.addEventListener('click', (e) => {
         if (!e.target.closest('.search-box')) {
           searchResults.style.display = 'none';
@@ -828,7 +460,6 @@
 
     async function searchModalLocation(query) {
       const searchResults = document.getElementById('mp-search-results');
-      
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
         const data = await response.json();
@@ -844,7 +475,6 @@
             ${place.display_name}
           </div>
         `).join('');
-        
         searchResults.style.display = 'block';
       } catch (error) {
         console.error('Search error:', error);
@@ -859,9 +489,7 @@
     }
 
     function setModalMarker(lat, lng) {
-      if (mpModalMarker) {
-        mpModalMap.removeLayer(mpModalMarker);
-      }
+      if (mpModalMarker) mpModalMap.removeLayer(mpModalMarker);
 
       mpModalMarker = L.marker([lat, lng])
         .addTo(mpModalMap)
@@ -905,139 +533,31 @@
         operator_id: CURRENT_OPERATOR_ID
       };
 
-      // Save to master if checked
       if (saveToMaster) {
         MEETING_POINTS.push(mpData);
-        // Reload dropdown options
         loadMeetingPointOptions();
       }
       
-      // Add to current trip
       currentMeetingPoints.push(mpId);
       renderSelectedMeetingPoints();
-      
       closeMeetingPointModal();
     }
 
     function closeMeetingPointModal() {
       document.getElementById('meeting-point-modal').classList.remove('active');
-      editingMpIndex = -1;
     }
 
-    // Tag Input Functions
-    function initTagInput() {
-      const input = document.getElementById('tag-input');
-      
-      if (!input) return;
-      
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          manualAddTag();
-        }
-      });
-      
-      input.addEventListener('input', (e) => {
-        showSuggestions(e.target.value);
-      });
-      
-      input.addEventListener('blur', () => {
-        setTimeout(hideSuggestions, 200);
-      });
-    }
-
-    function manualAddTag() {
-      const input = document.getElementById('tag-input');
-      const text = input.value.trim();
-      
-      if (text && !currentTags.includes(text)) {
-        addTag(text);
-        input.value = '';
-        hideSuggestions();
-      }
-    }
-
-    function addTag(text) {
-      if (!currentTags.includes(text)) {
-        currentTags.push(text);
-        renderTags();
-      }
-    }
-
-    function removeTag(text) {
-      currentTags = currentTags.filter(t => t !== text);
-      renderTags();
-    }
-
-    function renderTags() {
-      const tagList = document.getElementById('tag-list');
-      const placeholder = document.getElementById('tag-placeholder');
-      
-      if (!tagList) return;
-      
-      if (placeholder) {
-        placeholder.style.display = currentTags.length > 0 ? 'none' : 'inline';
-      }
-      
-      tagList.innerHTML = currentTags.map(tag => `
-        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #fff7ed; border: 1px solid #f97316; border-radius: 20px; font-size: 14px; color: #c2410c; font-weight: 600;">
-          ${tag}
-          <span onclick="removeTag('${tag}')" style="cursor: pointer; font-weight: bold; margin-left: 2px; color: #9a3412; font-size: 18px;">×</span>
-        </span>
-      `).join('');
-    }
-
-    function showSuggestions(query) {
-      const dropdown = document.getElementById('tag-suggestions');
-      
-      if (!query) {
-        hideSuggestions();
-        return;
-      }
-      
-      const matches = PREDEFINED_FACILITIES.filter(f => 
-        f.toLowerCase().includes(query.toLowerCase()) && 
-        !currentTags.includes(f)
-      );
-      
-      if (matches.length === 0) {
-        hideSuggestions();
-        return;
-      }
-      
-      dropdown.innerHTML = matches.map(f => `
-        <div class="tag-suggestion-item" onclick="addTagFromSuggestion('${f}')">
-          ${f}
-        </div>
-      `).join('');
-      
-      dropdown.style.display = 'block';
-    }
-
-    function addTagFromSuggestion(text) {
-      addTag(text);
-      document.getElementById('tag-input').value = '';
-      hideSuggestions();
-    }
-
-    function hideSuggestions() {
-      document.getElementById('tag-suggestions').style.display = 'none';
-    }
-
-    // Date Functions
     function initDateListeners() {
       const dateRangeInput = document.getElementById('trip-date-range');
       const startDate = document.getElementById('trip-start-date');
       const endDate = document.getElementById('trip-end-date');
       const datePopup = document.getElementById('date-picker-popup');
       
-      // Show popup when clicking the range input
       dateRangeInput.addEventListener('click', (e) => {
         e.stopPropagation();
         datePopup.style.display = datePopup.style.display === 'block' ? 'none' : 'block';
       });
       
-      // Close popup when clicking outside
       document.addEventListener('click', (e) => {
         if (!e.target.closest('#date-picker-popup') && !e.target.closest('#trip-date-range')) {
           datePopup.style.display = 'none';
@@ -1045,7 +565,6 @@
       });
       
       startDate.addEventListener('change', () => {
-        // Ensure end date is not before start date
         if (endDate.value && startDate.value > endDate.value) {
           endDate.value = startDate.value;
         }
@@ -1053,7 +572,6 @@
       });
       
       endDate.addEventListener('change', () => {
-        // Ensure start date is not after end date
         if (startDate.value && endDate.value < startDate.value) {
           startDate.value = endDate.value;
         }
@@ -1095,7 +613,6 @@
       }
     }
 
-    // Save Trip
     function saveTrip(e) {
       e.preventDefault();
       
@@ -1114,15 +631,13 @@
         duration: document.getElementById('trip-duration').value,
         package_id: packageId,
         meeting_points: currentMeetingPoints
-        // Harga dihitung dari pkg.price + meeting_points saat ditampilkan
       };
       
       console.log('Saving trip:', tripData);
-      alert('✅ Trip berhasil disimpan! (Demo)\n\nPaket: ' + pkg.name + '\nMeeting Points: ' + currentMeetingPoints.length + ' titik');
+      alert('Trip berhasil disimpan! (Demo)\n\nPaket: ' + pkg.name + '\nMeeting Points: ' + currentMeetingPoints.length + ' titik');
       window.location.href = 'index.html';
     }
 
-    // Load Trip Data
     function loadTripData() {
       const urlParams = new URLSearchParams(window.location.search);
       const tripId = urlParams.get('id');
@@ -1134,23 +649,18 @@
           document.getElementById('trip-mountain').value = trip.mountain_id || '';
           document.getElementById('trip-route').value = trip.route;
           
-          // Load package
           if (trip.package_id) {
             document.getElementById('trip-package').value = trip.package_id;
             onPackageChange();
           }
           
           if (trip.meeting_points) {
-            // Handle both old format (array of objects) and new format (array of IDs)
             if (trip.meeting_points.length > 0 && typeof trip.meeting_points[0] === 'object') {
-              // Old format - convert to IDs if possible
               currentMeetingPoints = trip.meeting_points.map(mp => {
-                // Try to find matching meeting point by name
                 const found = getMeetingPoints().find(m => m.name === mp.name);
                 return found ? found.id : null;
               }).filter(id => id !== null);
             } else {
-              // New format - array of IDs
               currentMeetingPoints = [...trip.meeting_points];
             }
             renderSelectedMeetingPoints();
@@ -1158,7 +668,6 @@
         }
       }
       
-      // Load options
       loadMeetingPointOptions();
       loadPackageOptions();
     }

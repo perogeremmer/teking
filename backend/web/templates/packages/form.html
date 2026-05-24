@@ -1,0 +1,222 @@
+{{define "content"}}
+<div class="mb-8">
+    <a href="/packages" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1 mb-2"><i class="bx bx-arrow-back"></i> Kembali</a>
+    <h1 class="text-2xl font-bold text-gray-900">{{if .EditMode}}Edit Paket{{else}}Tambah Paket Baru{{end}}</h1>
+</div>
+
+{{if .Error}}
+<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">{{.Error}}</div>
+{{end}}
+
+<form method="POST" action="{{if .EditMode}}/packages/{{.Package.ID}}{{else}}/packages{{end}}" onsubmit="buildFacilitiesJSON()">
+    {{if .EditMode}}<input type="hidden" name="_method" value="PUT">{{end}}
+    <input type="hidden" name="facilities_json" id="facilities_json" value="">
+
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6">Informasi Paket</h2>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Paket *</label>
+                <input type="text" name="name" required value="{{if .Package}}{{.Package.Name}}{{end}}"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                <textarea name="description" rows="3"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">{{if .Package}}{{.Package.Description}}{{end}}</textarea>
+            </div>
+        </div>
+
+        <hr class="border-gray-200 mb-6">
+
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Fasilitas</h2>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 mb-6">
+            <div class="flex-1 min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Cari atau tulis sendiri</label>
+                <input type="text" id="facility-search" list="facility-list" placeholder="Ketik untuk mencari..."
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
+                <datalist id="facility-list">
+                    <option value="Transportasi PP" data-detail="Jakarta - Basecamp">
+                    <option value="Guide" data-detail="Berpengalaman">
+                    <option value="Porter Tenda" data-detail="Membawa tenda & alat masak">
+                    <option value="Tenda" data-detail="Kapasitas 4-5, max isi 4 orang">
+                    <option value="Makan Selama Pendakian" data-detail="4x (Siang, Malam, Summit, Sebelum Turun)">
+                    <option value="P3K / First Aid Kit" data-detail="Standar">
+                    <option value="Dokumentasi" data-detail="Foto & video">
+                    <option value="Air Mineral" data-detail="1.5L 2 botol + 600ml 1 botol">
+                </datalist>
+                <p id="custom-hint" class="text-xs text-gray-400 mt-1 hidden">Tidak ada di daftar. Akan ditambahkan sebagai fasilitas custom.</p>
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <button type="button" onclick="addFacility('include')" class="px-4 py-2.5 bg-teal-600 text-white rounded-lg text-sm font-semibold hover:bg-teal-700 transition flex items-center gap-1">
+                    <i class="bx bx-plus"></i> Include
+                </button>
+                <button type="button" onclick="addFacility('exclude')" class="px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition flex items-center gap-1">
+                    <i class="bx bx-plus"></i> Exclude
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg inline-block">Include</h3>
+                <div id="include-list" class="space-y-2 min-h-[80px] border-2 border-dashed border-gray-200 rounded-lg p-3">
+                    <p class="text-xs text-gray-400 text-center py-4" id="include-empty">Belum ada fasilitas include</p>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg inline-block">Exclude</h3>
+                <div id="exclude-list" class="space-y-2 min-h-[80px] border-2 border-dashed border-gray-200 rounded-lg p-3">
+                    <p class="text-xs text-gray-400 text-center py-4" id="exclude-empty">Belum ada fasilitas exclude</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex gap-3 mt-6">
+        <button type="submit" class="bg-teal-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-teal-700 transition">
+            {{if .EditMode}}Simpan Perubahan{{else}}Simpan Paket{{end}}
+        </button>
+        <a href="/packages" class="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-200 transition">Batal</a>
+    </div>
+</form>
+
+<script>
+var masterFacilities = [];
+var defaultFacilities = ["Transportasi PP", "Guide", "Porter Tenda", "Tenda", "Makan Selama Pendakian", "P3K / First Aid Kit", "Dokumentasi", "Air Mineral"];
+var selectedFacilities = {{.SelectedJSON}};
+
+function populateDatalist(items) {
+    var dl = document.getElementById('facility-list');
+    dl.innerHTML = '';
+    items.forEach(function(name) {
+        var opt = document.createElement('option');
+        opt.value = name;
+        var found = masterFacilities.find(function(f) { return f.name === name; });
+        if (found && found.detail) opt.setAttribute('data-detail', found.detail);
+        dl.appendChild(opt);
+    });
+}
+
+function renderSelected() {
+    selectedFacilities.forEach(function(f) {
+        addToList(f.name, f.detail, f.type);
+    });
+}
+
+function addFacility(type) {
+    var input = document.getElementById('facility-search');
+    var name = input.value.trim();
+    if (!name) return;
+    if (isAdded(name)) { alert('"' + name + '" sudah ditambahkan'); return; }
+
+    var detail = '';
+    var found = masterFacilities.find(function(f) { return f.name === name; });
+    if (found) detail = found.detail || '';
+
+    addToList(name, detail, type);
+    input.value = '';
+    input.focus();
+    document.getElementById('custom-hint').classList.add('hidden');
+}
+
+function addToList(name, detail, type) {
+    var list = document.getElementById(type + '-list');
+    var empty = document.getElementById(type + '-empty');
+    if (empty) empty.remove();
+
+    var div = document.createElement('div');
+    div.className = 'facility-card flex items-start gap-2 p-3 border border-gray-200 rounded-lg bg-gray-50';
+    div.dataset.name = name;
+    div.dataset.type = type;
+
+    div.innerHTML =
+        '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center justify-between">' +
+                '<span class="text-sm font-medium text-gray-900">' + name + '</span>' +
+                '<button type="button" onclick="this.closest(\'.facility-card\').remove(); checkEmpty()" class="text-gray-400 hover:text-red-600 transition text-lg leading-none">&times;</button>' +
+            '</div>' +
+            '<input type="text" class="facility-detail w-full text-xs mt-1 px-2 py-1 border border-gray-200 rounded focus:ring-1 focus:ring-teal-500 outline-none" value="' + detail.replace(/"/g, '&quot;') + '" placeholder="Detail (opsional)">' +
+        '</div>';
+
+    list.appendChild(div);
+}
+
+function checkEmpty() {
+    ['include-list', 'exclude-list'].forEach(function(id) {
+        var list = document.getElementById(id);
+        if (list && list.children.length === 0) {
+            var p = document.createElement('p');
+            p.id = id + '-empty';
+            p.className = 'text-xs text-gray-400 text-center py-4';
+            p.textContent = id === 'include-list' ? 'Belum ada fasilitas include' : 'Belum ada fasilitas exclude';
+            list.appendChild(p);
+        }
+    });
+}
+
+function isAdded(name) {
+    return document.querySelector('.facility-card[data-name="' + name.replace(/"/g, '&quot;') + '"]') !== null;
+}
+
+function buildFacilitiesJSON() {
+    var facilities = [];
+    document.querySelectorAll('.facility-card').forEach(function(card) {
+        var detail = card.querySelector('.facility-detail').value;
+        facilities.push({
+            name: card.dataset.name,
+            detail: detail || '',
+            type: card.dataset.type
+        });
+    });
+    document.getElementById('facilities_json').value = JSON.stringify(facilities);
+}
+
+// Load master facilities from static JSON
+fetch('/static/data/facilities.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        masterFacilities = data;
+        populateDatalist(defaultFacilities);
+        renderSelected();
+    })
+    .catch(function(err) {
+        console.error('Gagal load fasilitas:', err);
+        renderSelected();
+    });
+
+// Setup search listener once DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('facility-search').addEventListener('input', function() {
+        var q = this.value.trim().toLowerCase();
+        var hint = document.getElementById('custom-hint');
+        if (!q) {
+            populateDatalist(defaultFacilities);
+            hint.classList.add('hidden');
+            return;
+        }
+        var matches = masterFacilities.filter(function(f) {
+            return f.name.toLowerCase().includes(q);
+        }).slice(0, 10);
+        var dl = document.getElementById('facility-list');
+        dl.innerHTML = '';
+        matches.forEach(function(f) {
+            var opt = document.createElement('option');
+            opt.value = f.name;
+            if (f.detail) opt.setAttribute('data-detail', f.detail);
+            dl.appendChild(opt);
+        });
+        hint.classList.toggle('hidden', matches.length > 0);
+    });
+
+    document.getElementById('facility-search').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addFacility('include');
+        }
+    });
+});
+</script>
+{{end}}

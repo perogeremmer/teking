@@ -1,0 +1,1443 @@
+{
+  "Abang": {
+    "name": "Abang",
+    "elevation": 2151,
+    "province": "Bali",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Adeng": {
+    "name": "Adeng",
+    "elevation": 1826,
+    "province": "Bali",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Agung": {
+    "name": "Agung",
+    "elevation": 3142,
+    "province": "Bali",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Amasing": {
+    "name": "Amasing",
+    "elevation": 1030,
+    "province": "Maluku Utara",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ambang": {
+    "name": "Ambang",
+    "elevation": 1795,
+    "province": "Sulawesi Utara",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Anak Krakatau": {
+    "name": "Anak Krakatau",
+    "elevation": 157,
+    "province": "Lampung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Andong": {
+    "name": "Andong",
+    "elevation": 1726,
+    "province": "Jawa Tengah",
+    "lat": -7.389094580061568,
+    "lon": 110.3709357075652,
+    "basecamps": [
+      {
+        "name": "Sawit Magelang",
+        "elevation": 1319
+      },
+      {
+        "name": "Gogik Magelang",
+        "elevation": 1244
+      },
+      {
+        "name": "Pendem Magelang",
+        "elevation": 1290
+      }
+    ]
+  },
+  "Argopuro": {
+    "name": "Argopuro",
+    "elevation": 3088,
+    "province": "Jawa Timur",
+    "lat": -7.965408104413958,
+    "lon": 113.5727608307636,
+    "basecamps": [
+      {
+        "name": "Bremi Probolinggo",
+        "elevation": 908
+      },
+      {
+        "name": "Baderan Situbondo",
+        "elevation": 782
+      }
+    ]
+  },
+  "Arjuno": {
+    "name": "Arjuno",
+    "elevation": 3339,
+    "province": "Jawa Timur",
+    "lat": -7.764196676743479,
+    "lon": 112.5891658808098,
+    "basecamps": [
+      {
+        "name": "Tambaksari Pasuruan",
+        "elevation": 864
+      },
+      {
+        "name": "Sumber Brantas Batu",
+        "elevation": 2058
+      },
+      {
+        "name": "Lawang Malang",
+        "elevation": 892
+      },
+      {
+        "name": "Tretes Pasuruan",
+        "elevation": 793
+      }
+    ]
+  },
+  "Aseupan": {
+    "name": "Aseupan",
+    "elevation": 1174,
+    "province": "Banten",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Awu": {
+    "name": "Awu",
+    "elevation": 1320,
+    "province": "Sulawesi Utara",
+    "lat": -7.627369603574301,
+    "lon": 111.1944620844944,
+    "basecamps": [
+      {
+        "name": "Cemoro Sewu Magetan",
+        "elevation": 1919
+      },
+      {
+        "name": "Cemoro Kandang Karanganyar",
+        "elevation": 1800
+      },
+      {
+        "name": "Candi Cetho Karanganyar",
+        "elevation": 1463
+      },
+      {
+        "name": "Tambak Karanganyar",
+        "elevation": 1158
+      },
+      {
+        "name": "Singolangu Magetan",
+        "elevation": 1327
+      }
+    ]
+  },
+  "Baluran": {
+    "name": "Baluran",
+    "elevation": 1247,
+    "province": "Jawa Timur",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Banda Api": {
+    "name": "Banda Api",
+    "elevation": 640,
+    "province": "Maluku",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Batu Tara": {
+    "name": "Batu Tara",
+    "elevation": 748,
+    "province": "Nusa Tenggara Timur",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Batukaru": {
+    "name": "Batukaru",
+    "elevation": 2276,
+    "province": "Bali",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Batur": {
+    "name": "Batur",
+    "elevation": 1717,
+    "province": "Bawakaraeng",
+    "lat": -8.238311099677762,
+    "lon": 115.3791688289105,
+    "basecamps": [
+      {
+        "name": "Pura Pasar Agung Bangli",
+        "elevation": 1346
+      }
+    ]
+  },
+  "Bawakaraeng Sulawesi Selatan": {
+    "name": "Bawakaraeng Sulawesi Selatan",
+    "elevation": 2830,
+    "province": "Belirang-Beriti",
+    "lat": -5.316654515699047,
+    "lon": 119.9444094486843,
+    "basecamps": [
+      {
+        "name": "Danau Tanralili Gowa",
+        "elevation": 1166
+      },
+      {
+        "name": "Lembanna Gowa",
+        "elevation": 1500
+      }
+    ]
+  },
+  "Belirang-Beriti Sumatra Selatan": {
+    "name": "Belirang-Beriti Sumatra Selatan",
+    "elevation": 1958,
+    "province": "Bibinoi",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bibinoi Maluku Utara": {
+    "name": "Bibinoi Maluku Utara",
+    "elevation": 900,
+    "province": "Binaiya",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Binaiya Maluku": {
+    "name": "Binaiya Maluku",
+    "elevation": 3027,
+    "province": "Bismo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bismo Jawa Tengah": {
+    "name": "Bismo Jawa Tengah",
+    "elevation": 2365,
+    "province": "Bongkok",
+    "lat": -7.238699957838693,
+    "lon": 109.8911766679136,
+    "basecamps": [
+      {
+        "name": "Sikunang Wonosobo",
+        "elevation": 2066
+      },
+      {
+        "name": "Ngandam Wonosobo",
+        "elevation": 1859
+      },
+      {
+        "name": "Silandak Wonosobo",
+        "elevation": 1214
+      }
+    ]
+  },
+  "Bongkok Jawa Barat": {
+    "name": "Bongkok Jawa Barat",
+    "elevation": 975,
+    "province": "Bratan",
+    "lat": -6.601485405105961,
+    "lon": 107.3378215256021,
+    "basecamps": [
+      {
+        "name": "Sukamulya Purwakarta",
+        "elevation": 625
+      }
+    ]
+  },
+  "Bratan Bali": {
+    "name": "Bratan Bali",
+    "elevation": 2276,
+    "province": "Bromo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bromo Jawa Timur": {
+    "name": "Bromo Jawa Timur",
+    "elevation": 2329,
+    "province": "Daun",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bukit Daun Bengkulu": {
+    "name": "Bukit Daun Bengkulu",
+    "elevation": 2467,
+    "province": "Lumut Balai",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bukit Lumut Balai Sumatra Selatan": {
+    "name": "Bukit Lumut Balai Sumatra Selatan",
+    "elevation": 2055,
+    "province": "Raya",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bukit Raya Kalimantan Tengah": {
+    "name": "Bukit Raya Kalimantan Tengah",
+    "elevation": 2278,
+    "province": "Baria",
+    "lat": -0.6591720635709462,
+    "lon": 112.6882700678846,
+    "basecamps": [
+      {
+        "name": "Tumbang Habangoi Katingan",
+        "elevation": 92
+      },
+      {
+        "name": "Rantau Malam Sintang",
+        "elevation": 277
+      }
+    ]
+  },
+  "Bulu Baria Sulawesi Selatan": {
+    "name": "Bulu Baria Sulawesi Selatan",
+    "elevation": 2730,
+    "province": "Monrolo",
+    "lat": -5.339148437818117,
+    "lon": 119.9194822329784,
+    "basecamps": [
+      {
+        "name": "Manimbahoi",
+        "elevation": 1261
+      }
+    ]
+  },
+  "Bulu Monrolo Sulawesi Selatan": {
+    "name": "Bulu Monrolo Sulawesi Selatan",
+    "elevation": 1109,
+    "province": "Mopeaanooleo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Bulu Mopeaanooleo Sulawesi Tenggara": {
+    "name": "Bulu Mopeaanooleo Sulawesi Tenggara",
+    "elevation": 2252,
+    "province": "Saraung",
+    "lat": -3.455841840112941,
+    "lon": 121.0268246909377,
+    "basecamps": [
+      {
+        "name": "Desa Puncak Monapa Kolaka Utara",
+        "elevation": 225
+      }
+    ]
+  },
+  "Bulu Saraung Sulawesi Selatan": {
+    "name": "Bulu Saraung Sulawesi Selatan",
+    "elevation": 1353,
+    "province": "Torompupu",
+    "lat": -8.128417177832517,
+    "lon": 114.0550463441178,
+    "basecamps": [
+      {
+        "name": "Kalibaru Banyuwangi",
+        "elevation": 563
+      },
+      {
+        "name": "Sumber Wringin Bondowoso",
+        "elevation": 723
+      }
+    ]
+  },
+  "Bulu Torompupu Sulawesi Tengah": {
+    "name": "Bulu Torompupu Sulawesi Tengah",
+    "elevation": 2463,
+    "province": "Burangrang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Burangrang Jawa Barat": {
+    "name": "Burangrang Jawa Barat",
+    "elevation": 2050,
+    "province": "Catur",
+    "lat": -6.774336845185532,
+    "lon": 107.5556414342464,
+    "basecamps": [
+      {
+        "name": "Legok Haji Cisarua",
+        "elevation": 1224
+      }
+    ]
+  },
+  "Catur Bali": {
+    "name": "Catur Bali",
+    "elevation": 2096,
+    "province": "Cikuray",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Cikuray Jawa Barat": {
+    "name": "Cikuray Jawa Barat",
+    "elevation": 2821,
+    "province": "Ciremai",
+    "lat": -7.322532795561608,
+    "lon": 107.8599976430471,
+    "basecamps": [
+      {
+        "name": "Tapak Geurot Garut",
+        "elevation": 1213
+      },
+      {
+        "name": "Pamancar Garut",
+        "elevation": 1519
+      }
+    ]
+  },
+  "Ciremai Jawa Barat": {
+    "name": "Ciremai Jawa Barat",
+    "elevation": 3078,
+    "province": "Colo",
+    "lat": -6.892796449890457,
+    "lon": 108.4069515957924,
+    "basecamps": [
+      {
+        "name": "Palutungan Kuningan",
+        "elevation": 1220
+      },
+      {
+        "name": "Linggajati Kuningan",
+        "elevation": 820
+      },
+      {
+        "name": "Linggasana Kuningan",
+        "elevation": 676
+      },
+      {
+        "name": "Apuy Majalengka",
+        "elevation": 1424
+      },
+      {
+        "name": "Trisakti Sadarahe Majalengka",
+        "elevation": 1288
+      }
+    ]
+  },
+  "Colo Sulawesi Tengah": {
+    "name": "Colo Sulawesi Tengah",
+    "elevation": 507,
+    "province": "Dempo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Dempo Sumatra Selatan": {
+    "name": "Dempo Sumatra Selatan",
+    "elevation": 3173,
+    "province": "Dieng",
+    "lat": -4.0158117,
+    "lon": 103.1195785,
+    "basecamps": [
+      {
+        "name": "Tugu Rimau Pagar Alam",
+        "elevation": 1847
+      }
+    ]
+  },
+  "Dieng Jawa Tengah": {
+    "name": "Dieng Jawa Tengah",
+    "elevation": 2565,
+    "province": "Dukono",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Dukono Maluku Utara": {
+    "name": "Dukono Maluku Utara",
+    "elevation": 1335,
+    "province": "Ebulobo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ebulobo Nusa Tenggara Timur": {
+    "name": "Ebulobo Nusa Tenggara Timur",
+    "elevation": 2124,
+    "province": "Egon",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Egon Nusa Tenggara Timur": {
+    "name": "Egon Nusa Tenggara Timur",
+    "elevation": 1703,
+    "province": "Eusing",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Eusing Jawa Barat": {
+    "name": "Eusing Jawa Barat",
+    "elevation": 360,
+    "province": "Galunggung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Galunggung Jawa Barat": {
+    "name": "Galunggung Jawa Barat",
+    "elevation": 2168,
+    "province": "Gamalama",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Gamalama Maluku Utara": {
+    "name": "Gamalama Maluku Utara",
+    "elevation": 1715,
+    "province": "Gamkonora",
+    "lat": 0.8092013245916867,
+    "lon": 127.3333149868628,
+    "basecamps": [
+      {
+        "name": "Moya Ternate",
+        "elevation": 288
+      }
+    ]
+  },
+  "Gamkonora Maluku Utara": {
+    "name": "Gamkonora Maluku Utara",
+    "elevation": 1635,
+    "province": "Gawalise",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Gawalise Sulawesi Tengah": {
+    "name": "Gawalise Sulawesi Tengah",
+    "elevation": 2023,
+    "province": "Gede",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Gede Jawa Barat": {
+    "name": "Gede Jawa Barat",
+    "elevation": 2958,
+    "province": "Geureudong",
+    "lat": -6.789860658284478,
+    "lon": 106.983198301768,
+    "basecamps": [
+      {
+        "name": "Gunung Putri Cianjur",
+        "elevation": 1551
+      },
+      {
+        "name": "Cibodas Cianjur",
+        "elevation": 1386
+      }
+    ]
+  },
+  "Geureudong Aceh": {
+    "name": "Geureudong Aceh",
+    "elevation": 2885,
+    "province": "Guntur",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Guntur Jawa Barat": {
+    "name": "Guntur Jawa Barat",
+    "elevation": 2249,
+    "province": "Toba",
+    "lat": -7.1508118,
+    "lon": 107.8287452,
+    "basecamps": [
+      {
+        "name": "Citiis Tarogong Kaler Garut",
+        "elevation": 804
+      },
+      {
+        "name": "Cikahuripan Garut",
+        "elevation": 1401
+      }
+    ]
+  },
+  "Gunung Toba Sumatra Utara": {
+    "name": "Gunung Toba Sumatra Utara",
+    "elevation": 2157,
+    "province": "Wetar",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Gunungapi Wetar Maluku": {
+    "name": "Gunungapi Wetar Maluku",
+    "elevation": 282,
+    "province": "Halau-Halau",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Halau-Halau Kalimantan Selatan": {
+    "name": "Halau-Halau Kalimantan Selatan",
+    "elevation": 1901,
+    "province": "Halimun",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Halimun Banten": {
+    "name": "Halimun Banten",
+    "elevation": 1929,
+    "province": "Hauk",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Hauk Kalimantan Selatan": {
+    "name": "Hauk Kalimantan Selatan",
+    "elevation": 1325,
+    "province": "Helatoba-Tarutung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Helatoba-Tarutung Sumatra Utara": {
+    "name": "Helatoba-Tarutung Sumatra Utara",
+    "elevation": 1100,
+    "province": "Hiri",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Hiri Maluku Utara": {
+    "name": "Hiri Maluku Utara",
+    "elevation": 630,
+    "province": "Hulubelu",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Hulubelu Lampung": {
+    "name": "Hulubelu Lampung",
+    "elevation": 1040,
+    "province": "Hutapanjang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Hutapanjang Sumatra Utara": {
+    "name": "Hutapanjang Sumatra Utara",
+    "elevation": 2021,
+    "province": "Ibu",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ibu Maluku Utara": {
+    "name": "Ibu Maluku Utara",
+    "elevation": 1325,
+    "province": "Ijen",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ijen Jawa Timur": {
+    "name": "Ijen Jawa Timur",
+    "elevation": 2769,
+    "province": "Iliboleng",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Iliboleng Nusa Tenggara Timur": {
+    "name": "Iliboleng Nusa Tenggara Timur",
+    "elevation": 1659,
+    "province": "Ililabalekan",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ililabalekan Nusa Tenggara Timur": {
+    "name": "Ililabalekan Nusa Tenggara Timur",
+    "elevation": 1018,
+    "province": "Ilimuda",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ilimuda Nusa Tenggara Timur": {
+    "name": "Ilimuda Nusa Tenggara Timur",
+    "elevation": 1100,
+    "province": "Iliwerung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Iliwerung Nusa Tenggara Timur": {
+    "name": "Iliwerung Nusa Tenggara Timur",
+    "elevation": 1018,
+    "province": "Imun",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Imun Sumatra Utara": {
+    "name": "Imun Sumatra Utara",
+    "elevation": 1505,
+    "province": "Inielika",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Inielika Nusa Tenggara Timur": {
+    "name": "Inielika Nusa Tenggara Timur",
+    "elevation": 1559,
+    "province": "Inierie",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Inierie Nusa Tenggara Timur": {
+    "name": "Inierie Nusa Tenggara Timur",
+    "elevation": 2245,
+    "province": "Iya",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Iya Nusa Tenggara Timur": {
+    "name": "Iya Nusa Tenggara Timur",
+    "elevation": 637,
+    "province": "Jailolo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Jailolo Maluku Utara": {
+    "name": "Jailolo Maluku Utara",
+    "elevation": 1130,
+    "province": "Kaba",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kaba Bengkulu": {
+    "name": "Kaba Bengkulu",
+    "elevation": 1952,
+    "province": "Kahung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kahung Kalimantan Selatan": {
+    "name": "Kahung Kalimantan Selatan",
+    "elevation": 1456,
+    "province": "Kamojang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kamojang Jawa Barat": {
+    "name": "Kamojang Jawa Barat",
+    "elevation": 1730,
+    "province": "Karaha",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Karaha Jawa Barat": {
+    "name": "Karaha Jawa Barat",
+    "elevation": 1155,
+    "province": "Karang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Karang Banten": {
+    "name": "Karang Banten",
+    "elevation": 1778,
+    "province": "Karangetang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Karangetang Sulawesi Utara": {
+    "name": "Karangetang Sulawesi Utara",
+    "elevation": 1784,
+    "province": "Katopasa",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Katopasa Sulawesi Tengah": {
+    "name": "Katopasa Sulawesi Tengah",
+    "elevation": 2865,
+    "province": "Kawi-Butak",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kawi-Butak Jawa Timur": {
+    "name": "Kawi-Butak Jawa Timur",
+    "elevation": 2651,
+    "province": "Kelimutu",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kelimutu Nusa Tenggara Timur": {
+    "name": "Kelimutu Nusa Tenggara Timur",
+    "elevation": 1639,
+    "province": "Kelud",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kelud Jawa Timur": {
+    "name": "Kelud Jawa Timur",
+    "elevation": 1731,
+    "province": "Kembang",
+    "lat": -7.934598175582857,
+    "lon": 112.3137860470362,
+    "basecamps": [
+      {
+        "name": "Karangrejo Blitar",
+        "elevation": 442
+      },
+      {
+        "name": "Tulungrejo Blitar",
+        "elevation": 653
+      }
+    ]
+  },
+  "Kembang Jawa Tengah": {
+    "name": "Kembang Jawa Tengah",
+    "elevation": 2340,
+    "province": "Kendang",
+    "lat": -7.31398715457173,
+    "lon": 109.9778954227491,
+    "basecamps": [
+      {
+        "name": "Lengkong Wonosobo",
+        "elevation": 1375
+      },
+      {
+        "name": "Blembem Wonosobo",
+        "elevation": 1344
+      }
+    ]
+  },
+  "Kendang Jawa Barat": {
+    "name": "Kendang Jawa Barat",
+    "elevation": 2608,
+    "province": "Kerenceng",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kerenceng Jawa Barat": {
+    "name": "Kerenceng Jawa Barat",
+    "elevation": 1754,
+    "province": "Kerinci",
+    "lat": -6.934226391155664,
+    "lon": 107.8819492741349,
+    "basecamps": [
+      {
+        "name": "Babakan Jambuaer Sumedang",
+        "elevation": 1128
+      }
+    ]
+  },
+  "Kerinci Jambi": {
+    "name": "Kerinci Jambi",
+    "elevation": 3805,
+    "province": "Kiaraberes-Gagak",
+    "lat": -1.697050917390891,
+    "lon": 101.2644572425955,
+    "basecamps": [
+      {
+        "name": "Kersik Tuo Kerinci",
+        "elevation": 1754
+      }
+    ]
+  },
+  "Kiaraberes-Gagak Jawa Barat": {
+    "name": "Kiaraberes-Gagak Jawa Barat",
+    "elevation": 1511,
+    "province": "Besi",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kie Besi Maluku Utara": {
+    "name": "Kie Besi Maluku Utara",
+    "elevation": 1357,
+    "province": "Klabat",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Klabat Sulawesi Utara": {
+    "name": "Klabat Sulawesi Utara",
+    "elevation": 1995,
+    "province": "Krakatau",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Krakatau Lampung": {
+    "name": "Krakatau Lampung",
+    "elevation": 813,
+    "province": "Kunyit",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Kunyit Bengkulu": {
+    "name": "Kunyit Bengkulu",
+    "elevation": 2151,
+    "province": "Lamongan",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lamongan Jawa Timur": {
+    "name": "Lamongan Jawa Timur",
+    "elevation": 1651,
+    "province": "Latimojong",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Latimojong Sulawesi Selatan": {
+    "name": "Latimojong Sulawesi Selatan",
+    "elevation": 3478,
+    "province": "Lawu",
+    "lat": -3.38500531936465,
+    "lon": 120.0241702695856,
+    "basecamps": [
+      {
+        "name": "Karangan Enrekang",
+        "elevation": 1442
+      },
+      {
+        "name": "To'lajuk Latimojong",
+        "elevation": 1146
+      }
+    ]
+  },
+  "Lawu Jawa Tengah": {
+    "name": "Lawu Jawa Tengah",
+    "elevation": 3265,
+    "province": "Leroboleng",
+    "lat": -7.627369603574301,
+    "lon": 111.1944620844944,
+    "basecamps": [
+      {
+        "name": "Cemoro Sewu Magetan",
+        "elevation": 1919
+      },
+      {
+        "name": "Cemoro Kandang Karanganyar",
+        "elevation": 1800
+      },
+      {
+        "name": "Candi Cetho Karanganyar",
+        "elevation": 1463
+      },
+      {
+        "name": "Tambak Karanganyar",
+        "elevation": 1158
+      },
+      {
+        "name": "Singolangu Magetan",
+        "elevation": 1327
+      }
+    ]
+  },
+  "Leroboleng Nusa Tenggara Timur": {
+    "name": "Leroboleng Nusa Tenggara Timur",
+    "elevation": 1117,
+    "province": "Lesung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lesung Bali": {
+    "name": "Lesung Bali",
+    "elevation": 1865,
+    "province": "Leuser",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Leuser Aceh": {
+    "name": "Leuser Aceh",
+    "elevation": 3119,
+    "province": "Laki-laki",
+    "lat": 3.772667,
+    "lon": 97.245417,
+    "basecamps": [
+      {
+        "name": "Kedah Desa Penosan Sepakat",
+        "elevation": 1230
+      }
+    ]
+  },
+  "Lewotobi Laki-laki Nusa Tenggara Timur": {
+    "name": "Lewotobi Laki-laki Nusa Tenggara Timur",
+    "elevation": 1584,
+    "province": "Perempuan",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lewotobi Perempuan Nusa Tenggara Timur": {
+    "name": "Lewotobi Perempuan Nusa Tenggara Timur",
+    "elevation": 1703,
+    "province": "Lewotolo",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lewotolo Nusa Tenggara Timur": {
+    "name": "Lewotolo Nusa Tenggara Timur",
+    "elevation": 1423,
+    "province": "Lokon",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lokon Sulawesi Utara": {
+    "name": "Lokon Sulawesi Utara",
+    "elevation": 1580,
+    "province": "Lokon-Empung",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lokon-Empung Sulawesi Utara": {
+    "name": "Lokon-Empung Sulawesi Utara",
+    "elevation": 1580,
+    "province": "Lompobattang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lompobattang Sulawesi Selatan": {
+    "name": "Lompobattang Sulawesi Selatan",
+    "elevation": 2874,
+    "province": "Lubukraya",
+    "lat": -5.355964408923026,
+    "lon": 119.9374424957802,
+    "basecamps": [
+      {
+        "name": "Tompobulu Gowa",
+        "elevation": 1619
+      }
+    ]
+  },
+  "Lubukraya Sumatra Utara": {
+    "name": "Lubukraya Sumatra Utara",
+    "elevation": 1862,
+    "province": "Lurus",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Lurus Jawa Timur": {
+    "name": "Lurus Jawa Timur",
+    "elevation": 539,
+    "province": "Magaringsai",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Magaringsai Kalimantan Selatan": {
+    "name": "Magaringsai Kalimantan Selatan",
+    "elevation": 1600,
+    "province": "Mahawu",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Mahawu Sulawesi Utara": {
+    "name": "Mahawu Sulawesi Utara",
+    "elevation": 1324,
+    "province": "Malabar",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Malabar Jawa Barat": {
+    "name": "Malabar Jawa Barat",
+    "elevation": 2343,
+    "province": "Malang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Malang Jawa Barat": {
+    "name": "Malang Jawa Barat",
+    "elevation": 680,
+    "province": "Manglayang",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Manglayang Jawa Barat": {
+    "name": "Manglayang Jawa Barat",
+    "elevation": 1818,
+    "province": "Manimporok",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Manimporok Sulawesi Selatan": {
+    "name": "Manimporok Sulawesi Selatan",
+    "elevation": 1661,
+    "province": "Manuk",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Manuk Maluku": {
+    "name": "Manuk Maluku",
+    "elevation": 282,
+    "province": "Marapi",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Marapi Sumatra Barat": {
+    "name": "Marapi Sumatra Barat",
+    "elevation": 2891,
+    "province": "Mare",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Mare Maluku Utara": {
+    "name": "Mare Maluku Utara",
+    "elevation": 308,
+    "province": "Mekongga",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Mekongga Sulawesi Tenggara": {
+    "name": "Mekongga Sulawesi Tenggara",
+    "elevation": 2620,
+    "province": "Merapi",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Merapi Jawa Tengah": {
+    "name": "Merapi Jawa Tengah",
+    "elevation": 2968,
+    "province": "Merbabu",
+    "lat": -7.540252964775685,
+    "lon": 110.4465222358704,
+    "basecamps": [
+      {
+        "name": "Selo Boyolali",
+        "elevation": 1836
+      },
+      {
+        "name": "Babadan Magelang",
+        "elevation": 1263
+      },
+      {
+        "name": "Sapuangin Klaten",
+        "elevation": 1327
+      },
+      {
+        "name": "Kinahrejo Sleman",
+        "elevation": 1080
+      }
+    ]
+  },
+  "Merbabu Jawa Tengah": {
+    "name": "Merbabu Jawa Tengah",
+    "elevation": 3145,
+    "province": "Merbuk",
+    "lat": -7.454276301745449,
+    "lon": 110.4399060154384,
+    "basecamps": [
+      {
+        "name": "Selo Boyolali",
+        "elevation": 1836
+      },
+      {
+        "name": "Suwanting Magelang",
+        "elevation": 1520
+      },
+      {
+        "name": "Wekas Magelang",
+        "elevation": 1781
+      },
+      {
+        "name": "Cuntel Kopeng Semarang",
+        "elevation": 1864
+      },
+      {
+        "name": "Thekelan Semarang",
+        "elevation": 1847
+      }
+    ]
+  },
+  "Merbuk Bali": {
+    "name": "Merbuk Bali",
+    "elevation": 1386,
+    "province": "Moti",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Moti Maluku Utara": {
+    "name": "Moti Maluku Utara",
+    "elevation": 950,
+    "province": "Muria",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Muria Jawa Tengah": {
+    "name": "Muria Jawa Tengah",
+    "elevation": 1625,
+    "province": "Napu",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Ndete Napu Nusa Tenggara Timur": {
+    "name": "Ndete Napu Nusa Tenggara Timur",
+    "elevation": 750,
+    "province": "Nila",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Nila Maluku": {
+    "name": "Nila Maluku",
+    "elevation": 781,
+    "province": "Nokilalaki",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Nokilalaki Sulawesi Tengah": {
+    "name": "Nokilalaki Sulawesi Tengah",
+    "elevation": 2355,
+    "province": "Porema",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Osu Porema Sulawesi Tenggara": {
+    "name": "Osu Porema Sulawesi Tenggara",
+    "elevation": 2140,
+    "province": "Pakuwaja",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Pakuwaja Jawa Tengah": {
+    "name": "Pakuwaja Jawa Tengah",
+    "elevation": 2421,
+    "province": "Paluweh",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Paluweh Nusa Tenggara Timur": {
+    "name": "Paluweh Nusa Tenggara Timur",
+    "elevation": 875,
+    "province": "Pangradinan",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Pangradinan Jawa Barat": {
+    "name": "Pangradinan Jawa Barat",
+    "elevation": 1179,
+    "province": "Pangrango",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Pangrango Jawa Barat": {
+    "name": "Pangrango Jawa Barat",
+    "elevation": 3019,
+    "province": "Papandayan",
+    "lat": -6.769999884257782,
+    "lon": 106.9636115327535,
+    "basecamps": [
+      {
+        "name": "Cibodas Cianjur",
+        "elevation": 1386
+      },
+      {
+        "name": "Gunung Putri Cianjur",
+        "elevation": 1551
+      },
+      {
+        "name": "Selabintana",
+        "elevation": 960
+      }
+    ]
+  },
+  "Papandayan Jawa Barat": {
+    "name": "Papandayan Jawa Barat",
+    "elevation": 2665,
+    "province": "Patah",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Patah Bengkulu": {
+    "name": "Patah Bengkulu",
+    "elevation": 2852,
+    "province": "Patuha",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Patuha Jawa Barat": {
+    "name": "Patuha Jawa Barat",
+    "elevation": 2434,
+    "province": "Penanggungan",
+    "lat": -7.162380169424948,
+    "lon": 107.3998309584949,
+    "basecamps": [
+      {
+        "name": "Cipanganten Bandung",
+        "elevation": 1857
+      }
+    ]
+  },
+  "Penanggungan Jawa Timur": {
+    "name": "Penanggungan Jawa Timur",
+    "elevation": 1653,
+    "province": "Perbakti",
+    "lat": -7.61503531818252,
+    "lon": 112.6201557599524,
+    "basecamps": [
+      {
+        "name": "Tamiajeng Mojokerto",
+        "elevation": 690
+      },
+      {
+        "name": "Jolotundo Mojokerto",
+        "elevation": 705
+      },
+      {
+        "name": "Kedungudi Mojokerto",
+        "elevation": 598
+      }
+    ]
+  },
+  "Perbakti Jawa Barat": {
+    "name": "Perbakti Jawa Barat",
+    "elevation": 1699,
+    "province": "Sagoe",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Peuet Sagoe Aceh": {
+    "name": "Peuet Sagoe Aceh",
+    "elevation": 2801,
+    "province": "Leok",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Poco Leok Nusa Tenggara Timur": {
+    "name": "Poco Leok Nusa Tenggara Timur",
+    "elevation": 1675,
+    "province": "Pohen",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Pohen Bali": {
+    "name": "Pohen Bali",
+    "elevation": 2063,
+    "province": "Prau",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Prau Jawa Tengah": {
+    "name": "Prau Jawa Tengah",
+    "elevation": 2590,
+    "province": "Pulosari",
+    "lat": -7.186942964790396,
+    "lon": 109.9227801509178,
+    "basecamps": [
+      {
+        "name": "Petakbanteng Wonosobo",
+        "elevation": 1990
+      },
+      {
+        "name": "Igirmanak Wonosobo",
+        "elevation": 1755
+      },
+      {
+        "name": "Wates Temanggung",
+        "elevation": 1675
+      },
+      {
+        "name": "Dwarawati Banjarnegara",
+        "elevation": 2140
+      },
+      {
+        "name": "Kalilembu Wonosobo",
+        "elevation": 2065
+      },
+      {
+        "name": "Dieng Wonosobo",
+        "elevation": 2125
+      }
+    ]
+  },
+  "Pulosari Banten": {
+    "name": "Pulosari Banten",
+    "elevation": 1346,
+    "province": "Jaya Wijaya",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  },
+  "Puncak Jaya Wijaya Papua Tengah": {
+    "name": "Puncak Jaya Wijaya Papua Tengah",
+    "elevation": 4884,
+    "province": "Punikan",
+    "lat": null,
+    "lon": null,
+    "basecamps": []
+  }
+}

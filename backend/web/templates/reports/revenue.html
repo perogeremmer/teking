@@ -1,0 +1,102 @@
+{{define "content"}}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">Laporan Revenue</h1>
+    <p class="text-gray-500 mt-1">Ringkasan pendapatan tahun {{.RevenueYear}}</p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
+        <p class="text-sm font-medium text-gray-500 mb-1">Total Revenue (Tahun Ini)</p>
+        <p class="text-3xl font-bold text-teal-600">{{formatCurrency .RevenueYear}}</p>
+    </div>
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
+        <p class="text-sm font-medium text-gray-500 mb-1">Total Booking</p>
+        <p class="text-3xl font-bold text-gray-900">{{.TotalBookings}}</p>
+    </div>
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
+        <p class="text-sm font-medium text-gray-500 mb-1">Rata-rata per Booking</p>
+        <p class="text-3xl font-bold text-gray-900">{{formatCurrency .AvgBooking}}</p>
+    </div>
+    <div class="bg-white rounded-xl p-6 border border-gray-200">
+        <p class="text-sm font-medium text-gray-500 mb-1">Top Trip</p>
+        <p class="text-lg font-bold text-gray-900 truncate">{{if .TopTrip}}{{.TopTrip}}{{else}}-{{end}}</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Revenue per Bulan</h2>
+    <canvas id="revenueChart" height="250"></canvas>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Per-Trip Breakdown</h2>
+    </div>
+    <div class="overflow-x-auto">
+        {{if .TripBreakdown}}
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">Trip</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Booking</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Total Peserta</th>
+                    <th class="text-right px-6 py-3 font-medium text-gray-500">Revenue</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {{range .TripBreakdown}}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">{{.Name}}</td>
+                    <td class="px-6 py-4 text-center">{{.Bookings}}</td>
+                    <td class="px-6 py-4 text-center">{{.Participants}}</td>
+                    <td class="px-6 py-4 text-right font-medium">{{formatCurrency .Revenue}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="text-center py-12">
+            <p class="text-gray-500">Belum ada data revenue</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+    var monthlyData = {{.MonthlyStatsJSON}};
+    var ctx = document.getElementById('revenueChart').getContext('2d');
+    var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    var labels = monthlyData.map(function(d) { return months[parseInt(d.Month)-1]; });
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Revenue (Rp)',
+                data: monthlyData.map(function(d) { return d.Revenue; }),
+                backgroundColor: '#0d9488',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(v) {
+                            if (v >= 1000000) return (v/1000000).toFixed(1)+'jt';
+                            if (v >= 1000) return (v/1000).toFixed(0)+'rb';
+                            return v;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{{end}}

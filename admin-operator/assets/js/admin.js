@@ -7,7 +7,9 @@ const CURRENT_OPERATOR_ID = 'tigadewa';
 function initAdmin() {
   loadOperatorData();
   renderSidebar();
+  renderSidebarUser();
   setupMobileMenu();
+  setupSidebarSearch();
 }
 
 // Load operator data
@@ -26,7 +28,6 @@ function loadOperatorData() {
 // Get base path based on current location depth
 function getBasePath() {
   const path = window.location.pathname;
-  // Count how many folders deep we are from admin-operator root
   const adminIndex = path.indexOf('/admin-operator/');
   if (adminIndex === -1) return './';
   
@@ -34,6 +35,31 @@ function getBasePath() {
   const depth = subPath.split('/').length - 1;
   
   return depth <= 0 ? './' : '../'.repeat(depth);
+}
+
+// Render sidebar user profile card
+function renderSidebarUser() {
+  const sidebar = document.querySelector('.admin-sidebar');
+  if (!sidebar) return;
+  
+  // Check if user card already exists
+  if (sidebar.querySelector('.sidebar-user')) return;
+  
+  const operator = getOperatorById(CURRENT_OPERATOR_ID);
+  const userHTML = `
+    <div class="sidebar-user">
+      <div class="sidebar-user-card" onclick="logout()">
+        <img src="${operator?.logo || ''}" alt="" class="operator-logo">
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name operator-name">${operator?.name || 'Operator'}</div>
+          <div class="sidebar-user-role">Operator Open Trip</div>
+        </div>
+        <span class="sidebar-user-arrow"><i class='bx bx-chevron-down'></i></span>
+      </div>
+    </div>
+  `;
+  
+  sidebar.insertAdjacentHTML('beforeend', userHTML);
 }
 
 // Render sidebar
@@ -44,25 +70,100 @@ function renderSidebar() {
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   const basePath = getBasePath();
   
-  const menuItems = [
-    { href: basePath + 'index.html', icon: '📊', label: 'Dashboard' },
-    { href: basePath + 'trips/index.html', icon: '🏔️', label: 'Manajemen Trip' },
-    { href: basePath + 'packages/index.html', icon: '📦', label: 'Paket' },
-    { href: basePath + 'meeting-points/index.html', icon: '📍', label: 'Meeting Point' },
-    { href: basePath + 'bookings/index.html', icon: '📝', label: 'Manajemen Booking' },
-    { href: basePath + 'reports/revenue.html', icon: '💰', label: 'Laporan' },
-    { href: basePath + 'profile/index.html', icon: '⚙️', label: 'Pengaturan' },
+  const menuSections = [
+    {
+      label: 'Menu Utama',
+      items: [
+        { href: basePath + 'index.html', icon: "<i class='bx bx-bar-chart-alt-2'></i>", label: 'Dashboard' },
+        { href: basePath + 'trips/index.html', icon: "<i class='bx bx-mountain'></i>", label: 'Manajemen Trip' },
+        { href: basePath + 'bookings/index.html', icon: "<i class='bx bx-file'></i>", label: 'Manajemen Booking' },
+        { href: basePath + 'reports/revenue.html', icon: "<i class='bx bx-wallet'></i>", label: 'Laporan' },
+      ]
+    },
+    {
+      label: 'Master Data',
+      items: [
+        { href: basePath + 'packages/index.html', icon: "<i class='bx bx-package'></i>", label: 'Paket' },
+        { href: basePath + 'meeting-points/index.html', icon: "<i class='bx bx-map-pin'></i>", label: 'Meeting Point' },
+      ]
+    },
+    {
+      label: 'Sistem',
+      items: [
+        { href: basePath + 'profile/index.html', icon: "<i class='bx bx-cog'></i>", label: 'Pengaturan' },
+      ]
+    }
   ];
   
-  sidebar.innerHTML = menuItems.map(item => {
-    const isActive = currentPage === item.href.split('/').pop();
+  sidebar.innerHTML = menuSections.map(section => {
+    const itemsHTML = section.items.map(item => {
+      const isActive = currentPage === item.href.split('/').pop();
+      return `
+        <a href="${item.href}" class="sidebar-item ${isActive ? 'active' : ''}">
+          <span class="icon">${item.icon}</span>
+          <span>${item.label}</span>
+        </a>
+      `;
+    }).join('');
+    
     return `
-      <a href="${item.href}" class="sidebar-item ${isActive ? 'active' : ''}">
-        <span class="icon">${item.icon}</span>
-        <span>${item.label}</span>
-      </a>
+      <div class="sidebar-section">${section.label}</div>
+      ${itemsHTML}
     `;
   }).join('');
+}
+
+// Setup sidebar search
+function setupSidebarSearch() {
+  const sidebar = document.querySelector('.admin-sidebar');
+  if (!sidebar) return;
+  
+  // Check if search already exists
+  if (sidebar.querySelector('.sidebar-search')) return;
+  
+  const searchHTML = `
+    <div class="sidebar-search">
+      <input type="text" placeholder="Cari menu..." id="sidebar-search-input">
+    </div>
+  `;
+  
+  const sidebarMenu = sidebar.querySelector('.sidebar-menu');
+  if (sidebarMenu) {
+    sidebarMenu.insertAdjacentHTML('beforebegin', searchHTML);
+  }
+  
+  const searchInput = document.getElementById('sidebar-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      const items = sidebar.querySelectorAll('.sidebar-item');
+      const sections = sidebar.querySelectorAll('.sidebar-section');
+      
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Hide/show sections based on visible items
+      sections.forEach(section => {
+        const nextItems = [];
+        let nextEl = section.nextElementSibling;
+        while (nextEl && !nextEl.classList.contains('sidebar-section')) {
+          if (nextEl.classList.contains('sidebar-item')) {
+            nextItems.push(nextEl);
+          }
+          nextEl = nextEl.nextElementSibling;
+        }
+        
+        const hasVisible = nextItems.some(item => item.style.display !== 'none');
+        section.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  }
 }
 
 // Mobile menu toggle
@@ -117,13 +218,19 @@ function formatCurrency(amount) {
   return 'Rp ' + amount.toLocaleString('id-ID');
 }
 
+// Format date
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
 // Get status badge HTML
 function getStatusBadge(status) {
   const badges = {
-    pending: '<span class="badge badge-pending">Pending</span>',
-    confirmed: '<span class="badge badge-confirmed">Confirmed</span>',
-    completed: '<span class="badge badge-completed">Completed</span>',
-    cancelled: '<span class="badge badge-cancelled">Cancelled</span>'
+    pending: '<span class="badge badge-pending"><i class="bx bx-time"></i> Pending</span>',
+    confirmed: '<span class="badge badge-confirmed"><i class="bx bx-check-circle"></i> Confirmed</span>',
+    completed: '<span class="badge badge-completed"><i class="bx bx-check"></i> Completed</span>',
+    cancelled: '<span class="badge badge-cancelled"><i class="bx bx-x"></i> Cancelled</span>'
   };
   return badges[status] || status;
 }

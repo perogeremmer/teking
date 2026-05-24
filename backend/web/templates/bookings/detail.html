@@ -1,0 +1,108 @@
+{{define "content"}}
+<div class="mb-8">
+    <a href="/bookings" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1 mb-2"><i class="bx bx-arrow-back"></i> Kembali</a>
+    <h1 class="text-2xl font-bold text-gray-900">Detail Booking #{{.Booking.BookingID}}</h1>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Informasi Booking</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div><p class="text-sm text-gray-500">Trip</p><p class="font-medium text-gray-900">{{.Booking.TripName}}</p></div>
+                <div><p class="text-sm text-gray-500">Jadwal</p><p class="font-medium text-gray-900">{{.Booking.ScheduleDate}}</p></div>
+                <div><p class="text-sm text-gray-500">Tanggal Booking</p><p class="font-medium text-gray-900">{{formatDateTime .Booking.CreatedAt}}</p></div>
+                <div><p class="text-sm text-gray-500">Status</p><div>{{statusBadge .Booking.Status}}</div></div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Data Customer</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div><p class="text-sm text-gray-500">Nama</p><p class="font-medium text-gray-900">{{.Booking.LeadName}}</p></div>
+                <div><p class="text-sm text-gray-500">Telepon</p><p class="font-medium text-gray-900">{{.Booking.LeadPhone}}</p></div>
+                <div><p class="text-sm text-gray-500">Email</p><p class="font-medium text-gray-900">{{if .Booking.LeadEmail}}{{.Booking.LeadEmail}}{{else}}-{{end}}</p></div>
+            </div>
+        </div>
+
+        {{if .Booking.Participants}}
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Peserta ({{len .Booking.Participants}})</h2>
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="text-left px-4 py-2 font-medium text-gray-500">Nama</th>
+                        <th class="text-left px-4 py-2 font-medium text-gray-500">KTP</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {{range .Booking.Participants}}
+                    <tr>
+                        <td class="px-4 py-2">{{.Name}}</td>
+                        <td class="px-4 py-2">{{if .KTP}}{{.KTP}}{{else}}-{{end}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{end}}
+    </div>
+
+    <div class="space-y-6">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Rincian Biaya</h2>
+            <p class="text-3xl font-bold text-teal-600">{{formatCurrency .Booking.Total}}</p>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <p class="text-sm text-gray-500">Total yang dibayar</p>
+            </div>
+        </div>
+
+        {{if .Booking.Addons}}
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Add-on</h2>
+            <div class="space-y-2">
+                {{range .Booking.Addons}}
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">{{.Name}}</span>
+                    <span class="font-medium">{{formatCurrency .Price}}</span>
+                </div>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+
+        <div class="bg-white rounded-xl border border-gray-200 p-6" id="statusActions">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi</h2>
+            <div class="space-y-2">
+                {{if eq .Booking.Status "pending"}}
+                <button hx-patch="/bookings/{{.Booking.BookingID}}/status" hx-vals='{"status":"confirmed"}' hx-target="#statusActions" hx-swap="outerHTML" hx-confirm="Konfirmasi booking ini?"
+                    class="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                    <span>Konfirmasi</span>
+                    <span class="htmx-indicator"><i class="bx bx-loader-alt animate-spin"></i></span>
+                </button>
+                <button hx-patch="/bookings/{{.Booking.BookingID}}/status" hx-vals='{"status":"cancelled"}' hx-target="#statusActions" hx-swap="outerHTML" hx-confirm="Yakin batalkan booking?"
+                    class="w-full bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 transition flex items-center justify-center gap-2">
+                    <span>Batalkan</span>
+                    <span class="htmx-indicator"><i class="bx bx-loader-alt animate-spin"></i></span>
+                </button>
+                {{end}}
+                {{if eq .Booking.Status "confirmed"}}
+                <button hx-patch="/bookings/{{.Booking.BookingID}}/status" hx-vals='{"status":"completed"}' hx-target="#statusActions" hx-swap="outerHTML" hx-confirm="Tandai selesai?"
+                    class="w-full bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 transition flex items-center justify-center gap-2">
+                    <span>Tandai Selesai</span>
+                    <span class="htmx-indicator"><i class="bx bx-loader-alt animate-spin"></i></span>
+                </button>
+                <button hx-patch="/bookings/{{.Booking.BookingID}}/status" hx-vals='{"status":"cancelled"}' hx-target="#statusActions" hx-swap="outerHTML" hx-confirm="Yakin batalkan?"
+                    class="w-full bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 transition flex items-center justify-center gap-2">
+                    <span>Batalkan</span>
+                    <span class="htmx-indicator"><i class="bx bx-loader-alt animate-spin"></i></span>
+                </button>
+                {{end}}
+                {{if or (eq .Booking.Status "completed") (eq .Booking.Status "cancelled")}}
+                <p class="text-sm text-gray-500 text-center py-2">Booking sudah {{.Booking.Status}}</p>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

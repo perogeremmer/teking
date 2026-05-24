@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Jadwal - Admin Operator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body class="admin-body">
@@ -25,8 +28,11 @@
     
     <header class="admin-header">
       <div class="header-left">
-        <button class="menu-toggle">☰</button>
-        <h1 class="header-title">Tambah/Edit Jadwal</h1>
+        <button class="menu-toggle"><i class='bx bx-menu'></i></button>
+        <div class="header-welcome">
+          <h1>Tambah/Edit Jadwal</h1>
+          <p>Atur jadwal dan kuota untuk trip</p>
+        </div>
       </div>
     </header>
     
@@ -44,7 +50,7 @@
               </select>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">Tanggal Mulai *</label>
                 <input type="date" class="form-input" id="schedule-start" required>
@@ -63,13 +69,13 @@
               <div class="form-group">
                 <label class="form-label">Sisa Kuota *</label>
                 <input type="number" class="form-input" id="schedule-remaining" min="0" placeholder="15" required>
-                <span style="font-size: 12px; color: #64748b; margin-top: 4px; display: block;">Bisa diatur manual atau otomatis = kuota total</span>
+                <span style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: block;">Bisa diatur manual atau otomatis = kuota total</span>
               </div>
             </div>
             
             <div style="display: flex; gap: 12px; margin-top: 24px;">
-              <button type="submit" class="btn btn-primary">💾 Simpan Jadwal</button>
-              <a href="" id="cancel-btn" class="btn btn-secondary">❌ Batal</a>
+              <button type="submit" class="btn btn-primary">Simpan Jadwal</button>
+              <a href="" id="cancel-btn" class="btn btn-secondary">Batal</a>
             </div>
             
           </form>
@@ -97,7 +103,6 @@
         select.appendChild(option);
       });
       
-      // Check URL params
       const urlParams = new URLSearchParams(window.location.search);
       const tripId = urlParams.get('trip');
       const scheduleId = urlParams.get('schedule');
@@ -108,7 +113,6 @@
         document.getElementById('cancel-btn').href = `detail.html?id=${tripId}`;
         
         if (scheduleId) {
-          // Edit mode
           const trip = getTripById(tripId);
           const schedule = trip?.schedules.find(s => s.id === scheduleId);
           if (schedule) {
@@ -135,26 +139,24 @@
       const quotaRemaining = parseInt(document.getElementById('schedule-remaining').value);
       
       if (!tripId || !dateStart || !dateEnd) {
-        alert('⚠️ Semua field wajib diisi!');
+        alert('Semua field wajib diisi!');
         return;
       }
       
       if (quotaRemaining > quotaTotal) {
-        alert('⚠️ Sisa kuota tidak boleh lebih besar dari kuota total!');
+        alert('Sisa kuota tidak boleh lebih besar dari kuota total!');
         return;
       }
       
       const trip = getTripById(tripId);
       
       if (editingSchedule) {
-        // Update existing
         editingSchedule.date_start = dateStart;
         editingSchedule.date_end = dateEnd;
         editingSchedule.quota_total = quotaTotal;
         editingSchedule.quota_remaining = quotaRemaining;
-        alert('✅ Jadwal berhasil diupdate!');
+        alert('Jadwal berhasil diupdate!');
       } else {
-        // Create new
         const newSchedule = {
           id: `sched-${tripId}-${Date.now()}`,
           date_start: dateStart,
@@ -163,14 +165,12 @@
           quota_remaining: quotaRemaining
         };
         trip.schedules.push(newSchedule);
-        alert('✅ Jadwal baru berhasil ditambahkan!');
+        alert('Jadwal baru berhasil ditambahkan!');
       }
       
-      // Redirect back to detail
       window.location.href = `detail.html?id=${tripId}`;
     }
 
-    // Auto set remaining = total when total changes (optional convenience)
     document.getElementById('schedule-quota').addEventListener('change', function() {
       if (!editingSchedule) {
         document.getElementById('schedule-remaining').value = this.value;

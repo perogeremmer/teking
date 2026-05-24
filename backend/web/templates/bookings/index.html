@@ -1,0 +1,76 @@
+{{define "content"}}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Daftar Booking</h1>
+        <p class="text-gray-500 mt-1">Kelola booking dari customer</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="p-4 border-b border-gray-200 space-y-3">
+        <div class="flex flex-wrap gap-2">
+            <a href="/bookings" class="px-3 py-1.5 rounded-lg text-sm font-medium {{if not .StatusFilter}}bg-teal-100 text-teal-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">Semua</a>
+            <a href="/bookings?status=pending" class="px-3 py-1.5 rounded-lg text-sm font-medium {{if eq .StatusFilter "pending"}}bg-yellow-100 text-yellow-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">Pending</a>
+            <a href="/bookings?status=confirmed" class="px-3 py-1.5 rounded-lg text-sm font-medium {{if eq .StatusFilter "confirmed"}}bg-blue-100 text-blue-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">Confirmed</a>
+            <a href="/bookings?status=completed" class="px-3 py-1.5 rounded-lg text-sm font-medium {{if eq .StatusFilter "completed"}}bg-green-100 text-green-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">Completed</a>
+            <a href="/bookings?status=cancelled" class="px-3 py-1.5 rounded-lg text-sm font-medium {{if eq .StatusFilter "cancelled"}}bg-red-100 text-red-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">Cancelled</a>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <input type="text" placeholder="Cari nama/telepon..." name="search" value="{{.Search}}"
+                hx-get="/bookings" hx-trigger="input changed delay:300ms" hx-target="#bookingTable" hx-select="#bookingTable" hx-swap="outerHTML"
+                class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none w-full max-w-xs">
+            <select name="trip_id" hx-get="/bookings" hx-trigger="change" hx-target="#bookingTable" hx-select="#bookingTable" hx-swap="outerHTML"
+                class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+                <option value="">Semua Trip</option>
+                {{range .Trips}}
+                <option value="{{.ID}}">{{.Name}}</option>
+                {{end}}
+            </select>
+        </div>
+    </div>
+    <div class="overflow-x-auto" id="bookingTable">
+        {{if .Bookings}}
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">ID</th>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">Customer</th>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">Trip</th>
+                    <th class="text-left px-6 py-3 font-medium text-gray-500">Tanggal</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Peserta</th>
+                    <th class="text-right px-6 py-3 font-medium text-gray-500">Total</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Status</th>
+                    <th class="text-center px-6 py-3 font-medium text-gray-500">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {{range .Bookings}}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">#{{.ID}}</td>
+                    <td class="px-6 py-4">
+                        <p class="font-medium text-gray-900">{{.Customer}}</p>
+                        <p class="text-xs text-gray-500">{{.Phone}}</p>
+                    </td>
+                    <td class="px-6 py-4">{{.TripName}}</td>
+                    <td class="px-6 py-4">{{formatDateTime .TripDate}}</td>
+                    <td class="px-6 py-4 text-center">{{.Participants}}</td>
+                    <td class="px-6 py-4 text-right font-medium">{{formatCurrency .Total}}</td>
+                    <td class="px-6 py-4 text-center">{{statusBadge .Status}}</td>
+                    <td class="px-6 py-4 text-center">
+                        <a href="/bookings/{{.ID}}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium hover:bg-teal-100 transition">
+                            <i class="bx bx-show"></i> Detail
+                        </a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="text-center py-16">
+            <i class="bx bxs-book-content text-5xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500">Belum ada booking</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}
