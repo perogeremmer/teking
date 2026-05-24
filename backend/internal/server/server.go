@@ -116,6 +116,9 @@ func (s *Server) templateFuncs() template.FuncMap {
 		"sub": func(a, b int) int {
 			return a - b
 		},
+		"add": func(a, b int) int {
+			return a + b
+		},
 	}
 }
 

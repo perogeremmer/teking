@@ -1,17 +1,79 @@
 package handler
 
 import (
+	"math"
 	"net/http"
 	"strconv"
 
 	"github.com/ayomendaki/ayomendaki-admin/internal/common"
 )
 
+const mpPerPage = 20
+
+type mpPaginationData struct {
+	Page       int
+	PerPage    int
+	Total      int
+	TotalPages int
+	HasPrev    bool
+	HasNext    bool
+}
+
 func (h *Handler) MeetingPointList(w http.ResponseWriter, r *http.Request) {
 	operatorID := common.GetOperatorID(r)
 
 	search := r.URL.Query().Get("search")
+	filterType := r.URL.Query().Get("type")
+	pageStr := r.URL.Query().Get("page")
 
+	page := 1
+	if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+		page = p
+	}
+
+	// Count totals per type for filter pills
+	typeCounts := map[string]int{}
+	typeRows, _ := h.db.Query("SELECT type, COUNT(*) FROM meeting_points WHERE operator_id = ? GROUP BY type", operatorID)
+	if typeRows != nil {
+		defer typeRows.Close()
+		for typeRows.Next() {
+			var t string
+			var c int
+			typeRows.Scan(&t, &c)
+			typeCounts[t] = c
+		}
+	}
+	totalAll := 0
+	for _, c := range typeCounts {
+		totalAll += c
+	}
+
+	// Count matching rows with filters
+	countQuery := "SELECT COUNT(*) FROM meeting_points mp WHERE mp.operator_id = ?"
+	countArgs := []interface{}{operatorID}
+
+	if filterType != "" {
+		countQuery += " AND mp.type = ?"
+		countArgs = append(countArgs, filterType)
+	}
+	if search != "" {
+		countQuery += " AND (mp.name LIKE ? OR mp.address LIKE ?)"
+		s := "%" + search + "%"
+		countArgs = append(countArgs, s, s)
+	}
+
+	var total int
+	h.db.QueryRow(countQuery, countArgs...).Scan(&total)
+
+	totalPages := int(math.Ceil(float64(total) / float64(mpPerPage)))
+	if totalPages < 1 {
+		totalPages = 1
+	}
+	if page > totalPages {
+		page = totalPages
+	}
+
+	// Fetch page
 	query := `
 		SELECT mp.id, mp.type, mp.name, mp.address, mp.lat, mp.lng,
 			COALESCE((SELECT COUNT(*) FROM trip_meeting_points WHERE meeting_point_id = mp.id), 0)
@@ -20,12 +82,18 @@ func (h *Handler) MeetingPointList(w http.ResponseWriter, r *http.Request) {
 	`
 	args := []interface{}{operatorID}
 
+	if filterType != "" {
+		query += " AND mp.type = ?"
+		args = append(args, filterType)
+	}
 	if search != "" {
 		query += " AND (mp.name LIKE ? OR mp.address LIKE ?)"
 		s := "%" + search + "%"
 		args = append(args, s, s)
 	}
-	query += " ORDER BY mp.name"
+	query += " ORDER BY mp.type, mp.name"
+	query += " LIMIT ? OFFSET ?"
+	args = append(args, mpPerPage, (page-1)*mpPerPage)
 
 	rows, err := h.db.Query(query, args...)
 	type mpItem struct {
@@ -48,9 +116,23 @@ func (h *Handler) MeetingPointList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	pagination := mpPaginationData{
+		Page:       page,
+		PerPage:    mpPerPage,
+		Total:      total,
+		TotalPages: totalPages,
+		HasPrev:    page > 1,
+		HasNext:    page < totalPages,
+	}
+
 	h.renderer.RenderTemplate(w, "meeting_points/index", map[string]interface{}{
-		"Items":  items,
-		"Search": search,
+		"Items":           items,
+		"Search":          search,
+		"FilterType":      filterType,
+		"Pagination":      pagination,
+		"TotalAll":        totalAll,
+		"CountBasecamp":   typeCounts["basecamp"],
+		"CountTitikJemput": typeCounts["titik_jemput"],
 	})
 }
 

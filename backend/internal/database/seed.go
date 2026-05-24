@@ -187,8 +187,9 @@ func Seed() error {
 		if err := json.Unmarshal(mountainsJSON, &jsonData); err == nil {
 		for _, m := range jsonData {
 			for _, bc := range m.Basecamps {
+				name := bc.Name + " - " + m.Name
 				_, err := DB.Exec(`INSERT OR IGNORE INTO meeting_points (operator_id, type, name, lat, lng) VALUES (1, 'basecamp', ?, ?, ?)`,
-					bc.Name, m.Lat, m.Lon)
+					name, m.Lat, m.Lon)
 				if err == nil {
 					basecampCount++
 				}

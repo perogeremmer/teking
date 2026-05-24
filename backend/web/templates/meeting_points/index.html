@@ -14,8 +14,26 @@
 </div>
 
 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-    <div class="p-4 border-b border-gray-200">
-        <input type="text" placeholder="Cari..." class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none w-full max-w-xs">
+    <div class="p-4 border-b border-gray-200 space-y-3">
+        <div class="flex flex-wrap gap-2">
+            <a href="/meeting-points" class="px-3 py-1.5 rounded-lg text-sm font-medium transition
+                {{if not .FilterType}}bg-teal-100 text-teal-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">
+                Semua ({{.TotalAll}})
+            </a>
+            <a href="/meeting-points?type=titik_jemput" class="px-3 py-1.5 rounded-lg text-sm font-medium transition
+                {{if eq .FilterType "titik_jemput"}}bg-blue-100 text-blue-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">
+                Titik Jemput ({{.CountTitikJemput}})
+            </a>
+            <a href="/meeting-points?type=basecamp" class="px-3 py-1.5 rounded-lg text-sm font-medium transition
+                {{if eq .FilterType "basecamp"}}bg-green-100 text-green-800{{else}}bg-gray-100 text-gray-600 hover:bg-gray-200{{end}}">
+                Basecamp ({{.CountBasecamp}})
+            </a>
+        </div>
+        <div>
+            <input type="text" placeholder="Cari nama atau alamat..." name="search" value="{{.Search}}"
+                hx-get="/meeting-points" hx-trigger="keyup changed delay:300ms" hx-target="body"
+                class="w-full max-w-xs px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none">
+        </div>
     </div>
     <div class="overflow-x-auto">
         {{if .Items}}
@@ -47,8 +65,7 @@
                             <a href="/meeting-points/{{.ID}}/edit" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition">
                                 <i class="bx bx-edit-alt"></i> Edit
                             </a>
-                            <button
-                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-xs font-medium transition {{if .UsedInTrip}}opacity-50 cursor-not-allowed{{else}}hover:bg-red-100{{end}}"
+                            <button class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-xs font-medium transition {{if .UsedInTrip}}opacity-50 cursor-not-allowed{{else}}hover:bg-red-100{{end}}"
                                 {{if .UsedInTrip}}disabled title="Tidak bisa dihapus — digunakan di trip"{{else}}hx-delete="/meeting-points/{{.ID}}" hx-confirm="Yakin hapus?"{{end}}>
                                 <i class="bx bx-trash"></i> Hapus
                             </button>
@@ -58,10 +75,32 @@
                 {{end}}
             </tbody>
         </table>
+
+        {{if gt .Pagination.TotalPages 1}}
+        <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+            <p class="text-sm text-gray-500">Menampilkan {{.Pagination.Page}} dari {{.Pagination.TotalPages}} halaman ({{.Pagination.Total}} total)</p>
+            <div class="flex gap-2">
+                {{if .Pagination.HasPrev}}
+                <a href="/meeting-points?page={{sub .Pagination.Page 1}}{{if .FilterType}}&type={{.FilterType}}{{end}}{{if .Search}}&search={{.Search}}{{end}}"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+                    <i class="bx bx-chevron-left"></i> Sebelumnya
+                </a>
+                {{end}}
+                {{if .Pagination.HasNext}}
+                <a href="/meeting-points?page={{add .Pagination.Page 1}}{{if .FilterType}}&type={{.FilterType}}{{end}}{{if .Search}}&search={{.Search}}{{end}}"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+                    Selanjutnya <i class="bx bx-chevron-right"></i>
+                </a>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+
         {{else}}
         <div class="text-center py-16">
             <i class="bx bxs-map text-5xl text-gray-300 mb-4"></i>
-            <p class="text-gray-500">Belum ada meeting point</p>
+            <p class="text-gray-500">Tidak ada meeting point</p>
+            <p class="text-xs text-gray-400 mt-1">Coba ubah filter atau <a href="/meeting-points/new" class="text-teal-600 hover:underline">buat baru</a></p>
         </div>
         {{end}}
     </div>
