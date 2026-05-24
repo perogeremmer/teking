@@ -337,9 +337,8 @@ func (s *Server) setupRoutes() {
 	mux.HandleFunc("DELETE /users/{id}", h.UserDelete)
 
 	loggedMux := s.loggingMiddleware(mux)
-	authMux := s.authMiddleware(loggedMux)
-	roleMux := s.roleMiddleware(authMux)
-	methodMux := s.methodOverrideMiddleware(roleMux)
+	methodMux := s.methodOverrideMiddleware(loggedMux)
+	authMux := s.authMiddleware(methodMux)
 
 	// Catch-all for 404
 	mux.HandleFunc("/{path...}", func(w http.ResponseWriter, r *http.Request) {
@@ -347,7 +346,7 @@ func (s *Server) setupRoutes() {
 		s.RenderTemplate(w, "404", nil)
 	})
 
-	s.Handler = methodMux
+	s.Handler = authMux
 }
 
 func (s *Server) methodOverrideMiddleware(next http.Handler) http.Handler {

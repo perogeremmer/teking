@@ -181,7 +181,10 @@ func migrate() error {
 	if err != nil {
 		return fmt.Errorf("execute schema: %w", err)
 	}
-
+	_, err = DB.Exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_mp_name_type ON meeting_points(name, type)")
+	if err != nil {
+		return fmt.Errorf("create index: %w", err)
+	}
 	return nil
 }
 

@@ -1,10 +1,15 @@
 package database
 
 import (
+	_ "embed"
+	"encoding/json"
 	"log"
 
 	"github.com/ayomendaki/ayomendaki-admin/internal/auth"
 )
+
+//go:embed mountains.json
+var mountainsJSON []byte
 
 func Seed() error {
 	var count int
@@ -166,6 +171,31 @@ func Seed() error {
 		}
 	}
 
-	log.Println("Seed complete: 3 operators, 5 provinces, 13 mountains, 7 meeting points, 3 packages, 8 addon templates")
+	// Seed basecamps from JSON
+	basecampCount := 0
+	var jsonData map[string]struct {
+		Name      string  `json:"name"`
+		Elevation int     `json:"elevation"`
+		Province  string  `json:"province"`
+		Lat       float64 `json:"lat"`
+		Lon       float64 `json:"lon"`
+		Basecamps []struct {
+			Name      string `json:"name"`
+			Elevation int    `json:"elevation"`
+		} `json:"basecamps"`
+	}
+		if err := json.Unmarshal(mountainsJSON, &jsonData); err == nil {
+		for _, m := range jsonData {
+			for _, bc := range m.Basecamps {
+				_, err := DB.Exec(`INSERT OR IGNORE INTO meeting_points (operator_id, type, name, lat, lng) VALUES (1, 'basecamp', ?, ?, ?)`,
+					bc.Name, m.Lat, m.Lon)
+				if err == nil {
+					basecampCount++
+				}
+			}
+		}
+	}
+
+	log.Printf("Seed complete: 3 operators, 5 provinces, 13 mountains, 7 meeting points, %d basecamps, 3 packages, 8 addon templates", basecampCount)
 	return nil
 }
